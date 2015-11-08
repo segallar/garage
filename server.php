@@ -20,6 +20,32 @@ if (!isset($cmd)) {
 
 $return = array( 'test' => 'ok' , 'cmd' => $cmd ,'time' => date("d.m.Y H:i:s"), "version" => $server_version );
 
+$params = ['year','mouth','day','hour','minute'];
+
+function events_cols() {
+    //, AVG(temp) AS temp, AVG(press)
+    
+    return ", AVG(temp) AS temp, AVG(press) ";
+}
+
+function events_where() {
+    
+    $WHERE = "";
+        
+    foreach($params as &$param) {
+        if(isset($_GET[$param])&&$_GET[$param]!="") {
+            if($WHERE!="")
+                $WHERE .= " AND ";
+            $WHERE = " $param(ts) = $_GET[$param] ";
+        }
+    }
+
+    if($WHERE!="")
+        $WHERE = " WHERE $WHERE";
+    
+    return $WHERE;
+}
+
 switch ( $cmd ) {
 case "hello":
     break;
@@ -44,7 +70,7 @@ case "mysql_test":
         $e->getMessage();
     }
     break;
-case "events_years":
+case "events":
     try {
         $db = mysql_connect($mysql_host, $mysql_user, $mysql_password) or 
             die(json_encode("Database error")); 
@@ -55,8 +81,12 @@ case "events_years":
 
         $return = [];
 
-        $query = "SELECT YEAR(ts) AS years, AVG(temp) AS temp, AVG(press) AS press FROM events GROUP BY years;";
-        $result = mysql_query($query);
+        $group = $_GET['group'];
+        if(!in_array($group,$params) {
+            $group = 'year';
+        }
+       
+        $query = "SELECT $group(ts) AS $group ".events_cols()." AS press FROM events ".events_where()." GROUP BY $group;";             $result = mysql_query($query);
         if (!$result) {
             die(json_encode('Invalid query: ' . mysql_error()));
         } else {
@@ -71,84 +101,6 @@ case "events_years":
         $e->getMessage();
     }
     break;
-case "events_months":
-    try {
-        $db = mysql_connect($mysql_host, $mysql_user, $mysql_password) or 
-            die(json_encode("Database error")); 
-        mysql_select_db($mysql_database, $db); 
-
-        //SOLUTION::  add this comment before your 1st query -- force multiLanuage support 
-        //$result = mysql_query("set names 'utf8'"); 
-
-        $return = [];
-
-        $WHERE = "";
-        
-        $year = $_GET["year"];
-        if(isset($year)&&year!="") {
-            $WHERE = " WHERE YEAR(ts)=$year "; 
-        }
-        
-        $query = "SELECT  MONTH(ts) AS months, AVG(temp) AS temp, AVG(press) AS press FROM events $WHERE GROUP BY months;";
-        $result = mysql_query($query);
-        if (!$result) {
-            die(json_encode('Invalid query: ' . mysql_error()));
-        } else {
-            $arr2 = [];
-            while($arr = mysql_fetch_array($result, MYSQL_ASSOC)) {
-                $arr2[] = $arr;
-            }         
-            $return = $arr2;
-        }
-    }
-    catch (Exception $e) {
-        $e->getMessage();
-    }
-    break;       
-case "events_days":
-    try {
-        $db = mysql_connect($mysql_host, $mysql_user, $mysql_password) or 
-            die(json_encode("Database error")); 
-        mysql_select_db($mysql_database, $db); 
-
-        //SOLUTION::  add this comment before your 1st query -- force multiLanuage support 
-        //$result = mysql_query("set names 'utf8'"); 
-
-        $return = [];
-
-        $WHERE = "";
-        
-        $year = $_GET["year"];
-        if(isset($year)&&year!="") {
-            $WHERE = " YEAR(ts)=$year "; 
-        }
-        
-        $month = $_GET["month"];
-        if(isset($month)&&month!="") {
-            if($WHERE!="")
-                $WHERE .= " AND ";
-            $WHERE = " MONTH(ts)=$month "; 
-        }
-        
-        if($WHERE!="")
-            $WHERE = " WHERE $WHERE";
-        
-        $query = "SELECT DAY(ts) AS days, AVG(temp) AS temp, AVG(press) AS press FROM events $WHERE GROUP BY days;";
-        $result = mysql_query($query);
-        if (!$result) {
-            die(json_encode('Invalid query: ' . mysql_error()));
-        } else {
-            $arr2 = [];
-            while($arr = mysql_fetch_array($result, MYSQL_ASSOC)) {
-                $arr2[] = $arr;
-            }         
-            $return = $arr2;
-        }
-    }
-    catch (Exception $e) {
-        $e->getMessage();
-    }
-    break;       
 case "get_track":
     /* GeoJSON example 
     { "type": "MultiLineString",
