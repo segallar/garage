@@ -55,7 +55,7 @@ case "events_years":
 
         $return = [];
 
-        $query = "SELECT DISTINCT year(ts) AS years FROM events;";
+        $query = "SELECT DISTINCT year(ts) AS years FROM events ORDER BY years;";
         $result = mysql_query($query);
         if (!$result) {
             die(json_encode('Invalid query: ' . mysql_error()));
@@ -89,7 +89,7 @@ case "events_months":
             $WHERE = " WHERE YEAR(ts)=$year "; 
         }
         
-        $query = "SELECT DISTINCT MONTH(ts) AS months FROM events $WHERE;";
+        $query = "SELECT DISTINCT MONTH(ts) AS months FROM events $WHERE ORDER BY months;";
         $result = mysql_query($query);
         if (!$result) {
             die(json_encode('Invalid query: ' . mysql_error()));
@@ -133,7 +133,7 @@ case "events_days":
         if($WHERE!="")
             $WHERE = " WHERE $WHERE";
         
-        $query = "SELECT DISTINCT DAY(ts) AS days FROM events $WHERE;";
+        $query = "SELECT DISTINCT DAY(ts) AS days FROM events $WHERE ORDER BY days;";
         $result = mysql_query($query);
         if (!$result) {
             die(json_encode('Invalid query: ' . mysql_error()));
