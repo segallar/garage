@@ -61,7 +61,7 @@ case "events_years":
             die(json_encode('Invalid query: ' . mysql_error()));
         } else {
             while($arr = mysql_fetch_array($result, MYSQL_ASSOC)) {
-                $return[] = $arr;
+                $return[] = $arr['years'];
             }          
         }
     }
@@ -93,7 +93,7 @@ case "events_months":
             die(json_encode('Invalid query: ' . mysql_error()));
         } else {
             while($arr = mysql_fetch_array($result, MYSQL_ASSOC)) {
-                $return[] = $arr;
+                $return[] = $arr['months'];
             }            
         }
     }
