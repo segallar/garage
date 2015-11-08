@@ -140,7 +140,7 @@
     
 var delta = 5;   
     
-var levels = {'year':'month','month':'day'};
+var levels = {'year':'month','month':'day','day':'hour','hour':'minute'};
     
 function menuClick(item) {  
     $( ".active" ).removeClass("active");
@@ -262,9 +262,12 @@ function show_events(level,id,param) {
         function( data ) {
             $.each( data, function( key, val ) {
                 var element=val[level];
-                s =  "<div type=\"button\" class=\"btn btn-default\" id="+id+"-"+element;
-                s += " onClick=\"show_events('"+levels[level]+"','"+id+'-';
-                s += element+"','"+param+"&"+level+"="+element+param+"')\"><b>"+element+"</b> "+ val["temp"]+"</div>";
+                s =  "<div type=\"button\" class=\"btn btn-default list-group-item\" id="+id+"-"+element;
+                if(level!='minute') {
+                    s += " onClick=\"show_events('"+levels[level]+"','"+id+'-';
+                    s += element+"','"+param+"&"+level+"="+element+param+"')\"";
+                }
+                s += "><b>"+id+"-"+element+"</b> "+ val["temp"]+"</div>";
                 $(s).insertAfter("#"+id);
             });
         });
