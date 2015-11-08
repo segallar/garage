@@ -131,7 +131,7 @@ case "send_sms":
 
             // insert into outbox (number,text) values('+31972123456', 'Tetsing Testing everyone');
             
-            $query = "insert into outbox (number,text) values ". 
+            $query = "insert into outbox (DestinationNumber,TextDecoded) values ". 
                 " ('$number','$text');"; 
             $result = mysql_query($query); 
             if (!$result) {
@@ -163,7 +163,7 @@ case "show_sms_inbox":
             $limit = " LIMIT ".$range;
         }
         
-        $query = "SELECT id, SenderNumber as number, ReceivingDateTime as smsdate, TextDecoded as text, Processed as processed  FROM inbox ";
+        $query = "SELECT id, SenderNumber as number, ReceivingDateTime as date, TextDecoded as text FROM inbox ";
         if ($where != "") {
             $query .= " WHERE ".$where." ";
         }
@@ -172,7 +172,7 @@ case "show_sms_inbox":
             $query .= $limit;
         }
         
-        $query .= ";";
+        $query .= " ORDER BY id DESC;";
         
         $returnQuery = [];
         
@@ -210,7 +210,7 @@ case "show_sms_outbox":
             $limit = " LIMIT ".$range;
         }
         
-        $query = "SELECT * FROM outbox ";
+        $query = "SELECT id, SendingDateTime as date, TextDecoded as text, DestinationNumber as number FROM SendItems ";
                 
         $where = "";
         if ($where != "") {
@@ -221,7 +221,7 @@ case "show_sms_outbox":
             $query .= $limit;
         }
         
-        $query .= ";";
+        $query .= " ORDER BY id DESC;";
         
         $returnQuery = [];
         
