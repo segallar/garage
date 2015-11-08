@@ -9,7 +9,7 @@ $mysql_database = "garage";
 $mysql_user = "root";
 $mysql_password = "nigthfal";
 
-$server_version = '0.1';
+$server_version = '0.1.1';
 
 header('Content-type: application/json; charset=utf-8');
 
@@ -85,7 +85,7 @@ case "events_months":
             $WHERE = " WHERE YEAR(ts)=$year "; 
         }
         
-        $query = "SELECT DISTINCT mount(ts) AS mounts FROM events $WHERE;";
+        $query = "SELECT DISTINCT MOUTH(ts) AS mouths FROM events $WHERE;";
         $result = mysql_query($query);
         if (!$result) {
             die(json_encode('Invalid query: ' . mysql_error()));
