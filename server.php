@@ -34,6 +34,7 @@ function events_cols() {
 }
 
 function events_where() {
+    if($debug) echo "events! \n";
     $WHERE = "";
     foreach($params as &$param) {
         if($debug) echo "param $param \n";
