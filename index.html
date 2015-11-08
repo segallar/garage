@@ -142,6 +142,7 @@ function show_sms_inbox(param) {
     $("#sms_form").hide();
     $(".sms_menu").removeClass("active");
     $("#sms_inbox_menu").addClass("active");
+    $("#sms_table_body").html("");
     $.getJSON( "http://pi/server.php?cmd=show_sms_inbox"+param, 
         function( data ) {
             var str = '';
@@ -161,6 +162,7 @@ function show_sms_outbox(param) {
     $("#sms_form").hide();
     $(".sms_menu").removeClass("active");
     $("#sms_outbox_menu").addClass("active");
+    $("#sms_table_body").html("");
     $.getJSON( "http://pi/server.php?cmd=show_sms_outbox"+param, 
         function( data ) {
             var str = '';
