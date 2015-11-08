@@ -85,7 +85,7 @@ case "events_months":
             $WHERE = " WHERE YEAR(ts)=$year "; 
         }
         
-        $query = "SELECT DISTINCT MOUTH(ts) AS mouths FROM events $WHERE;";
+        $query = "SELECT DISTINCT MONTH(ts) AS months FROM events $WHERE;";
         $result = mysql_query($query);
         if (!$result) {
             die(json_encode('Invalid query: ' . mysql_error()));
