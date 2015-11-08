@@ -34,6 +34,8 @@ function events_cols() {
 }
 
 function events_where() {
+    global $params , $debug;
+    
     $where = "";
     
     if($debug) $where .= " xxx ";
