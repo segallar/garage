@@ -30,7 +30,7 @@ $params = array ('year','mouth','day','hour','minute');
 function events_cols() {
     //, AVG(temp) AS temp, AVG(press)
     $cols = ", AVG(temp) AS temp, AVG(press) AS press "
-    if(is_set($_GET['minmax'])&&$_GET['minmax']=='on') {
+    if(isset($_GET['minmax'])&&$_GET['minmax']=='on') {
         $cols .= ", MIN(temp) as min_temp, MAX(temp) as max_temp ";
         $cols .= ", MIN(press) as min_press, MAX(press) as max_press ";
     }
