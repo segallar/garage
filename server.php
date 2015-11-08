@@ -34,14 +34,9 @@ function events_cols() {
 }
 
 function events_where() {
-    global $params , $debug;
-    
+    global $params;
     $where = "";
-    
-    if($debug) $where .= " xxx ";
-    
     foreach($params as &$param) {
-        if($debug) echo "param $param \n";
         if(isset($_GET[$param])&&$_GET[$param]!="") {
             if($where!="")
                 $where .= " AND ";
@@ -50,7 +45,6 @@ function events_where() {
     }
     if($where!="") 
         $where = " WHERE $where";
-    
     return $where;
 }
 
@@ -117,9 +111,6 @@ if(isset($db))
 
 if($debug) 
     echo "$query \n\n";  
-
-if($debug) 
-    echo events_where()."\n\n";
 
 echo json_encode($return);
 
