@@ -19,7 +19,7 @@ if (!isset($cmd)) {
 }
 
 $debug = false;
-if($_GET["debug"]="on") {
+if($_GET["debug"]=="on") {
     $debug = true;
 }  
 
@@ -36,10 +36,11 @@ function events_cols() {
 function events_where() {
     $WHERE = "";
     foreach($params as &$param) {
+        echo "param $param \n";
         if(isset($_GET[$param])&&$_GET[$param]!="") {
             if($WHERE!="")
                 $WHERE .= " AND ";
-            $WHERE = " $param(ts) = $_GET[$param] ";
+            $WHERE .= " $param(ts) = $_GET[$param] ";
         }
     }
     if($WHERE!="") 
