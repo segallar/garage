@@ -163,7 +163,7 @@ case "show_sms_inbox":
             $limit = " LIMIT ".$range;
         }
         
-        $query = "SELECT * FROM inbox ";
+        $query = "SELECT id, SenderNumber as number, ReceivingDateTime as smsdate, TextDecoded as text, Processed as processed  FROM inbox ";
         if ($where != "") {
             $query .= " WHERE ".$where." ";
         }
