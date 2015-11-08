@@ -135,7 +135,7 @@ case "send_sms":
                 " ('$number','$text');"; 
             $result = mysql_query($query); 
             if (!$result) {
-                die(json_encode('Invalid query: ' . mysql_error()));
+                $return['result'] = 'Invalid query: ' . mysql_error();
             } else {
                 $return['result'] = 'ok';
             }

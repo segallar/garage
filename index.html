@@ -189,7 +189,7 @@ function send_sms() {
     var param = "&number=" + encodeURIComponent($("#sms_number_input").val());
     param += "&text=" + encodeURIComponent($("#sms_text_input").val()); 
     $.getJSON( "http://pi/server.php?cmd=send_sms"+param, function( data ) {
-        $("#send_status").html(param+"<br>"+data['result']);        
+        $("#send_status").html(data['result']);        
      });
 }
   
