@@ -189,9 +189,8 @@ function send_sms() {
     var param = "&number=" + encodeURIComponent($("#sms_number_input").val());
     param += "&text=" + encodeURIComponent($("#sms_text_input").val()); 
     $.getJSON( "http://pi/server.php?cmd=send_sms"+param, function( data ) {
-        $("#send_status").html(data['result']);
+        $("#send_status").html(param+"<br>"+data['result']);        
      });
-     
 }
   
 function show_sms_balance() {
@@ -200,7 +199,7 @@ function show_sms_balance() {
     $(".sms_menu").removeClass("active");
     $("#sms_balance_menu").addClass("active");
     $.getJSON( "http://pi/server.php?cmd=balance", function( data ) {
-        $("#sms_balance").html(data['balance']);
+        $("#sms_balance").html("balance - "+data['balance']);
      });
 }    
     

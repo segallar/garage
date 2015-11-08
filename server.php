@@ -20,7 +20,7 @@ if(isset($_GET['cmd'])) {
 }
 
 $debug = false;
-if($_GET["debug"]=="on") {
+if(isset($_GET['debug'])&&$_GET['debug']=="on") {
     $debug = true;
 }  
 
@@ -149,9 +149,6 @@ case "send_sms":
     break;
 case "show_sms_inbox":
     try {
-        
-        $range = $_GET["range"];
-       
         $db = mysql_connect($mysql_host, $mysql_user, $mysql_password) or 
             die(json_encode("Database error")); 
         mysql_select_db($mysql_database_sms, $db); 
@@ -205,9 +202,8 @@ case "show_sms_outbox":
         mysql_select_db($mysql_database_sms, $db); 
         $result = mysql_query("set names 'utf8'"); 
         
-        $range = $_GET["range"];
-        if (isset($range)&&$range!="") {
-            $limit = " LIMIT ".$range;
+        if(isset($_GET["range"])) {
+            $limit = " LIMIT ".$_GET["range"];
         }
         
         $query = "SELECT id, SendingDateTime AS date, TextDecoded AS text, DestinationNumber AS number FROM sentitems ";
