@@ -32,7 +32,7 @@ case "mysql_test":
         //SOLUTION::  add this comment before your 1st query -- force multiLanuage support 
         //$result = mysql_query("set names 'utf8'"); 
 
-        $query = "select count(id) from events;"; 
+        $query = "SELECT COUNT(id) AS ITEMS FROM events;"; 
         $result = mysql_query($query); 
         if (!$result) {
             die(json_encode('Invalid query: ' . mysql_error()));
@@ -55,19 +55,49 @@ case "events_years":
 
         $return = [];
 
-        $query = "select DISTINCT year(ts) from events;";
+        $query = "SELECT DISTINCT year(ts) AS years FROM events;";
         $result = mysql_query($query);
         if (!$result) {
             die(json_encode('Invalid query: ' . mysql_error()));
         } else {
-            $return = mysql_fetch_array($result, MYSQL_ASSOC))            
+            $return = mysql_fetch_array($result, MYSQL_ASSOC);            
         }
     }
     catch (Exception $e) {
         $e->getMessage();
     }
     break;
-case get_track:
+case "events_months":
+    try {
+        $db = mysql_connect($mysql_host, $mysql_user, $mysql_password) or 
+            die(json_encode("Database error")); 
+        mysql_select_db($mysql_database, $db); 
+
+        //SOLUTION::  add this comment before your 1st query -- force multiLanuage support 
+        //$result = mysql_query("set names 'utf8'"); 
+
+        $return = [];
+
+        $WHERE = "";
+        
+        $year = $_GET["year"];
+        if(isset($year)&&year!="") {
+            $WHERE = " WHERE YEAR(ts)=$year "; 
+        }
+        
+        $query = "SELECT DISTINCT mount(ts) AS mounts FROM events $WHERE;";
+        $result = mysql_query($query);
+        if (!$result) {
+            die(json_encode('Invalid query: ' . mysql_error()));
+        } else {
+            $return = mysql_fetch_array($result, MYSQL_ASSOC);            
+        }
+    }
+    catch (Exception $e) {
+        $e->getMessage();
+    }
+    break;        
+case "get_track":
     /* GeoJSON example 
     { "type": "MultiLineString",
     "coordinates": [
