@@ -25,7 +25,7 @@ if($_GET["debug"]=="on") {
 
 $return = array( 'test' => 'ok' , 'cmd' => $cmd ,'time' => date("d.m.Y H:i:s"), "version" => $server_version );
 
-$params = ['year','mouth','day','hour','minute'];
+$params = array ('year','mouth','day','hour','minute');
 
 function events_cols() {
     //, AVG(temp) AS temp, AVG(press)
