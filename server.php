@@ -82,7 +82,7 @@ case "events":
         $return = [];
 
         $group = $_GET['group'];
-        if(!in_array($group,$params) {
+        if(!in_array($group,$params)) {
             $group = 'year';
         }
        
