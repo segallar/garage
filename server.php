@@ -104,7 +104,51 @@ case "events_months":
     catch (Exception $e) {
         $e->getMessage();
     }
-    break;        
+    break;       
+case "events_days":
+    try {
+        $db = mysql_connect($mysql_host, $mysql_user, $mysql_password) or 
+            die(json_encode("Database error")); 
+        mysql_select_db($mysql_database, $db); 
+
+        //SOLUTION::  add this comment before your 1st query -- force multiLanuage support 
+        //$result = mysql_query("set names 'utf8'"); 
+
+        $return = [];
+
+        $WHERE = "";
+        
+        $year = $_GET["year"];
+        if(isset($year)&&year!="") {
+            $WHERE = " YEAR(ts)=$year "; 
+        }
+        
+        $month = $_GET["month"];
+        if(isset($month)&&month!="") {
+            if($WHERE!="")
+                $WHERE .= " AND ";
+            $WHERE = " MONTH(ts)=$month "; 
+        }
+        
+        if($WHERE!="")
+            $WHERE = " WHERE $WHERE";
+        
+        $query = "SELECT DISTINCT DAY(ts) AS days FROM events $WHERE;";
+        $result = mysql_query($query);
+        if (!$result) {
+            die(json_encode('Invalid query: ' . mysql_error()));
+        } else {
+            $arr2 = [];
+            while($arr = mysql_fetch_array($result, MYSQL_ASSOC)) {
+                $arr2[] = $arr['days'];
+            }         
+            $return['days'] = $arr2;
+        }
+    }
+    catch (Exception $e) {
+        $e->getMessage();
+    }
+    break;       
 case "get_track":
     /* GeoJSON example 
     { "type": "MultiLineString",
