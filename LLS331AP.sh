@@ -1,4 +1,7 @@
- #!/bin/bash
+#!/bin/bash
+#
+# garage project 
+#
 
  WHO_AM_I=`sudo i2cget -y 1 0x5c 0x0f`
  if [ $WHO_AM_I != "0xbb" ]; then
