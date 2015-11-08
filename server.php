@@ -14,7 +14,7 @@ $server_version = '0.1.1';
 header('Content-type: application/json; charset=utf-8');
 
 $cmd = "no_command";    
-if(!isset($_GET['cmd'])) {
+if(isset($_GET['cmd'])) {
     $cmd = $_GET['cmd'];
 }
 
