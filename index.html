@@ -59,7 +59,7 @@
             <h1>SMS</h1>
             <div class="row">
                 <ul class="nav nav-pills">
-                     <li id="sms_newmsg_menu" class="sms_menu">
+                    <li id="sms_newmsg_menu" class="sms_menu">
                         <a href="javascript:show_sms_newmsg('')">New message</a>
                     </li>
                     <li id="sms_inbox_menu" class="sms_menu">
@@ -95,6 +95,15 @@
                     <div id="sms_balance"></div>
                 </div>
             </div>
+        </div>
+        
+        <div class="main-text" id="main-text-event">
+            <h1>Events</h1>
+            <div class="row">
+                <ul id="events">
+                </ul>
+            </div>
+        
         </div>
         
         <div class="main-text" id="main-text-map">
@@ -309,7 +318,8 @@ function connectionTest() {
 // Menu data    
 var menu = {
     sms : "SMS",
-    events : "Events"
+    event : "Events",
+    control : "Control"
     //sms_out : "SMS Outbox",
     //smi_send : "SMS Send"
 };
@@ -349,6 +359,18 @@ $( document ).ready( function() {
         $("<li onClick='menuClick("+'"'+key+'"'+")' "+activeClass+" id='menu-item-"+key+"'><a href='#"+key+"'>"+val+"</a></li>").appendTo("#menu");
     });
     if( location.hash != "" ) menuClick(active);  
+    
+    // load events
+    
+    ///!!!!!!!!
+    $.getJSON( "http://pi/server.php?cmd=events&group=year", 
+        function( data ) {
+            $.each( data, function( key, val ) {
+                var year=val["year"];
+                $("#events").append("<li type=\"button\" class=\"btn btn-default\" id=event-year-"+year+" onClick=\"event-expand('&group=month&year="+year+"')\"><b>"+val["year"]+"</b> "+ val["temp"]+"</li>"); 
+            });
+        });
+        
     
     // load devices
     /*
