@@ -30,13 +30,13 @@ $params = ['year','mouth','day','hour','minute'];
 function events_cols() {
     //, AVG(temp) AS temp, AVG(press)
     
-    return ", AVG(temp) AS temp, AVG(press) ";
+    return ", AVG(temp) AS temp, AVG(press) AS press ";
 }
 
 function events_where() {
     $WHERE = "";
     foreach($params as &$param) {
-        echo "param $param \n";
+        if($debug) echo "param $param \n";
         if(isset($_GET[$param])&&$_GET[$param]!="") {
             if($WHERE!="")
                 $WHERE .= " AND ";
@@ -88,7 +88,7 @@ case "events":
             $group = 'year';
         }
        
-        $query = "SELECT $group(ts) AS $group ".events_cols()." AS press FROM events ".events_where()." GROUP BY $group;";             $result = mysql_query($query);
+        $query = "SELECT $group(ts) AS $group ".events_cols()." FROM events ".events_where()." GROUP BY $group;";             $result = mysql_query($query);
         if (!$result) {
             die(json_encode('Invalid query: ' . mysql_error()));
         } else {
