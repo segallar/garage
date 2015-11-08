@@ -100,8 +100,8 @@
         <div class="main-text" id="main-text-event">
             <h1>Events</h1>
             <div class="row">
-                <ul id="events">
-                </ul>
+                <div id="events">
+                </div>
             </div>
         
         </div>
@@ -138,7 +138,9 @@
 
 <script>
     
-var delta = 5;    
+var delta = 5;   
+    
+var levels = {'year':'month','month':'day'};
     
 function menuClick(item) {  
     $( ".active" ).removeClass("active");
@@ -255,6 +257,19 @@ function showMapTrack(session) {
     */
 }
     
+function show_events(level,id,param) {
+    $.getJSON( "http://pi/server.php?cmd=events&group="+level+param, 
+        function( data ) {
+            $.each( data, function( key, val ) {
+                var element=val[level];
+                s =  "<div type=\"button\" class=\"btn btn-default\" id="+id+"-"+element;
+                s += " onClick=\"show_events('"+levels[level]+"','"+id+'-';
+                s += element+"','"+param+"&"+level+"="+element+param+"')\"><b>"+element+"</b> "+ val["temp"]+"</div>";
+                $(s).insertAfter("#"+id);
+            });
+        });
+}    
+    
 function showMapSessions(device) {
     if($("#dev-"+device).hasClass("active")) {
         $(".dev-"+device).hide();
@@ -362,14 +377,10 @@ $( document ).ready( function() {
     
     // load events
     
+   
+    
     ///!!!!!!!!
-    $.getJSON( "http://pi/server.php?cmd=events&group=year", 
-        function( data ) {
-            $.each( data, function( key, val ) {
-                var year=val["year"];
-                $("#events").append("<li type=\"button\" class=\"btn btn-default\" id=event-year-"+year+" onClick=\"event-expand('&group=month&year="+year+"')\"><b>"+val["year"]+"</b> "+ val["temp"]+"</li>"); 
-            });
-        });
+    show_events("year","events","");
         
     
     // load devices
