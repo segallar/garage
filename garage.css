@@ -1,0 +1,18 @@
+body {
+  padding-top: 50px;
+}
+.main-text {
+/*  padding: 40px 15px; */
+  text-align: center;
+}
+th {
+  text-align: center;
+}
+.map {
+    height: 400px;
+    width: 100%;
+}
+.mono {
+    text-align: left;
+    font-family: monospace;
+}
