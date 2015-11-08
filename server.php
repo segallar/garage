@@ -55,16 +55,16 @@ case "events_years":
 
         $return = [];
 
-        $query = "SELECT DISTINCT year(ts) AS years FROM events ORDER BY years;";
+        $query = "SELECT YEAR(ts) AS years, AVG(temp) AS temp, AVG(press) AS press FROM events GROUP BY years;";
         $result = mysql_query($query);
         if (!$result) {
             die(json_encode('Invalid query: ' . mysql_error()));
         } else {
             $arr2 = [];
             while($arr = mysql_fetch_array($result, MYSQL_ASSOC)) {
-                $arr2[] = $arr['years'];
+                $arr2[] = $arr;
             }     
-            $return['years'] = $arr2;
+            $return = $arr2;
         }
     }
     catch (Exception $e) {
@@ -89,16 +89,16 @@ case "events_months":
             $WHERE = " WHERE YEAR(ts)=$year "; 
         }
         
-        $query = "SELECT DISTINCT MONTH(ts) AS months FROM events $WHERE ORDER BY months;";
+        $query = "SELECT  MONTH(ts) AS months, AVG(temp) AS temp, AVG(press) AS press FROM events $WHERE GROUP BY months;";
         $result = mysql_query($query);
         if (!$result) {
             die(json_encode('Invalid query: ' . mysql_error()));
         } else {
             $arr2 = [];
             while($arr = mysql_fetch_array($result, MYSQL_ASSOC)) {
-                $arr2[] = $arr['months'];
+                $arr2[] = $arr;
             }         
-            $return['months'] = $arr2;
+            $return = $arr2;
         }
     }
     catch (Exception $e) {
@@ -133,16 +133,16 @@ case "events_days":
         if($WHERE!="")
             $WHERE = " WHERE $WHERE";
         
-        $query = "SELECT DISTINCT DAY(ts) AS days FROM events $WHERE ORDER BY days;";
+        $query = "SELECT DAY(ts) AS days, AVG(temp) AS temp, AVG(press) AS press FROM events $WHERE GROUP BY days;";
         $result = mysql_query($query);
         if (!$result) {
             die(json_encode('Invalid query: ' . mysql_error()));
         } else {
             $arr2 = [];
             while($arr = mysql_fetch_array($result, MYSQL_ASSOC)) {
-                $arr2[] = $arr['days'];
+                $arr2[] = $arr;
             }         
-            $return['days'] = $arr2;
+            $return = $arr2;
         }
     }
     catch (Exception $e) {
