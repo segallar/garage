@@ -126,7 +126,7 @@ case "send_sms":
         if( isset($number)&&isset($text) ) {
             
             $db = mysql_connect($mysql_host, $mysql_user, $mysql_password) or die("Database error"); 
-            mysql_select_db($mysql_database, $db); 
+            mysql_select_db($mysql_database_sms, $db); 
             $result = mysql_query("set names 'utf8'"); 
 
             // insert into outbox (number,text) values('+31972123456', 'Tetsing Testing everyone');
