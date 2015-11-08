@@ -210,7 +210,7 @@ case "show_sms_outbox":
             $limit = " LIMIT ".$range;
         }
         
-        $query = "SELECT id, SendingDateTime AS date, TextDecoded AS text, DestinationNumber AS number FROM senditems ";
+        $query = "SELECT id, SendingDateTime AS date, TextDecoded AS text, DestinationNumber AS number FROM sentitems ";
                 
         $where = "";
         if ($where != "") {
