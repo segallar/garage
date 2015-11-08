@@ -44,7 +44,7 @@ case "mysql_test":
         $e->getMessage();
     }
     break;
-case "list_dev":
+case "events_years":
     try {
         $db = mysql_connect($mysql_host, $mysql_user, $mysql_password) or 
             die(json_encode("Database error")); 
@@ -55,23 +55,12 @@ case "list_dev":
 
         $return = [];
 
-        $query = "select DISTINCT UUID from track;";
+        $query = "select DISTINCT year(ts) from events;";
         $result = mysql_query($query);
         if (!$result) {
             die(json_encode('Invalid query: ' . mysql_error()));
         } else {
-            while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
-                $query = "select distinct session from track where uuid='".$row['UUID']."';";
-               	$result1 = mysql_query($query);
-                $i=0;
-                while ( $row1 = mysql_fetch_array($result1, MYSQL_ASSOC)) {
-                    $query1 = "select session, max(date) as date_max , min(date) as date_min";
-                    $query1 .= " from track where session='".$row1['session']."';";
-                    $result2 = mysql_query($query1);
-                    $row2 = mysql_fetch_array($result2, MYSQL_ASSOC);
-                    $return[$row['UUID']][$i++] = $row2;
-                }
-            }
+            $return = mysql_fetch_array($result, MYSQL_ASSOC))            
         }
     }
     catch (Exception $e) {
