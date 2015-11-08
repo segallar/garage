@@ -208,6 +208,7 @@ function show_sms_balance() {
     
 function loadData(param,range) {
     //+"&range="+(range*1)+","+(delta*1)
+    /*
     $.getJSON( "http://accmon.segalla.ru/server.php?cmd=list_track"+param, 
         function( data ) {
             var str = '';
@@ -223,11 +224,13 @@ function loadData(param,range) {
             }
             $("#track-table").append(str);
         });
+        */
     //$("#main-text-raw-load-more").html("<span class='btn btn-default' id='load-more' onClick=\"loadRangeRawData('"+param+"',"+(range+delta)+")\" >Load more...</span>");
 }   
     
 function showMapTrack(session) {
     //alert(session);
+    /*
     if (!$("#session-"+session).hasClass("active")) {
         $.getJSON( "http://pi/server.php?cmd=get_track&session="+session, 
             function( data ) {
@@ -243,6 +246,7 @@ function showMapTrack(session) {
         setView();
         $("#session-"+session).removeClass("active");
     }
+    */
 }
     
 function showMapSessions(device) {
@@ -308,6 +312,7 @@ function connectionTest() {
 // Menu data    
 var menu = {
     sms : "SMS",
+    events : "Events"
     //sms_out : "SMS Outbox",
     //smi_send : "SMS Send"
 };
@@ -349,6 +354,7 @@ $( document ).ready( function() {
     if( location.hash != "" ) menuClick(active);  
     
     // load devices
+    /*
     $.getJSON( "http://accmon.segalla.ru/server.php?cmd=list_dev", function( data ) {
         var str = '';
         $.each( data, function( key, val ) {
@@ -360,7 +366,7 @@ $( document ).ready( function() {
         $("#dev-table").html(str);
         $(".dev-cell").hide();
     });
-    
+    */
 });
 </script>
 </body>

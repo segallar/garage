@@ -6,6 +6,7 @@
 
 $mysql_host = "localhost";
 $mysql_database = "garage";
+$mysql_database_sms = "smsd";
 $mysql_user = "root";
 $mysql_password = "nigthfal";
 
@@ -76,6 +77,10 @@ case "mysql_test":
         $e->getMessage();
     }
     break;
+
+//
+// For barometer board
+//      
 case "events":
     try {
         $db = mysql_connect($mysql_host, $mysql_user, $mysql_password) or 
@@ -105,6 +110,168 @@ case "events":
         $e->getMessage();
     }
     break;
+
+//
+// SMS subsystem
+//
+// show_sms_outbox, show_sms_inbox, send_sms, show_balance
+//
+
+case "send_sms":
+    try {
+        
+        $number = $_GET["number"];
+        $text = $_GET["text"];
+
+        if( isset($number)&&isset($text) ) {
+            
+            $db = mysql_connect($mysql_host, $mysql_user, $mysql_password) or die("Database error"); 
+            mysql_select_db($mysql_database, $db); 
+            $result = mysql_query("set names 'utf8'"); 
+
+            // insert into outbox (number,text) values('+31972123456', 'Tetsing Testing everyone');
+            
+            $query = "insert into outbox (number,text) values ". 
+                " ('$number','$text');"; 
+            $result = mysql_query($query); 
+            if (!$result) {
+                die(json_encode('Invalid query: ' . mysql_error()));
+            } else {
+                $return['result'] = 'ok';
+            }
+        } else {
+            $return['result'] = 'false URL';
+        }
+    }
+    catch (Exception $e) {
+        $e->getMessage();
+    }
+    break;
+case "show_sms_inbox":
+    try {
+        
+        $range = $_GET["range"];
+       
+        $db = mysql_connect($mysql_host, $mysql_user, $mysql_password) or 
+            die(json_encode("Database error")); 
+        mysql_select_db($mysql_database_sms, $db); 
+        $result = mysql_query("set names 'utf8'"); 
+        
+        $where = "";
+  
+        if (isset($range)&&$range!="") {
+            $limit = " LIMIT ".$range;
+        }
+        
+        $query = "SELECT * FROM inbox ";
+        if ($where != "") {
+            $query .= " WHERE ".$where." ";
+        }
+    
+        if (isset($limit)) {
+            $query .= $limit;
+        }
+        
+        $query .= ";";
+        
+        $returnQuery = [];
+        
+        $result = mysql_query($query); 
+        if (!$result) {
+            die(json_encode('Invalid query: ' . mysql_error()));
+        } else {
+            while ($arr= mysql_fetch_array($result, MYSQL_ASSOC)) {
+                $returnQuery[] = $arr;    
+            }
+            if (!$debug) {
+                $return = [];
+                $return = $returnQuery;
+            } else {
+                $return["sql"] = $query;
+                $return["result"] = $returnQuery;
+            } 
+        }
+    }
+    catch (Exception $e) {
+        echo("SQL:".$query."</br>");
+        $e->getMessage();
+    }
+    break;
+case "show_sms_outbox":
+    try {
+       
+        $db = mysql_connect($mysql_host, $mysql_user, $mysql_password) or 
+            die(json_encode("Database error")); 
+        mysql_select_db($mysql_database_sms, $db); 
+        $result = mysql_query("set names 'utf8'"); 
+        
+        $range = $_GET["range"];
+        if (isset($range)&&$range!="") {
+            $limit = " LIMIT ".$range;
+        }
+        
+        $query = "SELECT * FROM outbox ";
+                
+        $where = "";
+        if ($where != "") {
+            $query .= " WHERE ".$where." ";
+        }
+    
+        if (isset($limit)) {
+            $query .= $limit;
+        }
+        
+        $query .= ";";
+        
+        $returnQuery = [];
+        
+        $result = mysql_query($query); 
+        if (!$result) {
+            die(json_encode('Invalid query: ' . mysql_error()));
+        } else {
+            while ($arr= mysql_fetch_array($result, MYSQL_ASSOC)) {
+                $returnQuery[] = $arr;    
+            }
+            if (!$debug) {
+                $return = [];
+                $return = $returnQuery;
+            } else {
+                $return["sql"] = $query;
+                $return["result"] = $returnQuery;
+            } 
+        }
+    }
+    catch (Exception $e) {
+        echo("SQL:".$query."</br>");
+        $e->getMessage();
+    }
+    break;
+case 'balance':
+    try {
+        $db = mysql_connect($mysql_host, $mysql_user, $mysql_password) or 
+            die(json_encode("Database error")); 
+        mysql_select_db($mysql_database_sms, $db); 
+        $result = mysql_query("set names 'utf8'"); 
+        
+        $balance = -1;
+        
+        $result = mysql_query("SELECT balance, balance_time FROM balance ORDER BY id DESC LIMIT 1;");
+        if ($arr = mysql_fetch_array($result, MYSQL_ASSOC)) {
+            $balance = $arr['balance'];
+            $return = $arr;
+        } else { 
+            $return['balance'] = '-1';
+        }
+    }
+    catch (Exception $e) {
+        echo("SQL:".$query."</br>");
+        $e->getMessage();
+    }    
+    break;
+        
+//
+// Default action
+//
 
 default :
     $return["cmd"] = "no_command"; 
