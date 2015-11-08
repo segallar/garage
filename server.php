@@ -89,7 +89,7 @@ case "events":
             $group = 'year';
         }
        
-        $query = "SELECT $group(ts) AS $group ".events_cols()." FROM events ".events_where()." GROUP BY $group;";             $result = mysql_query($query);
+        $query = "SELECT $group(ts) AS $group ".events_cols()." FROM events ".events_where()." GROUP BY $group;";                   $result = mysql_query($query);
         if (!$result) {
             die(json_encode('Invalid query: ' . mysql_error()));
         } else {
@@ -161,6 +161,9 @@ if(isset($db))
 
 if($debug) 
     echo "$query \n\n";  
+
+if($debug) 
+    echo events_where()."\n\n";
 
 echo json_encode($return);
 
