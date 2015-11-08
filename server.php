@@ -60,7 +60,9 @@ case "events_years":
         if (!$result) {
             die(json_encode('Invalid query: ' . mysql_error()));
         } else {
-            $return = mysql_fetch_array($result);            
+            while($arr = mysql_fetch_array($result, MYSQL_ASSOC)) {
+                $return[] = $arr;
+            }          
         }
     }
     catch (Exception $e) {
@@ -90,7 +92,9 @@ case "events_months":
         if (!$result) {
             die(json_encode('Invalid query: ' . mysql_error()));
         } else {
-            $return = mysql_fetch_array($result);            
+            while($arr = mysql_fetch_array($result, MYSQL_ASSOC)) {
+                $return[] = $arr;
+            }            
         }
     }
     catch (Exception $e) {
