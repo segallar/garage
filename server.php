@@ -27,8 +27,9 @@ if(isset($_GET['debug'])&&$_GET['debug']=="on") {
 $auth = false;
 //if (isset($_REQUEST[session_name()]))
 session_start();
-if (isset($_SESSION['user_id']) AND $_SESSION['ip'] == $_SERVER['REMOTE_ADDR']) 
+if (isset($_SESSION['user_id']) AND $_SESSION['ip'] == $_SERVER['REMOTE_ADDR']) {
     $auth = true;
+}
 
 $return = array( 'test' => 'ok' , 'cmd' => $cmd , 'auth' => $auth, 'time' => date("d.m.Y H:i:s"), "version" => $server_version );
 
@@ -82,12 +83,12 @@ case "auth":// auth
             $return['query'] = $query;
             $res = mysql_query($query) or die(json_encode(Array('Invalid query ' => mysql_error() ,"query" => $query)));
             if ($row = mysql_fetch_assoc($res)) {
-                if(isset($row['id'])&&row['id']!="") {
+                if(isset($row['id'])&&$row['id']!="") {
                     session_start();
                     $_SESSION['user_id'] = $row['id'];
                     $_SESSION['ip'] = $_SERVER['REMOTE_ADDR'];
                     $auth = true;
-                    $return["auth"] = "ok";
+                    $return["auth"] = "true";
                 } else {
                     $auth = false;
                     $return["auth"] = "no_user";

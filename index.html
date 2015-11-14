@@ -252,7 +252,7 @@ function submit_auth() {
     $.getJSON( "http://pi/server.php?cmd=auth&auth_name="+$("#exampleInputEmail1").val()+"&auth_pass="+$("#exampleInputPassword1").val(), 
         function( data ) {
             $("#test").html("auth - "+data['auth']);
-            if(data['auth']=="ok") {
+            if(data['auth']=="true") {
                 show_all();
             }
     });
