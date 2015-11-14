@@ -24,7 +24,13 @@ if(isset($_GET['debug'])&&$_GET['debug']=="on") {
     $debug = true;
 }  
 
-$return = array( 'test' => 'ok' , 'cmd' => $cmd ,'time' => date("d.m.Y H:i:s"), "version" => $server_version );
+if (isset($_REQUEST[session_name()])) session_start();
+if (isset($_REQUEST[session_name()])) session_start();
+if (isset($_SESSION['user_id']) AND $_SESSION['ip'] == $_SERVER['REMOTE_ADDR']) return;
+else 
+    echo "Need auth";
+
+$return = array( 'test' => 'ok' , 'cmd' => $cmd , 'auth' => $auth,'time' => date("d.m.Y H:i:s"), "version" => $server_version );
 
 $params = array ('year','month','day','hour','minute');
 
@@ -56,6 +62,30 @@ function events_where() {
 
 switch ( $cmd ) {
 case "hello":
+    break;
+case "auth":// auth
+    try{
+        if (isset($_GET['auth_name'])) {
+            $name=mysql_real_escape_string($_GET['auth_name']);
+            $pass=mysql_real_escape_string($_GET['auth_pass']);
+            $db = mysql_connect($mysql_host, $mysql_user, $mysql_password) or 
+                die(json_encode("Database error")); 
+            mysql_select_db($mysql_database, $db); 
+            $result = mysql_query("set names 'utf8'");
+            $query = "SELECT * FROM users WHERE name='$name' AND pass='$pass'";
+            $res = mysql_query($query) or trigger_error(mysql_error().$query);
+            if ($row = mysql_fetch_assoc($res)) {
+                session_start();
+                $_SESSION['user_id'] = $row['id'];
+                $_SESSION['ip'] = $_SERVER['REMOTE_ADDR'];
+            }
+            //header("Location: http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']);
+            $return = "ok";
+        }
+    }
+    catch (Exception $e) {
+        $e->getMessage();
+    }
     break;
 case "mysql_test":
     try {

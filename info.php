@@ -6,7 +6,7 @@ session_start();
 
 if(isset($_GET['cmd'])&&$_GET['cmd']=='destroy') {
   session_destroy();
-  header("Location: http://".$_SERVER['HTTP_HOST']."/");
+  header("Location: http://".$_SERVER['PHP_SELF']."/");
   exit;
 }
 
