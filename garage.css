@@ -8,6 +8,10 @@ body {
 th {
   text-align: center;
 }
+.list-button
+{
+    text-align: left;
+}
 .map {
     height: 400px;
     width: 100%;

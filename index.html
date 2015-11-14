@@ -100,8 +100,9 @@
         <div class="main-text" id="main-text-event">
             <h1>Events</h1>
             <div class="row">
-                <div id="events">
-                </div>
+                <table class="table">
+                <tbody id="events"></tbody>
+                </table>
             </div>
         
         </div>
@@ -258,19 +259,35 @@ function showMapTrack(session) {
 }
     
 function show_events(level,id,param) {
-    $.getJSON( "http://pi/server.php?cmd=events&group="+level+param, 
-        function( data ) {
-            $.each( data, function( key, val ) {
-                var element=val[level];
-                s =  "<div type=\"button\" class=\"btn btn-default list-group-item\" id="+id+"-"+element;
-                if(level!='minute') {
-                    s += " onClick=\"show_events('"+levels[level]+"','"+id+'-';
-                    s += element+"','"+param+"&"+level+"="+element+param+"')\"";
-                }
-                s += "><b>"+id+"-"+element+"</b> "+ val["temp"]+"</div>";
-                $(s).insertAfter("#"+id);
+    if(!$("#"+id).hasClass("has-pressed")) {
+        elem = "#"+id;
+        $.getJSON( "http://pi/server.php?cmd=events&minmax=on&group="+level+param, 
+            function( data ) {
+                $.each( data, function( key, val ) {
+                    var element=val[level];
+                    s1 = "";
+                    s =  "<tr id="+id+"-"+element;
+                    if(val['count']>1) {
+                        s += " onClick=\"show_events('"+levels[level]+"','"+id+'-';
+                        s += element+"','"+param+"&"+level+"="+element+param+"')\"";
+                        s1 = "<span class=\"glyphicon glyphicon-triangle-right\" aria-hidden=\"true\"></span>";
+                    }
+                    show_date = id+"-"+element;
+                    show_date = show_date.replace("events-","");
+                    s += "><td>"+s1+"</td><td>"+show_date+"</td>";
+                    s += "<td>"+val["temp_min"]+"</td>";
+                    s += "<td>"+val["temp"]+"</td>";
+                    s += "<td>"+val["temp_max"]+"</td>";                    
+                    s += "<td>"+val['press_min']+"</td>";
+                    s += "<td>"+val['press']+"</td>";
+                    s += "<td>"+val['press_max']+"</td>";
+                    s += "</tr>";
+                    $(s).insertAfter(elem);
+                    elem = "#"+id+"-"+element;
+                });
             });
-        });
+        $("#"+id).addClass("has-pressed");
+    }
 }    
     
 function showMapSessions(device) {

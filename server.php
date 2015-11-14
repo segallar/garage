@@ -32,8 +32,8 @@ function events_cols() {
     //, AVG(temp) AS temp, AVG(press)
     $cols = ", COUNT(id) AS count, AVG(temp) AS temp, AVG(press) AS press ";
     if(isset($_GET['minmax'])&&$_GET['minmax']=='on') {
-        $cols .= ", MIN(temp) as min_temp, MAX(temp) as max_temp ";
-        $cols .= ", MIN(press) as min_press, MAX(press) as max_press ";
+        $cols .= ", MIN(temp) as temp_min, MAX(temp) as temp_max ";
+        $cols .= ", MIN(press) as press_min, MAX(press) as press_max ";
     }
     return $cols;
 }
