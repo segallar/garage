@@ -72,7 +72,7 @@ case "auth":// auth
                 die(json_encode("Database error")); 
             mysql_select_db($mysql_database, $db); 
             $result = mysql_query("set names 'utf8'");
-            $query = "SELECT * FROM users WHERE name='$name' AND pass='$pass';";
+            $query = "SELECT id FROM users WHERE email='$name' AND password='$pass';";
             $res = mysql_query($query) or trigger_error(mysql_error().$query);
             if ($row = mysql_fetch_assoc($res)) {
                 if(isset($row['id'])&&row['id']!="") {
