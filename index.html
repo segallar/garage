@@ -99,11 +99,11 @@
         
         <div class="main-text" id="main-text-event">
             <h1>Events</h1>
-            <div class="panel panel-default">
-                <div class="panel-body" id="events-bar">
+            
+                <div class="row" id="events-bar">
             
                 </div>
-            </div>
+            
             <div class="row">
                 <table class="table table-condensed table-striped">
                     <thead>
@@ -117,7 +117,7 @@
                             <th>Max p</th>
                         </tr>
                     </thead>
-                    <tbody><tr id="events"></tr></tbody>
+                    <tbody><tr id="events"><td colspan="7">Loading...</td></tr></tbody>
                 </table>
             </div>
         
@@ -171,7 +171,7 @@ function show_sms_inbox(param) {
     $(".sms_menu").removeClass("active");
     $("#sms_inbox_menu").addClass("active");
     $("#sms_table_body").html("");
-    $.getJSON( "http://pi/server.php?cmd=show_sms_inbox"+param, 
+    $.getJSON( "http://pi/server.php?cmd=show_sms&box=inbox"+param, 
         function( data ) {
             var str = '';
             $.each( data, function( key, val ) {
@@ -191,7 +191,7 @@ function show_sms_outbox(param) {
     $(".sms_menu").removeClass("active");
     $("#sms_outbox_menu").addClass("active");
     $("#sms_table_body").html("");
-    $.getJSON( "http://pi/server.php?cmd=show_sms_outbox"+param, 
+    $.getJSON( "http://pi/server.php?cmd=show_sms&box=outbox"+param, 
         function( data ) {
             var str = '';
             $.each( data, function( key, val ) {
@@ -275,6 +275,8 @@ function showMapTrack(session) {
 }
     
 function show_date_from_id(id) {     
+    var months = new Array("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec");
+    
     var returnstr = "";
     var show_date = id;
     show_date = show_date.replace("events-","");
@@ -299,22 +301,43 @@ function show_date_from_id(id) {
         // вырезаем год
         year = show_date.substr(0, 4); 
         show_date = show_date.substr(5);
-        // вырезаем месяц
         month = cut_time(show_date); 
-        // вырезаем день
         day = cut_time(show_date);
         hour = cut_time(show_date);
         minute = cut_time(show_date);  
-        if(year!="")
-            returnstr = year;
-        if(month!="")
-            returnstr += "-"+month;
-        if(day!="")
-            returnstr += "-"+day;
-        if(hour!="")
-            returnstr += " "+hour;
-        if(minute!="")
-            returnstr += ":"+minute;
+        if(false) {
+            if(year!="")
+                returnstr = year;
+            if(month!="")
+                returnstr += "-"+month;
+            if(day!="")
+                returnstr += "-"+day;
+            if(hour!="")
+                returnstr += " "+hour;
+            if(minute!="")
+                returnstr += ":"+minute;
+        } else {
+            returnstr = "";
+            if(minute!="")
+                returnstr = hour+":"+minute;
+            if(returnstr=="") {
+                if(hour!="")
+                    returnstr = hour+":XX";
+                if(returnstr=="") {
+                    if(day!="") {
+                        returnstr = day + " " + months[parseInt(month)-1];
+                    }
+                    if(returnstr=="") {
+                        if(month!="") {
+                            returnstr = months[parseInt(month)-1];
+                            if(returnstr=="") {
+                                returnstr = year;
+                            }
+                        }
+                    }
+                }
+            } 
+        }
     }
     
     return returnstr;
@@ -339,10 +362,8 @@ function show_events(level,id,param) {
                         s += element+"','"+param+"&"+levels[level]+"="+element+param+"','"+id+"')\"";
                         s1 = "<span class=\"glyphicon glyphicon-triangle-right\" aria-hidden=\"true\" id=\"gi-"+id+"-"+element+"\"></span>";
                     }
-                
                     function show_float(temp,pr) {
-                        var a = parseFloat(temp);
-                        return a.toFixed(pr);
+                        return parseFloat(temp).toFixed(pr);
                     }
                     var ident = "";
                     for(i=0;i<level;i++) {
@@ -359,19 +380,17 @@ function show_events(level,id,param) {
                     $(s).insertAfter(elem);   
                     elem = "#"+id+"-"+element;
                 });
+                $("#events").hide();
             });
         $("#"+id).addClass("has-pressed");
-        $("#gi-"+id).removeClass("glyphicon-triangle-right");
-        $("#gi-"+id).addClass("glyphicon-triangle-bottom");
+        $("#gi-"+id).removeClass("glyphicon-triangle-right").addClass("glyphicon-triangle-bottom");
     } else {
         if($("#gi-"+id).hasClass("glyphicon-triangle-right")) {
             $(".parent-"+id).show();
-            $("#gi-"+id).removeClass("glyphicon-triangle-right");
-            $("#gi-"+id).addClass("glyphicon-triangle-bottom");
+            $("#gi-"+id).removeClass("glyphicon-triangle-right").addClass("glyphicon-triangle-bottom");
         } else {
             $(".parent-"+id).hide();
-            $("#gi-"+id).removeClass("glyphicon-triangle-bottom");
-            $("#gi-"+id).addClass("glyphicon-triangle-right");
+            $("#gi-"+id).removeClass("glyphicon-triangle-bottom").addClass("glyphicon-triangle-right");
         }
     }
 }    
@@ -380,7 +399,7 @@ function show_event_bar() {
     
     var months = new Array("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec");
     
-    var divs = 6;
+    var divs = 6; 
     var interval = 3; // in hours
     
     for(i=divs-1;i>=0;i--) {
@@ -391,23 +410,28 @@ function show_event_bar() {
         ms = ms - interval*60*60*1000*i;
         today = new Date(ms);
         id = "event-col-"+today.getDate()+"-"+today.getHours();
-        $("<div class=\"col-md-2\" id=\""+id+"\"></div>").appendTo("#events-bar");
-        $("<span class=\"event-bar-day\">"+months[today.getMonth()]+" "+today.getDate()+" </span>").appendTo("#"+id);
-        $("<span class=\"event-bar-hour\">"+today.getHours()+":00 <span>").appendTo("#"+id);
+        $("<div class=\" col-md-2 panel panel-default\" id=\""+id+"\"></div>").appendTo("#events-bar");
+        s1 = months[today.getMonth()]+" "+today.getDate()+" "+today.getHours()+":00";
+        $("<div class=\" panel-heading\"><h3 class=\"panel-title\">"+s1+"</h3></div> ").appendTo("#"+id);
+        if(i==0) {
+            $("#"+id).removeClass("panel-default");
+            $("#"+id).addClass("panel-primary");
+        }
+        $("<div id=\""+id+"-body\" class=\"panel-body\">Loading...</div>").appendTo("#"+id);
     }
     
     //http://pi/server.php?cmd=events&group=hour&interval=5&div=3&debug=on
-    $.getJSON( "http://pi/server.php?cmd=events&group=hour&interval="+interval+"&div="+divs+"&minmax=on&debug=on", function( data ) {
+    $.getJSON( "http://pi/server.php?cmd=events&group=hour&interval="+interval+"&div="+divs+"&minmax=on", function( data ) {
         $.each( data, function( key, val ) {
-            var s = "<table border=1 width=\"100%\">";
-            s += "<tr><td class=\"event-bar-temp-min\">"+parseFloat(val['press_min']).toFixed(0)+"</td>";
-            s += "<td class=\"event-bar-temp-min\">"+parseFloat(val['temp_min']).toFixed(1)+"</td></tr>";
-            s += "<tr><td class=\"event-bar-temp\">"+parseFloat(val['press']).toFixed(0)+"</td>";
-            s += "<td class=\"event-bar-temp\">"+parseFloat(val['temp']).toFixed(1)+"</td></tr>";
-            s += "<tr><td class=\"event-bar-temp-max\">"+parseFloat(val['press_max']).toFixed(0)+"</td>";
-            s += "<td class=\"event-bar-temp-max\">"+parseFloat(val['temp_max']).toFixed(1)+"</td></tr>";
-            s += "</table>"
-            $("#event-col-"+val['day']+"-"+val['hour']).append(s);
+            var s = "<table width=\"100%\">";
+            s += "<tr><td class=\"event-bar-temp-min\"> "+parseFloat(val['press_min']).toFixed(0)+"</td>";
+            s += "<td class=\"event-bar-temp-min\"> "+parseFloat(val['temp_min']).toFixed(1)+"</td></tr>";
+            s += "<tr><td class=\"event-bar-temp\"> "+parseFloat(val['press']).toFixed(0)+"</td>";
+            s += "<td class=\"event-bar-temp\"> "+parseFloat(val['temp']).toFixed(1)+"</td></tr>";
+            s += "<tr><td class=\"event-bar-temp-max\"> "+parseFloat(val['press_max']).toFixed(0)+"</td>";
+            s += "<td class=\"event-bar-temp-max\"> "+parseFloat(val['temp_max']).toFixed(1)+"</td></tr>";
+            s += "</table></div>"
+            $("#event-col-"+val['day']+"-"+val['hour']+"-body").html(s);
         });
     });
 }

@@ -35,17 +35,17 @@ th {
     color:darkgray;
 }
 .event-bar-temp {
-    font-size: 1.2em;
+    font-size: 1.0em;
     color: black;
     text-align: right;
 }
 .event-bar-temp-max {
-    font-size: 1.2em;
+    font-size: 0.8em;
     color: crimson;
     text-align: right;
 }
 .event-bar-temp-min {
-    font-size: 1.2em;
+    font-size: 0.8em;
     color: cornflowerblue;
     text-align: right;
 }

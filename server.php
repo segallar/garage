@@ -45,7 +45,7 @@ function events_where() {
         if(isset($_GET[$param])&&$_GET[$param]!="") {
             if($where!="")
                 $where .= " AND ";
-            $where .= " $param(ts) = $_GET[$param] ";
+            $where .= " $param(ts) = ".(int)$_GET[$param]*1." ";
         }
     }
         
@@ -94,15 +94,16 @@ case "events":
 
         if(isset($_GET["interval"])&&$_GET["interval"]!=""&&isset($_GET["div"])&&$_GET["div"]!="") {
             //SELECT day(ts),hour(ts), hour(ts) div 3 as hdiv, avg(temp) from events  where ts between now() - interval 3*5 hour and now() group by hdiv ;
-            $div = $_GET['div'];
-            $interval = $_GET['interval'];
+            $div = (int)$_GET['div']*1;
+            $interval = (int)$_GET['interval']*1;
             $intwhere = " ts BETWEEN now() - INTERVAL $interval * $div HOUR AND now()";
             $where = events_where();
             if($where=="")
                 $where = " WHERE $intwhere";
             else
                 $where .= "AND $intwhere";
-            $query = "SELECT $group(ts) div $interval AS div$group, hour(ts) AS hour, day(ts) AS day ".events_cols()." FROM events $where GROUP BY div$group;";
+            $query = "SELECT $group(ts) div $interval AS div$group, hour(ts) AS hour, day(ts) AS day ".events_cols();
+            $query .= " FROM events $where GROUP BY div$group;";
         } else { 
             $query = "SELECT $group(ts) AS $group ".events_cols()." FROM events ".events_where()." GROUP BY $group;";
         }
@@ -131,6 +132,8 @@ case "send_sms":
         
         $number = $_GET["number"];
         $text = $_GET["text"];
+        
+        //!! mast check for sql injection
 
         if( isset($number)&&isset($text) ) {
             
@@ -156,7 +159,7 @@ case "send_sms":
         $e->getMessage();
     }
     break;
-case "show_sms_inbox":
+case "show_sms":
     try {
         $db = mysql_connect($mysql_host, $mysql_user, $mysql_password) or 
             die(json_encode("Database error")); 
@@ -169,55 +172,11 @@ case "show_sms_inbox":
             $limit = " LIMIT ".$range;
         }
         
-        $query = "SELECT id, SenderNumber as number, ReceivingDateTime as date, TextDecoded as text FROM inbox ";
-        if ($where != "") {
-            $query .= " WHERE ".$where." ";
-        }
-    
-        if (isset($limit)) {
-            $query .= $limit;
-        }
-        
-        $query .= " ORDER BY id DESC;";
-        
-        $returnQuery = [];
-        
-        $result = mysql_query($query); 
-        if (!$result) {
-            die(json_encode('Invalid query: ' . mysql_error()));
-        } else {
-            while ($arr= mysql_fetch_array($result, MYSQL_ASSOC)) {
-                $returnQuery[] = $arr;    
-            }
-            if (!$debug) {
-                $return = [];
-                $return = $returnQuery;
-            } else {
-                $return["sql"] = $query;
-                $return["result"] = $returnQuery;
-            } 
-        }
-    }
-    catch (Exception $e) {
-        echo("SQL:".$query."</br>");
-        $e->getMessage();
-    }
-    break;
-case "show_sms_outbox":
-    try {
-       
-        $db = mysql_connect($mysql_host, $mysql_user, $mysql_password) or 
-            die(json_encode("Database error")); 
-        mysql_select_db($mysql_database_sms, $db); 
-        $result = mysql_query("set names 'utf8'"); 
-        
-        if(isset($_GET["range"])) {
-            $limit = " LIMIT ".$_GET["range"];
-        }
-        
-        $query = "SELECT id, SendingDateTime AS date, TextDecoded AS text, DestinationNumber AS number FROM sentitems ";
-                
-        $where = "";
+        if(isset($_GET['box'])&&$_GET['box']=='inbox')
+            $query = "SELECT id, SenderNumber as number, ReceivingDateTime as date, TextDecoded as text FROM inbox ";
+        if(isset($_GET['box'])&&$_GET['box']=='outbox')
+            $query = "SELECT id, DestinationNumber AS number, SendingDateTime AS date, TextDecoded AS text FROM sentitems ";
+  
         if ($where != "") {
             $query .= " WHERE ".$where." ";
         }
