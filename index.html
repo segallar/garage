@@ -153,6 +153,10 @@
                 </div>
             </div>
         </div>
+      
+      <div class="main-text" id="main-text-user">
+          <a class="btn btn-default" href="javascript:logout()" role="button">Logout</a>
+      </div>
         
     <div class="point" id="point"></div>
     </div><!-- /.container -->
@@ -170,6 +174,8 @@
 var delta = 5;   
     
 var levels = Array('year','month','day','hour','minute');
+    
+var auth = false;    
     
 function menuClick(item) {
     if(item!="") { 
@@ -252,11 +258,10 @@ function submit_auth() {
     $.getJSON( "http://pi/server.php?cmd=auth&auth_name="+$("#exampleInputEmail1").val()+"&auth_pass="+$("#exampleInputPassword1").val(), 
         function( data ) {
             $("#test").html("auth - "+data['auth']);
-            if(data['auth']=="true") {
+            if(data['auth']==true||data['auth']=="true") {
                 show_all();
             }
     });
-    //exampleInputPassword1
 }    
 
 function loadData(param,range) {
@@ -506,14 +511,14 @@ function setView() {
 }
     
 function connectionTest() {
-    auth = false;
     $("#main-text-").show();
     $("#test").html("<p class='label label-info'>Testing connеcetion to server ... </p>");
     $.getJSON("http://pi/server.php?cmd=hello") 
         .done(function( data ) {
-            if(data['auth']=="true") 
+            if(data['auth']==true||data['auth']=="true") {
                 auth = true;
-            $("#login_form").show();
+                show_all();
+            }
             $("#test").html("Connection to server - <b>"+data["test"]+
                 "</b><div> Auth - "+  data['auth']+
                 "</div><div class='btn btn-primary' onClick=connectionTest()>Test again</div>");    
@@ -522,8 +527,6 @@ function connectionTest() {
             $("#test").html("<div class='label label-danger'> Status - "+textStatus + ", error - " + error+"</div>"+
                 "<br/><br/><div class='btn btn-primary' onClick=connectionTest()>Test again</div>");
         });
-    $("#test").append();
-    return auth;
 }
 
     
@@ -555,6 +558,11 @@ function show_menu() {
     if( location.hash != "" ) menuClick(active); 
 }
 
+function logout() {
+    $.getJSON("http://pi/server.php?cmd=logout");
+    location.replace(location.origin+location.pathname);
+}  
+
 /*
 atr = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>';
     
@@ -570,12 +578,8 @@ var delta = 25;
 */
     
 function show_all() {
-    // make menu
     show_menu(); 
-    // show sms subsustem
     show_sms_newmsg();
-
-    // load eventts
     show_events(0,"events","");
     show_event_bar();
 }
@@ -587,25 +591,11 @@ $( document ).ready( function() {
     $(".main-text").hide();
     
     // Testing connection to server
-    if(connectionTest()) {
-
+    connectionTest();
+    
+    /*if(auth) {
         show_all();
-
-        // load devices
-        /*
-        $.getJSON( "http://accmon.segalla.ru/server.php?cmd=list_dev", function( data ) {
-            var str = '';
-            $.each( data, function( key, val ) {
-                $("<a class='list-group-item' id='dev-"+key+"' onClick='showMapSessions("+'"'+key+'"'+")'>").html(key).appendTo("#device-select");
-                $.each( val, function (key1, val1) {
-                    $("<a class='list-group-item dev-"+key+"' id='session-"+val1['session']+"'  onClick='showMapTrack("+'"'+val1['session']+'"'+")'>").html(val1['session']).hide().appendTo("#session-select");
-                });
-            });
-            $("#dev-table").html(str);
-            $(".dev-cell").hide();
-        });
-        */
-    }
+    }*/
 });
 </script>
 </body>
