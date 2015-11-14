@@ -7,8 +7,8 @@
 $mysql_host = "localhost";
 $mysql_database = "garage";
 $mysql_database_sms = "smsd";
-$mysql_user = "root";
-$mysql_password = "nigthfal";
+$mysql_user = "www";
+$mysql_password = "passwww";
 
 $server_version = '0.1.1';
 
