@@ -26,7 +26,6 @@ if(isset($_GET['debug'])&&$_GET['debug']=="on") {
 
 $auth = false;
 if (isset($_REQUEST[session_name()])) session_start();
-if (isset($_REQUEST[session_name()])) session_start();
 if (isset($_SESSION['user_id']) AND $_SESSION['ip'] == $_SERVER['REMOTE_ADDR']) 
     $auth=true;
 
@@ -65,14 +64,14 @@ case "hello":
     break;
 case "auth":// auth
     try{
-        if (isset($_GET['auth_name'])) {
+        if (isset($_GET['auth_name'])&&isset($_GET['auth_pass'])) {
             $name=mysql_real_escape_string($_GET['auth_name']);
             $pass=mysql_real_escape_string($_GET['auth_pass']);
             $db = mysql_connect($mysql_host, $mysql_user, $mysql_password) or 
                 die(json_encode("Database error")); 
             mysql_select_db($mysql_database, $db); 
             $result = mysql_query("set names 'utf8'");
-            $query = "SELECT * FROM users WHERE name='$name' AND pass='$pass'";
+            $query = "SELECT * FROM users WHERE name='$name' AND pass='$pass';";
             $res = mysql_query($query) or trigger_error(mysql_error().$query);
             if ($row = mysql_fetch_assoc($res)) {
                 if(isset($row['id'])&&row['id']!="") {
@@ -87,7 +86,6 @@ case "auth":// auth
                 }
             }
             //header("Location: http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']);
-            
         }
     }
     catch (Exception $e) {
@@ -118,7 +116,7 @@ case "mysql_test":
 //      
 case "events":
     try {
-        if(!$auth) die(json_encode("Need auth!")); 
+        if(!$auth) die(json_encode(array("auth":"need_auth"))); 
         $db = mysql_connect($mysql_host, $mysql_user, $mysql_password) or 
             die(json_encode("Database error")); 
         mysql_select_db($mysql_database, $db); 
