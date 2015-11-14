@@ -191,7 +191,7 @@ function show_sms_outbox(param) {
     $(".sms_menu").removeClass("active");
     $("#sms_outbox_menu").addClass("active");
     $("#sms_table_body").html("");
-    $.getJSON( "http://pi/server.php?cmd=show_sms&box=outbox"+param, 
+    $.getJSON( "http://pi/server.php?cmd=show_sms&box=outbox&"+param, 
         function( data ) {
             var str = '';
             $.each( data, function( key, val ) {
