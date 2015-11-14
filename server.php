@@ -24,13 +24,13 @@ if(isset($_GET['debug'])&&$_GET['debug']=="on") {
     $debug = true;
 }  
 
+$auth = false;
 if (isset($_REQUEST[session_name()])) session_start();
 if (isset($_REQUEST[session_name()])) session_start();
-if (isset($_SESSION['user_id']) AND $_SESSION['ip'] == $_SERVER['REMOTE_ADDR']) return;
-else 
-    echo "Need auth";
+if (isset($_SESSION['user_id']) AND $_SESSION['ip'] == $_SERVER['REMOTE_ADDR']) 
+    $auth=true;
 
-$return = array( 'test' => 'ok' , 'cmd' => $cmd , 'auth' => $auth,'time' => date("d.m.Y H:i:s"), "version" => $server_version );
+$return = array( 'test' => 'ok' , 'cmd' => $cmd , 'auth' => $auth, 'time' => date("d.m.Y H:i:s"), "version" => $server_version );
 
 $params = array ('year','month','day','hour','minute');
 

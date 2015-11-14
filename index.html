@@ -490,8 +490,8 @@ function connectionTest() {
     $.getJSON("http://pi/server.php?cmd=hello") 
         .done(function( data ) {
             $("#test").html("Connection to server - <b>"+data["test"]+
-                "</b><br/> Server time - "+data["time"]+" <br/> Server version - "+
-                data['version']+
+                "</b><br/> Auth - "+
+                data['auth']+
                 "<br/><div class='btn btn-primary' onClick=connectionTest()>Test again</div>");    
         })
         .fail(function( jqxhr, textStatus, error ) {
