@@ -65,7 +65,6 @@ switch ( $cmd ) {
 case "hello":
     break;
 case "logout":
-  session_start();
   session_destroy();
   $return['auth'] = "logout";
   break;
@@ -84,7 +83,6 @@ case "auth":// auth
             $res = mysql_query($query) or die(json_encode(Array('Invalid query ' => mysql_error() ,"query" => $query)));
             if ($row = mysql_fetch_assoc($res)) {
                 if(isset($row['id'])&&$row['id']!="") {
-                    session_start();
                     $_SESSION['user_id'] = $row['id'];
                     $_SESSION['ip'] = $_SERVER['REMOTE_ADDR'];
                     $auth = true;
