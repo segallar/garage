@@ -96,7 +96,12 @@ case "events":
             //SELECT day(ts),hour(ts), hour(ts) div 3 as hdiv, avg(temp) from events  where ts between now() - interval 3*5 hour and now() group by hdiv ;
             $div = $_GET['div'];
             $interval = $_GET['interval'];
-            $where = events_where()." ts BETWEEN NOW() - INTERVAL $interval * $div HOUR AND HOW()";
+            $intwhere = " ts BETWEEN NOW() - INTERVAL $interval * $div HOUR AND HOW()";
+            $where = events_where();
+            if($where=="")
+                $where = " WHERE $intwhere";
+            else
+                $where .= "AND $intwhere";
             $query = "SELECT $group(ts) div $div AS div$group, hour(ts) AS hour, day(ts) AS day ".events_cols()." FROM events $where GROUP BY div$group;";
         } else { 
             $query = "SELECT $group(ts) AS $group ".events_cols()." FROM events ".events_where()." GROUP BY $group;";
