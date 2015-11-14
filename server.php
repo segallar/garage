@@ -32,8 +32,8 @@ function events_cols() {
     //, AVG(temp) AS temp, AVG(press)
     $cols = ", COUNT(id) AS count, AVG(temp) AS temp, AVG(press) AS press ";
     if(isset($_GET['minmax'])&&$_GET['minmax']=='on') {
-        $cols .= ", MIN(temp) as temp_min, MAX(temp) as temp_max ";
-        $cols .= ", MIN(press) as press_min, MAX(press) as press_max ";
+        $cols .= ", MIN(temp) AS temp_min, MAX(temp) AS temp_max ";
+        $cols .= ", MIN(press) AS press_min, MAX(press) AS press_max ";
     }
     return $cols;
 }
@@ -102,7 +102,7 @@ case "events":
                 $where = " WHERE $intwhere";
             else
                 $where .= "AND $intwhere";
-            $query = "SELECT $group(ts) div $div AS div$group, hour(ts) AS hour, day(ts) AS day ".events_cols()." FROM events $where GROUP BY div$group;";
+            $query = "SELECT $group(ts) div $interval AS div$group, hour(ts) AS hour, day(ts) AS day ".events_cols()." FROM events $where GROUP BY div$group;";
         } else { 
             $query = "SELECT $group(ts) AS $group ".events_cols()." FROM events ".events_where()." GROUP BY $group;";
         }

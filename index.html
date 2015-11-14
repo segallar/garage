@@ -99,8 +99,10 @@
         
         <div class="main-text" id="main-text-event">
             <h1>Events</h1>
-            <div class="row" id="events-bar">
-                
+            <div class="panel panel-default">
+                <div class="panel-body" id="events-bar">
+            
+                </div>
             </div>
             <div class="row">
                 <table class="table table-condensed table-striped">
@@ -374,6 +376,42 @@ function show_events(level,id,param) {
     }
 }    
     
+function show_event_bar() {
+    
+    var months = new Array("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec");
+    
+    var divs = 6;
+    var interval = 3; // in hours
+    
+    for(i=divs-1;i>=0;i--) {
+        var today = new Date(); 
+        today.setMinutes(0,0,0);
+        today.setHours( today.getHours() - today.getHours() % interval );
+        ms = today.getTime();
+        ms = ms - interval*60*60*1000*i;
+        today = new Date(ms);
+        id = "event-col-"+today.getDate()+"-"+today.getHours();
+        $("<div class=\"col-md-2\" id=\""+id+"\"></div>").appendTo("#events-bar");
+        $("<span class=\"event-bar-day\">"+months[today.getMonth()]+" "+today.getDate()+" </span>").appendTo("#"+id);
+        $("<span class=\"event-bar-hour\">"+today.getHours()+":00 <span>").appendTo("#"+id);
+    }
+    
+    //http://pi/server.php?cmd=events&group=hour&interval=5&div=3&debug=on
+    $.getJSON( "http://pi/server.php?cmd=events&group=hour&interval="+interval+"&div="+divs+"&minmax=on&debug=on", function( data ) {
+        $.each( data, function( key, val ) {
+            var s = "<table border=1 width=\"100%\">";
+            s += "<tr><td class=\"event-bar-temp-min\">"+parseFloat(val['press_min']).toFixed(0)+"</td>";
+            s += "<td class=\"event-bar-temp-min\">"+parseFloat(val['temp_min']).toFixed(1)+"</td></tr>";
+            s += "<tr><td class=\"event-bar-temp\">"+parseFloat(val['press']).toFixed(0)+"</td>";
+            s += "<td class=\"event-bar-temp\">"+parseFloat(val['temp']).toFixed(1)+"</td></tr>";
+            s += "<tr><td class=\"event-bar-temp-max\">"+parseFloat(val['press_max']).toFixed(0)+"</td>";
+            s += "<td class=\"event-bar-temp-max\">"+parseFloat(val['temp_max']).toFixed(1)+"</td></tr>";
+            s += "</table>"
+            $("#event-col-"+val['day']+"-"+val['hour']).append(s);
+        });
+    });
+}
+    
 function showMapSessions(device) {
     if($("#dev-"+device).hasClass("active")) {
         $(".dev-"+device).hide();
@@ -491,20 +529,7 @@ $( document ).ready( function() {
     // 0-3 3-6 6-9 9-12 12-15 15-18 18-21 21-0 24/3=8
     // now - 8 8 mod 3 = 2
     
-    var months = new Array("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec");
-    
-    for(i=4;i>=0;i--) {
-        var today = new Date(); 
-        today.setMinutes(0,0,0);
-        today.setHours( today.getHours() - today.getHours() % 3 );
-        ms = today.getTime();
-        ms = ms - 10800000*i;
-        today = new Date(ms);
-        
-        $("<div class=\"col-md-2\" id=\"event-col-"+i+"\"></div>").appendTo("#events-bar");
-        $("<span class=\"event-bar-day\">"+months[today.getMonth()]+" "+today.getDate()+" </span>").appendTo("#event-col-"+i);
-        $("<span class=\"event-bar-hour\">"+today.getHours()+":00 <span>").appendTo("#event-col-"+i);
-    }
+    show_event_bar();
     
     // load devices
     /*
