@@ -63,6 +63,11 @@ function events_where() {
 switch ( $cmd ) {
 case "hello":
     break;
+case "logout":
+  session_start();
+  session_destroy();
+  $return['auth'] = "logout";
+  break;
 case "auth":// auth
     try{
         $return["auth"] = "invalid_request";
