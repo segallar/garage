@@ -64,6 +64,7 @@ case "hello":
     break;
 case "auth":// auth
     try{
+        $return["auth"] = "invalid_request";
         if (isset($_GET['auth_name'])&&isset($_GET['auth_pass'])) {
             $name=mysql_real_escape_string($_GET['auth_name']);
             $pass=mysql_real_escape_string($_GET['auth_pass']);
@@ -165,7 +166,7 @@ case "events":
 
 case "send_sms":
     try {
-        if(!$auth) die(json_encode("Need auth!")); 
+        if(!$auth) die(json_encode(array("auth" => "need_auth"))); 
         $number = $_GET["number"];
         $text = $_GET["text"];
         
@@ -197,7 +198,7 @@ case "send_sms":
     break;
 case "show_sms":
     try {
-        if(!$auth) die(json_encode("Need auth!")); 
+        if(!$auth) die(json_encode(array("auth" => "need_auth"))); 
         $db = mysql_connect($mysql_host, $mysql_user, $mysql_password) or 
             die(json_encode("Database error")); 
         mysql_select_db($mysql_database_sms, $db); 
@@ -249,7 +250,7 @@ case "show_sms":
     break;
 case 'balance':
     try {
-        if(!$auth) die(json_encode("Need auth!")); 
+        if(!$auth) die(json_encode(array("auth" => "need_auth"))); 
         $db = mysql_connect($mysql_host, $mysql_user, $mysql_password) or 
             die(json_encode("Database error")); 
         mysql_select_db($mysql_database_sms, $db); 
