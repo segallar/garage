@@ -20,3 +20,17 @@ th {
     text-align: left;
     font-family: monospace;
 }
+.value-cell {
+    text-align: right;
+}
+.date-cell {
+    text-align: left;
+}
+.event-bar-day {
+    font-size: 1.8em;
+    color:lightblue;
+}
+.event-bar-hour {
+    font-size: 1.8em;
+    color:darkgray;
+}

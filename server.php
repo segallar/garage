@@ -48,6 +48,7 @@ function events_where() {
             $where .= " $param(ts) = $_GET[$param] ";
         }
     }
+        
     if($where!="") 
         $where = " WHERE $where";
     return $where;
@@ -61,10 +62,7 @@ case "mysql_test":
         $db = mysql_connect($mysql_host, $mysql_user, $mysql_password) or 
             die(json_encode("Database error")); 
         mysql_select_db($mysql_database, $db); 
-
-        //SOLUTION::  add this comment before your 1st query -- force multiLanuage support 
-        //$result = mysql_query("set names 'utf8'"); 
-
+        $result = mysql_query("set names 'utf8'");
         $query = "SELECT COUNT(id) AS ITEMS FROM events;"; 
         $result = mysql_query($query); 
         if (!$result) {
@@ -86,18 +84,24 @@ case "events":
         $db = mysql_connect($mysql_host, $mysql_user, $mysql_password) or 
             die(json_encode("Database error")); 
         mysql_select_db($mysql_database, $db); 
-
-        //SOLUTION::  add this comment before your 1st query -- force multiLanuage support 
-        //$result = mysql_query("set names 'utf8'"); 
-
+        $result = mysql_query("set names 'utf8'"); 
         $return = [];
-
+        
         $group = $_GET['group'];
         if(!in_array($group,$params)) {
             $group = 'year';
         }
-       
-        $query = "SELECT $group(ts) AS $group ".events_cols()." FROM events ".events_where()." GROUP BY $group;";                   $result = mysql_query($query);
+
+        if(isset($_GET["interval"])&&$_GET["interval"]!=""&&isset($_GET["div"])&&$_GET["div"]!="") {
+            //SELECT day(ts),hour(ts), hour(ts) div 3 as hdiv, avg(temp) from events  where ts between now() - interval 3*5 hour and now() group by hdiv ;
+            $div = $_GET['div'];
+            $interval = $_GET['interval'];
+            $where = events_where()." ts BETWEEN NOW() - INTERVAL $interval * $div HOUR AND HOW()";
+            $query = "SELECT $group(ts) div $div AS div$group, hour(ts) AS hour, day(ts) AS day ".events_cols()." FROM events ".." GROUP BY div$group;";
+        } else { 
+            $query = "SELECT $group(ts) AS $group ".events_cols()." FROM events ".events_where()." GROUP BY $group;";
+        }
+        $result = mysql_query($query);
         if (!$result) {
             die(json_encode('Invalid query: ' . mysql_error()));
         } else {

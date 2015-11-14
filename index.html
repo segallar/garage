@@ -99,9 +99,23 @@
         
         <div class="main-text" id="main-text-event">
             <h1>Events</h1>
+            <div class="row" id="events-bar">
+                
+            </div>
             <div class="row">
-                <table class="table">
-                <tbody id="events"></tbody>
+                <table class="table table-condensed table-striped">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Min t</th>
+                            <th>Avg t</th>
+                            <th>Max t</th>
+                            <th>Min p</th>
+                            <th>Avg p</th>
+                            <th>Max p</th>
+                        </tr>
+                    </thead>
+                    <tbody><tr id="events"></tr></tbody>
                 </table>
             </div>
         
@@ -141,7 +155,7 @@
     
 var delta = 5;   
     
-var levels = {'year':'month','month':'day','day':'hour','hour':'minute'};
+var levels = Array('year','month','day','hour','minute');
     
 function menuClick(item) {  
     $( ".active" ).removeClass("active");
@@ -258,35 +272,105 @@ function showMapTrack(session) {
     */
 }
     
+function show_date_from_id(id) {     
+    var returnstr = "";
+    var show_date = id;
+    show_date = show_date.replace("events-","");
+    
+    function cut_time() {
+        var time ="";
+        if(show_date.length > 0) {
+            if(show_date.indexOf("-") != -1) { 
+                time = show_date.substr(0,show_date.indexOf("-"));
+                show_date = show_date.substr(show_date.indexOf("-")+1);
+            } else {
+                time = show_date;
+                show_date = "";
+            }
+            if(time.length == 1) 
+                time = "0"+time;
+        }
+        return time;
+    }
+    
+    if(show_date.length > 3) {
+        // вырезаем год
+        year = show_date.substr(0, 4); 
+        show_date = show_date.substr(5);
+        // вырезаем месяц
+        month = cut_time(show_date); 
+        // вырезаем день
+        day = cut_time(show_date);
+        hour = cut_time(show_date);
+        minute = cut_time(show_date);  
+        if(year!="")
+            returnstr = year;
+        if(month!="")
+            returnstr += "-"+month;
+        if(day!="")
+            returnstr += "-"+day;
+        if(hour!="")
+            returnstr += " "+hour;
+        if(minute!="")
+            returnstr += ":"+minute;
+    }
+    
+    return returnstr;
+    
+}
+    
 function show_events(level,id,param) {
     if(!$("#"+id).hasClass("has-pressed")) {
         elem = "#"+id;
-        $.getJSON( "http://pi/server.php?cmd=events&minmax=on&group="+level+param, 
+        $.getJSON( "http://pi/server.php?cmd=events&minmax=on&group="+levels[level]+param, 
             function( data ) {
                 $.each( data, function( key, val ) {
-                    var element=val[level];
-                    s1 = "";
-                    s =  "<tr id="+id+"-"+element;
+                    var element=val[levels[level]];
+                    var s1 = "<span class=\"glyphicon glyphicon-chevron-right\" aria-hidden=\"true\" id=\"gi-"+id+"-"+element+"\"></span>";
+                    var s =  "<tr id=\""+id+"-"+element+"\" ";
+                    var classes = "";
+                    if( id != "" ) 
+                        classes = $("#"+id).attr('class').replace("has-pressed","");
+                    s += " class=\"parent-"+id+" "+classes+"\" ";
                     if(val['count']>1) {
-                        s += " onClick=\"show_events('"+levels[level]+"','"+id+'-';
-                        s += element+"','"+param+"&"+level+"="+element+param+"')\"";
-                        s1 = "<span class=\"glyphicon glyphicon-triangle-right\" aria-hidden=\"true\"></span>";
+                        s += " onClick=\"show_events("+(level+1)+",'"+id+'-';
+                        s += element+"','"+param+"&"+levels[level]+"="+element+param+"','"+id+"')\"";
+                        s1 = "<span class=\"glyphicon glyphicon-triangle-right\" aria-hidden=\"true\" id=\"gi-"+id+"-"+element+"\"></span>";
                     }
-                    show_date = id+"-"+element;
-                    show_date = show_date.replace("events-","");
-                    s += "><td>"+s1+"</td><td>"+show_date+"</td>";
-                    s += "<td>"+val["temp_min"]+"</td>";
-                    s += "<td>"+val["temp"]+"</td>";
-                    s += "<td>"+val["temp_max"]+"</td>";                    
-                    s += "<td>"+val['press_min']+"</td>";
-                    s += "<td>"+val['press']+"</td>";
-                    s += "<td>"+val['press_max']+"</td>";
+                
+                    function show_float(temp,pr) {
+                        var a = parseFloat(temp);
+                        return a.toFixed(pr);
+                    }
+                    var ident = "";
+                    for(i=0;i<level;i++) {
+                        ident += "&nbsp;&nbsp;";
+                    }
+                    s += "><td class=\"date-cell\">"+ident+s1+" "+show_date_from_id(id+"-"+element)+"</td>";
+                    s += "<td class=\"value-cell\">"+show_float(val["temp_min"],1)+"</td>";
+                    s += "<td class=\"value-cell\">"+show_float(val["temp"],1)+"</td>";
+                    s += "<td class=\"value-cell\">"+show_float(val["temp_max"],1)+"</td>";                    
+                    s += "<td class=\"value-cell\">"+show_float(val['press_min'],0)+"</td>";
+                    s += "<td class=\"value-cell\">"+show_float(val['press'],0)+"</td>";
+                    s += "<td class=\"value-cell\">"+show_float(val['press_max'],0)+"</td>"
                     s += "</tr>";
-                    $(s).insertAfter(elem);
+                    $(s).insertAfter(elem);   
                     elem = "#"+id+"-"+element;
                 });
             });
         $("#"+id).addClass("has-pressed");
+        $("#gi-"+id).removeClass("glyphicon-triangle-right");
+        $("#gi-"+id).addClass("glyphicon-triangle-bottom");
+    } else {
+        if($("#gi-"+id).hasClass("glyphicon-triangle-right")) {
+            $(".parent-"+id).show();
+            $("#gi-"+id).removeClass("glyphicon-triangle-right");
+            $("#gi-"+id).addClass("glyphicon-triangle-bottom");
+        } else {
+            $(".parent-"+id).hide();
+            $("#gi-"+id).removeClass("glyphicon-triangle-bottom");
+            $("#gi-"+id).addClass("glyphicon-triangle-right");
+        }
     }
 }    
     
@@ -358,7 +442,8 @@ var menu = {
     //sms_out : "SMS Outbox",
     //smi_send : "SMS Send"
 };
-      
+
+/*
 atr = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>';
     
 var map = L.map('map').setView([55.7706328701863,37.6792607577922], 13);
@@ -370,6 +455,7 @@ L.tileLayer('https://{s}.tiles.mapbox.com/v3/segallar.k96pg69g/{z}/{x}/{y}.png',
 var mapLayers = new Array();
 
 var delta = 25;
+*/
     
 // Init function
 $( document ).ready( function() {
@@ -400,8 +486,25 @@ $( document ).ready( function() {
    
     
     ///!!!!!!!!
-    show_events("year","events","");
+    show_events(0,"events","");
+
+    // 0-3 3-6 6-9 9-12 12-15 15-18 18-21 21-0 24/3=8
+    // now - 8 8 mod 3 = 2
+    
+    var months = new Array("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec");
+    
+    for(i=4;i>=0;i--) {
+        var today = new Date(); 
+        today.setMinutes(0,0,0);
+        today.setHours( today.getHours() - today.getHours() % 3 );
+        ms = today.getTime();
+        ms = ms - 10800000*i;
+        today = new Date(ms);
         
+        $("<div class=\"col-md-2\" id=\"event-col-"+i+"\"></div>").appendTo("#events-bar");
+        $("<span class=\"event-bar-day\">"+months[today.getMonth()]+" "+today.getDate()+" </span>").appendTo("#event-col-"+i);
+        $("<span class=\"event-bar-hour\">"+today.getHours()+":00 <span>").appendTo("#event-col-"+i);
+    }
     
     // load devices
     /*
