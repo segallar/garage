@@ -116,7 +116,7 @@ case "mysql_test":
 //      
 case "events":
     try {
-        if(!$auth) die(json_encode(array("auth":"need_auth"))); 
+        if(!$auth) die(json_encode(array("auth" => "need_auth"))); 
         $db = mysql_connect($mysql_host, $mysql_user, $mysql_password) or 
             die(json_encode("Database error")); 
         mysql_select_db($mysql_database, $db); 
