@@ -67,14 +67,14 @@ case "auth":// auth
         $return["auth"] = "invalid_request";
         if (isset($_GET['auth_name'])&&isset($_GET['auth_pass'])) {
             $db = mysql_connect($mysql_host, $mysql_user, $mysql_password) or 
-                die(json_encode("Database error")); 
+                die(json_encode(Array("error" => "Database error"))); 
             mysql_select_db($mysql_database, $db); 
             $result = mysql_query("set names 'utf8'");
             $name = mysql_real_escape_string($_GET['auth_name']);
             $pass = mysql_real_escape_string($_GET['auth_pass']);
             $query = "SELECT id FROM users WHERE email='$name' AND password='$pass';";
             $return['query'] = $query;
-            $res = mysql_query($query) or trigger_error(mysql_error().$query);
+            $res = mysql_query($query) or die(json_encode(Array('Invalid query ' => mysql_error() ,"query" => $query));
             if ($row = mysql_fetch_assoc($res)) {
                 if(isset($row['id'])&&row['id']!="") {
                     session_start();
