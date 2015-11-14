@@ -45,7 +45,7 @@ function events_where() {
         if(isset($_GET[$param])&&$_GET[$param]!="") {
             if($where!="")
                 $where .= " AND ";
-            $where .= " $param(ts) = ".(int)$_GET[$param]*1." ";
+            $where .= " $param(ts) = ".((int)$_GET[$param]*1)." ";
         }
     }
         
