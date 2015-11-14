@@ -75,12 +75,19 @@ case "auth":// auth
             $query = "SELECT * FROM users WHERE name='$name' AND pass='$pass'";
             $res = mysql_query($query) or trigger_error(mysql_error().$query);
             if ($row = mysql_fetch_assoc($res)) {
-                session_start();
-                $_SESSION['user_id'] = $row['id'];
-                $_SESSION['ip'] = $_SERVER['REMOTE_ADDR'];
+                if(isset($row['id'])&&row['id']!="") {
+                    session_start();
+                    $_SESSION['user_id'] = $row['id'];
+                    $_SESSION['ip'] = $_SERVER['REMOTE_ADDR'];
+                    $auth = true;
+                    $return["auth"] = "ok";
+                } else {
+                    $auth = false;
+                    $return["auth"] = "no_user";
+                }
             }
             //header("Location: http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']);
-            $return = "ok";
+            
         }
     }
     catch (Exception $e) {

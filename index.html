@@ -62,9 +62,10 @@
                 <label for="exampleInputPassword1">Password</label>
                 <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
               </div>
-              <button type="submit" class="btn btn-default">Submit</button>
+              <button type="submit" class="btn btn-default" onClick="submit_auth()">Submit</button>
             </div>
-            <div class="row col-md-12">
+            <div class="row col-md-6 col-md-offset-3">
+                <br/>
                 <p style="text-align:left" id="test"> Testing connection to server ... </p>
             </div>
         </div>
@@ -247,6 +248,14 @@ function show_sms_balance() {
      });
 }    
     
+function submit_auth() {
+    $.getJSON( "http://pi/server.php?cmd=auth&auth_name="+$("exampleInputEmail1").val()+"&auth_pass="+$("exampleInputPassword1").val(), 
+        function( data ) {
+            $("#test").html("auth - "+data['auth']);
+    });
+    //exampleInputPassword1
+}    
+
 function loadData(param,range) {
     //+"&range="+(range*1)+","+(delta*1)
     /*
@@ -511,8 +520,7 @@ function connectionTest() {
                 "<br/><br/><div class='btn btn-primary' onClick=connectionTest()>Test again</div>");
         });
     $("#test").append();
-    //return auth;
-    return true;
+    return auth;
 }
 
     
