@@ -103,7 +103,7 @@ case "events":
         }
         $result = mysql_query($query);
         if (!$result) {
-            die(json_encode('Invalid query: ' . mysql_error()));
+            die(json_encode('Invalid query: ' . mysql_error() . " query ->".$query));
         } else {
             while($arr = mysql_fetch_array($result, MYSQL_ASSOC)) {
                 $return[] = $arr;
