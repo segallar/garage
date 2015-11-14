@@ -97,7 +97,7 @@ case "events":
             $div = $_GET['div'];
             $interval = $_GET['interval'];
             $where = events_where()." ts BETWEEN NOW() - INTERVAL $interval * $div HOUR AND HOW()";
-            $query = "SELECT $group(ts) div $div AS div$group, hour(ts) AS hour, day(ts) AS day ".events_cols()." FROM events ".." GROUP BY div$group;";
+            $query = "SELECT $group(ts) div $div AS div$group, hour(ts) AS hour, day(ts) AS day ".events_cols()." FROM events $where GROUP BY div$group;";
         } else { 
             $query = "SELECT $group(ts) AS $group ".events_cols()." FROM events ".events_where()." GROUP BY $group;";
         }
