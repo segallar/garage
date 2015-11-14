@@ -111,6 +111,7 @@ case "mysql_test":
 //      
 case "events":
     try {
+        if(!$auth) die(json_encode("Need auth!")); 
         $db = mysql_connect($mysql_host, $mysql_user, $mysql_password) or 
             die(json_encode("Database error")); 
         mysql_select_db($mysql_database, $db); 
@@ -159,7 +160,7 @@ case "events":
 
 case "send_sms":
     try {
-        
+        if(!$auth) die(json_encode("Need auth!")); 
         $number = $_GET["number"];
         $text = $_GET["text"];
         
@@ -191,6 +192,7 @@ case "send_sms":
     break;
 case "show_sms":
     try {
+        if(!$auth) die(json_encode("Need auth!")); 
         $db = mysql_connect($mysql_host, $mysql_user, $mysql_password) or 
             die(json_encode("Database error")); 
         mysql_select_db($mysql_database_sms, $db); 
@@ -242,6 +244,7 @@ case "show_sms":
     break;
 case 'balance':
     try {
+        if(!$auth) die(json_encode("Need auth!")); 
         $db = mysql_connect($mysql_host, $mysql_user, $mysql_password) or 
             die(json_encode("Database error")); 
         mysql_select_db($mysql_database_sms, $db); 
