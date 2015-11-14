@@ -25,9 +25,10 @@ if(isset($_GET['debug'])&&$_GET['debug']=="on") {
 }  
 
 $auth = false;
-if (isset($_REQUEST[session_name()])) session_start();
+//if (isset($_REQUEST[session_name()]))
+session_start();
 if (isset($_SESSION['user_id']) AND $_SESSION['ip'] == $_SERVER['REMOTE_ADDR']) 
-    $auth=true;
+    $auth = true;
 
 $return = array( 'test' => 'ok' , 'cmd' => $cmd , 'auth' => $auth, 'time' => date("d.m.Y H:i:s"), "version" => $server_version );
 
@@ -86,6 +87,7 @@ case "auth":// auth
                     $auth = false;
                     $return["auth"] = "no_user";
                 }
+                $return["auth"] = "no_user";
             }
             //header("Location: http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']);
         }
