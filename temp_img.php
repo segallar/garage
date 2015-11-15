@@ -32,7 +32,7 @@ if(isset($_GET["interval"])&&$_GET["interval"]!=""&&isset($_GET["div"])&&$_GET["
 $points_count = 0; //
 $points = [];
 
-$where = " WHERE ts BETWEEN now() - INTERVAL ".$divs*$interval." HOUR AND now() ";
+$where = " WHERE ts BETWEEN now() - INTERVAL ".($divs*$interval)." HOUR AND now() ";
 $group = " GROUP BY d, grp ";
 $group_fld = " HOUR(ts) DIV $interval AS grp ";
 
