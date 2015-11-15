@@ -50,7 +50,7 @@
     <div class="container">
 
         <div class="main-text" id="main-text-">
-            <h1>Garage system</h1>
+            <h1>Smart garage system</h1>
             <p style="text-align:left">This is garage system pages v0.1</p>
             
             <div class="col-md-6 col-md-offset-3" align="left" id="login_form">
@@ -115,10 +115,35 @@
         
         <div class="main-text" id="main-text-event">
             <h1>Events</h1>
+                <div class="row panel panel-default panel-body" style="text-align:left;">
+
+                    
+                  <div class="btn-group" role="group" aria-label="...">
+                    <a type="button" class="btn btn-default"  onclick="events_interval_inc(true)"  aria-label="Left Align">
+                        <span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span>
+                    </a>
+                    <input class="btn btn-default"  id="event-bar-divs" value="6" />  
+                    <a type="button" class="btn btn-default" onclick="events_interval_inc(false)" aria-label="Left Align">
+                        <span class="glyphicon glyphicon-zoom-out" aria-hidden="true"></span>
+                    </a>
+                    </div>
+                  <div class="btn-group" role="group" aria-label="...">
+                    <button type="button" class="btn btn-default" onclick="events_divs_inc(true)" aria-label="Left Align">
+                        <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>
+                    </button>
+                    <button type="button" class="btn btn-default" onclick="events_divs_inc(false)" aria-label="Left Align">
+                        <span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span>
+                    </button>
+                   </div>
+        
+                    <button type="button" id="events-table-btn" class="btn btn-default" aria-label="Events table" onclick="events_table_show()">
+                        <span class="glyphicon glyphicon-calendar" aria-hidden="true"></span>
+                    </button>
+                </div>
                 <div class="row" id="events-bar">
                 </div>
             <div><img id="tmp_img"/></div>
-            <div class="row">
+            <div class="row hidden" id="events-table">
                 <table class="table table-condensed table-striped">
                     <thead>
                         <tr>
@@ -162,9 +187,6 @@
             Action
             Parameter
             </div>
-            
-            
-            
         </div>
         
         <div class="main-text" id="main-text-map">
@@ -211,23 +233,21 @@ var delta = 5;
     
 var levels = Array('year','month','day','hour','minute');
     
-var auth = false;    
+var auth = false;
     
-isFunc = function(func){ return typeof window[func] === "function"; }    
-
-function menuClick(item) {
-    if(item!="") { 
-        $("#menu-item-").css("color","darkgray");
-    } else { 
-        $("#menu-item-").css("color","white"); 
-    }
-    $( ".active" ).removeClass("active");
-    $( "#menu-item-" + item).addClass("active");
-    $( ".main-text" ).hide();
-    $( "#main-text-" + item ).show();
-    if(isFunc(item+"_click")) eval(item+"_click()");
+var events_divs = 6;
+    
+var events_interval = 3;
+      
+//
+// SMS
+//
+    
+function sms_click(firstrun) {
+    if(firstrun)
+        show_sms_newmsg();
 }
-  
+
 function show_sms_inbox(param) {
     $("#sms_form").hide();
     $(".sms_menu").removeClass("active");
@@ -293,16 +313,6 @@ function show_sms_balance() {
      });
 }    
     
-function submit_auth() {
-    $.getJSON( "http://pi/server.php?cmd=auth&auth_name="+$("#exampleInputEmail1").val()+"&auth_pass="+$("#exampleInputPassword1").val(), 
-        function( data ) {
-            $("#test").html("auth - "+data['auth']);
-            if(data['auth']==true||data['auth']=="true") {
-                show_all();
-            }
-    });
-}    
-
 function loadData(param,range) {
     //+"&range="+(range*1)+","+(delta*1)
     /*
@@ -344,6 +354,51 @@ function showMapTrack(session) {
         $("#session-"+session).removeClass("active");
     }
     */
+}
+    
+
+// 
+// events 
+//
+    
+function event_click(firstrun) {
+    if(firstrun)
+        show_event_bar();
+}    
+    
+function events_table_show() {
+    if($("#events-table").hasClass("hidden")) {
+        show_events(0,"events","");
+        $("#events-table").removeClass("hidden");
+    }
+    if($("#events-table-btn").hasClass("active")) {
+        $("#events-table").hide();
+        $("#events-table-btn").removeClass("active");
+    } else {
+        $("#events-table").show();
+        $("#events-table-btn").addClass("active");        
+    }
+}
+    
+function events_divs_inc(incrace) {
+    if(incrace) {
+        if(events_divs<20)
+          events_divs++;
+    } else {
+        if(events_divs>1)
+          events_divs--;
+    }
+    show_event_bar(events_divs,events_interval);
+}
+ 
+function events_interval_inc(incrace) {
+    if(incrace) {
+        events_interval++;
+    } else {
+        if(events_interval>1)
+          events_interval--;
+    }
+    show_event_bar(events_divs,events_interval);
 }
     
 function show_date_from_id(id) {     
@@ -403,7 +458,7 @@ function show_date_from_id(id) {
         }
     }
 }
-    
+  
 function show_events(level,id,param) {
     if(!$("#"+id).hasClass("has-pressed")) {
         elem = "#"+id;
@@ -455,14 +510,20 @@ function show_events(level,id,param) {
     }
 }    
     
-function show_event_bar() {
+function show_event_bar(divs,interval) {
     
     var months = new Array("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec");
     
-    var divs = 6; 
-    var interval = 3; // in hours
+    if (divs === undefined) {
+        divs = 6;   // count panels
+    }
+    if (interval === undefined) {
+        interval = 3; // in hours
+    } 
     
     $("#tmp_img").attr("src","http://pi/temp_img.php?interval="+interval+"&div="+divs+"&minmax=on");
+    // Создаем панели
+    $("#events-bar").html("");
     for(i=divs-1;i>=0;i--) {
         var today = new Date(); 
         today.setMinutes(0,0,0);
@@ -471,9 +532,9 @@ function show_event_bar() {
         ms = ms - interval*60*60*1000*i;
         today = new Date(ms);
         id = "event-col-"+today.getDate()+"-"+today.getHours();
-        $("<div class=\" col-md-2 panel panel-default\" id=\""+id+"\"></div>").appendTo("#events-bar");
+        $("<div class=\"col-md-2 panel panel-default \" id=\""+id+"\"></div>").appendTo("#events-bar");
         s1 = months[today.getMonth()]+" "+today.getDate()+" "+today.getHours()+":00";
-        $("<div class=\" panel-heading\"><h3 class=\"panel-title\">"+s1+"</h3></div> ").appendTo("#"+id);
+        $("<div class=\"panel-heading\"><h3 class=\"panel-title\">"+s1+"</h3></div> ").appendTo("#"+id);
         if(i==0) {
             $("#"+id).removeClass("panel-default");
             $("#"+id).addClass("panel-primary");
@@ -482,6 +543,7 @@ function show_event_bar() {
     }
     
     //http://pi/server.php?cmd=events&group=hour&interval=5&div=3&debug=on
+    // загружаем в панели информацию
     $.getJSON( "http://pi/server.php?cmd=events&group=hour&interval="+interval+"&div="+divs+"&minmax=on", function( data ) {
         $.each( data, function( key, val ) {
             var s = "<table width=\"100%\">";
@@ -543,6 +605,10 @@ function setView() {
     });
     map.fitBounds([[maxLat, maxLng],[minLat, minLng]]);
 }
+ 
+//
+// Auth
+//
     
 function connectionTest() {
     $("#main-text-").show();
@@ -567,6 +633,29 @@ function connectionTest() {
         });
 }
 
+function submit_auth() {
+    $.getJSON( "http://pi/server.php?cmd=auth&auth_name="+$("#exampleInputEmail1").val()+"&auth_pass="+$("#exampleInputPassword1").val(), 
+        function( data ) {
+            $("#test").html("auth - "+data['auth']);
+            if(data['auth']==true||data['auth']=="true") {
+                show_all();
+            }
+    });
+}    
+    
+function logout() {
+    $.getJSON("http://pi/server.php?cmd=logout", 
+        function( data ) {
+            //$("#main-text-user").append("<div>"+data["auth"]+"</div>");
+            auth = false;
+            location.replace(location.origin+location.pathname);
+        });
+}  
+  
+//
+// Menu
+//
+    
 // Menu data    
 var menu = {
     sms : "SMS",
@@ -574,6 +663,28 @@ var menu = {
     control : "Control",
     user : "User"
 };
+  
+isFunc = function(func){ return typeof window[func] === "function"; }    
+
+function menuClick(item) {
+    if(item!="") { 
+        $("#menu-item-").css("color","darkgray");
+    } else { 
+        $("#menu-item-").css("color","white"); 
+    }
+    $( ".active" ).removeClass("active");
+    $( "#menu-item-" + item).addClass("active");
+    $( ".main-text" ).hide();
+    $( "#main-text-" + item ).show();
+    if($("#menu-item-"+item).hasClass('first-run')) {
+        first_run = true;
+        $("#menu-item-"+item).removeClass('first-run');
+    } else {
+        first_run = false;
+    } 
+    if(isFunc(item+"_click")) 
+        eval(item+"_click("+first_run+")");
+}
     
 function show_menu() {
     if( location.hash == "#" || location.hash == "" ) {
@@ -586,23 +697,23 @@ function show_menu() {
     }
     $.each( menu , function (key, val) {
         if( active == key ) { 
-            activeClass = " class='active' "; 
+            activeClass = " active"; 
         } else { 
             activeClass = ""; 
         }
-        $("<li onClick='menuClick("+'"'+key+'"'+")' "+activeClass+" id='menu-item-"+key+"'><a href='#"+key+"'>"+val+"</a></li>").appendTo("#menu");
+        $("<li onClick='menuClick("+'"'+key+'"'+")' class=\"first-run "+activeClass+"\" id='menu-item-"+key+"'><a href='#"+key+"'>"+val+"</a></li>").appendTo("#menu");
     });
     if( location.hash != "" ) menuClick(active); 
 }
 
-function logout() {
-    $.getJSON("http://pi/server.php?cmd=logout", 
-        function( data ) {
-            //$("#main-text-user").append("<div>"+data["auth"]+"</div>");
-            auth = false;
-            location.replace(location.origin+location.pathname);
-        });
-}  
+function show_all() {
+    $("#login_form").hide();
+    show_menu();
+}
+    
+//
+// User
+//    
 
 function user_click() {
     $("#user-tbl").html("");
@@ -627,14 +738,6 @@ var mapLayers = new Array();
 
 var delta = 25;
 */
-    
-function show_all() {
-    show_menu(); 
-    show_sms_newmsg();
-    show_events(0,"events","");
-    show_event_bar();
-    $("#login_form").hide();
-}
     
 // Init function
 $( document ).ready( function() {
