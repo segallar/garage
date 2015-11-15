@@ -34,10 +34,14 @@ if (isset($_SESSION['user_id']) AND $_SESSION['ip'] == $_SERVER['REMOTE_ADDR']) 
     $_SESSION['last_time'] = date_timestamp_get($date);
 }
 
-$return = array( 'test' => 'ok' , 'cmd' => $cmd , 'auth' => $auth, 'time' => date("d.m.Y H:i:s"), "version" => $server_version );
+$return = array( 'hello' => 'ok' , 'cmd' => $cmd , 'auth' => $auth, 'time' => date("d.m.Y H:i:s"), "version" => $server_version );
 
-if($debug) {
-    var_dump($_SESSION);
+if(true) {
+    $return['session_ip'] = $_SESSION['ip'];
+    $return['session_begin_time'] = $_SESSION['begin_time'];
+    $return['session_last_time'] = $_SESSION['last_time'];
+    $return['session_count'] = $_SESSION['count'];
+    $return['session_user_id'] = $_SESSION['user_id'];
 }
 
 $params = array ('year','month','day','hour','minute');
@@ -80,7 +84,7 @@ case "auth":// auth
         $return["auth"] = "invalid_request";
         if (isset($_GET['auth_name'])&&isset($_GET['auth_pass'])) {
             $db = mysql_connect($mysql_host, $mysql_user, $mysql_password) or 
-                die(json_encode(Array("error" => "Database error"))); 
+                die(json_encode(Array($return, "error" => "Database error")));
             mysql_select_db($mysql_database, $db); 
             $result = mysql_query("set names 'utf8'");
             $name = mysql_real_escape_string($_GET['auth_name']);
@@ -88,7 +92,7 @@ case "auth":// auth
             $query = "SELECT id FROM users WHERE email='$name' AND password='$pass';";
             $return['query'] = $query;
             $res = mysql_query($query) 
-                or die(json_encode(Array('Invalid query ' => mysql_error() ,"query" => $query)));
+                or die(json_encode(Array($return, "error" => "Invalid query", "mysql_error" => mysql_error(), "query" => $query)));
             if ($row = mysql_fetch_assoc($res)) {
                 if(isset($row['id'])&&$row['id']!="") {
                     $_SESSION['user_id'] = $row['id'];
@@ -106,11 +110,10 @@ case "auth":// auth
             } else {
                 $return["auth"] = "no_user";   
             }
-            //header("Location: http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']);
         }
     }
     catch (Exception $e) {
-        $e->getMessage();
+        $return["error"] = $e->getMessage();
     }
     break;
 case "mysql_test":
