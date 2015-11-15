@@ -29,6 +29,9 @@ $auth = false;
 session_start();
 if (isset($_SESSION['user_id']) AND $_SESSION['ip'] == $_SERVER['REMOTE_ADDR']) {
     $auth = true;
+    $_SESSION['count']++;
+    $date = date_create();
+    $_SESSION['last_time'] = date_timestamp_get($date);
 }
 
 $return = array( 'test' => 'ok' , 'cmd' => $cmd , 'auth' => $auth, 'time' => date("d.m.Y H:i:s"), "version" => $server_version );
@@ -84,18 +87,24 @@ case "auth":// auth
             $pass = mysql_real_escape_string($_GET['auth_pass']);
             $query = "SELECT id FROM users WHERE email='$name' AND password='$pass';";
             $return['query'] = $query;
-            $res = mysql_query($query) or die(json_encode(Array('Invalid query ' => mysql_error() ,"query" => $query)));
+            $res = mysql_query($query) 
+                or die(json_encode(Array('Invalid query ' => mysql_error() ,"query" => $query)));
             if ($row = mysql_fetch_assoc($res)) {
                 if(isset($row['id'])&&$row['id']!="") {
                     $_SESSION['user_id'] = $row['id'];
                     $_SESSION['ip'] = $_SERVER['REMOTE_ADDR'];
+                    $_SESSION['count'] = 0;
+                    $date = date_create();
+                    $_SESSION['last_time'] = date_timestamp_get($date);
+                    $_SESSION['begin_time'] = $_SESSION['last_time'];
                     $auth = true;
                     $return["auth"] = "true";
                 } else {
                     $auth = false;
                     $return["auth"] = "no_user";
                 }
-                $return["auth"] = "no_user";
+            } else {
+                $return["auth"] = "no_user";   
             }
             //header("Location: http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']);
         }
