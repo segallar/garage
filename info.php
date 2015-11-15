@@ -19,7 +19,8 @@ echo "<br><a href=".$_SERVER['PHP_SELF'].">обновить";
 echo "<br><a href=".$_SERVER['PHP_SELF']."?cmd=destroy>Удалить сессию</a>";
 echo "<hr>";
 
-phpinfo();
+var_dump($_SERVER);
+
 
 ?>
-test
+<br/>test

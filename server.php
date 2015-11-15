@@ -155,6 +155,7 @@ case "events":
             $group = 'year';
         }
 
+        // interval in hours
         if(isset($_GET["interval"])&&$_GET["interval"]!=""&&isset($_GET["div"])&&$_GET["div"]!="") {
             $div = (int)$_GET['div']*1;
             $interval = (int)$_GET['interval']*1;

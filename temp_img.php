@@ -1,39 +1,38 @@
 <?php
 
+#
+# garage project 
+#
+
 // Параметры:
-// &begin_ts
-// &end_ts
-// Пример: temp_img.php?begin_ts=2015-10-20%2023:40:02&end_ts=2015-10-20%2024:40:02
 
 // определяем параметры подключения к базе
-$mysql_host = "192.168.5.252";
+if($_SERVER["DOCUMENT_ROOT"] == "/Users/rosipov/progs/garage") {
+    $mysql_host = "192.168.5.252";
+    $mysql_user = "mac";
+    $mysql_password = "macpass";
+    
+} else {
+    $mysql_host = "localhost";
+    $mysql_user = "www";
+    $mysql_password = "passwww";
+}
 $mysql_database = "garage";
-$mysql_user = "mac";
-$mysql_password = "macpass";
-
 $server_version = '0.1';
 
 //определяем переменные
-/*
-$begin_ts = $_GET["begin_ts"];    
-if (!isset($begin_ts)) {
-    $begin_ts = " now() - INTERVAL 10 MINUTE ";
+if(isset($_GET["interval"])&&$_GET["interval"]!=""&&isset($_GET["div"])&&$_GET["div"]!="") {
+    $divs = (int)$_GET['div']*1;
+    $interval = (int)$_GET['interval']*1;
+} else {
+    $interval = 3; // in hours
+    $divs = 6; // столбцов
 }
-$end_ts = $_GET["end_ts"];
-if (!isset($end_ts)) {
-    $end_ts = " now() ";
-}
-*/
 
-$interval = 3; // in hours
-$points_count = 6; //
+$points_count = 0; //
 $points = [];
-$points_min = [];
-$points_max = [];
-$points_d = [];
 
-
-$where = " WHERE ts BETWEEN now() - INTERVAL ".$points_count*$interval." HOUR AND now() ";
+$where = " WHERE ts BETWEEN now() - INTERVAL ".$divs*$interval." HOUR AND now() ";
 $group = " GROUP BY d, grp ";
 $group_fld = " HOUR(ts) DIV $interval AS grp ";
 
@@ -51,13 +50,16 @@ try {
             $where .= " WHERE ts BETWEEN $begin_ts AND $end_ts"; */
         
         // получаем количество значений максимальные и минимальные значения и максимум и минимум времени
-        $query = "SELECT count(id) AS c, max(temp) AS max, min(temp) AS min, max(ts) AS max_ts, min(ts) as min_ts FROM events $where ;";
+        $cols = " max(temp) AS tmax, min(temp) AS tmin, max(press) AS pmax, min(press) AS pmin, ";
+        $query = "SELECT count(id) AS c, $cols max(ts) AS max_ts, min(ts) as min_ts FROM events $where ;";
         //echo $query;
         if ($result = mysql_query($query)) {
             $arr = mysql_fetch_array($result);
             $items_count = $arr['c'];
-            $max_temp = (float)$arr['max'];
-            $min_temp = (float)$arr['min'];
+            $t_max = (float)$arr['tmax'];
+            $t_min = (float)$arr['tmin'];
+            $p_max = (float)$arr['pmax'];
+            $p_min = (float)$arr['pmin'];
             $max_ts = $arr['max_ts'];
             $min_ts = $arr['min_ts'];
         } else {
@@ -66,15 +68,18 @@ try {
         }
         // выбираем данные
         if($items_count > 0) {
-            $cols = "avg(temp) AS t, min(temp) AS mi, max(temp) AS mx, day(ts) AS d, month(ts) as m, hour(ts) AS h";
+            $cols = "avg(temp) AS t, avg(press) AS p, $cols day(ts) AS d, month(ts) as m, hour(ts) AS h ";
             $query = "SELECT $cols , $group_fld FROM events $where $group ;";
             //echo  $query;
             $points_count = 0;
             if($result = mysql_query($query)) {
                 while($arr = mysql_fetch_assoc($result)) {
-                    $points['val'][$points_count] = (float)$arr['t'];
-                    $points['min'][$points_count] = (float)$arr['mi'];
-                    $points['max'][$points_count] = (float)$arr['mx'];
+                    $points['t'][$points_count] = (float)$arr['t'];
+                    $points['p'][$points_count] = (float)$arr['p'];
+                    $points['tmin'][$points_count] = (float)$arr['tmin'];
+                    $points['tmax'][$points_count] = (float)$arr['tmax'];
+                    $points['pmin'][$points_count] = (float)$arr['pmin'];
+                    $points['pmax'][$points_count] = (float)$arr['pmax'];
                     $points['day'][$points_count] = $arr['d'];
                     $points['hour'][$points_count] = (int)$arr['h'];
                     $points['month'][$points_count] = (int)$arr['m'];
@@ -94,19 +99,27 @@ $diagramWidth = 710;
 $diagramHeight = 400;  
 
 //
-$scale = ($diagramHeight - 50) / ($max_temp - $min_temp) ;
+$t_scale = ($diagramHeight - 50) / ($t_max - $t_min) ;
+$p_scale = ($diagramHeight - 50) / ($p_max - $p_min) ;
 
 // содаем изображение 
 $image = imageCreate($diagramWidth, $diagramHeight); 
 
 // Регистрируем используемые цвета 
-$colorBackgr       = imageColorAllocate($image, 192, 192, 192); 
-$colorForegr       = imageColorAllocate($image, 255, 255, 255); 
-$colorGrid         = imageColorAllocate($image, 0, 0, 0); 
-$colorCross        = imageColorAllocate($image, 0, 0, 0); 
-$colorAvg          = imageColorAllocate($image, 0, 0, 0); // black
-$colorMin          = imageColorAllocate($image, 0, 0, 255); //blue 
-$colorMax          = imageColorAllocate($image, 255, 0, 0); //red
+$colorBackgr        = imageColorAllocate($image, 192, 192, 192); 
+$colorForegr        = imageColorAllocate($image, 255, 255, 255); 
+$colorGrid          = imageColorAllocate($image, 208, 208, 208); 
+$colorCross         = imageColorAllocate($image, 0, 0, 0); 
+$colorTAvg          = imageColorAllocate($image, 0, 0, 0);     // black
+$colorTMin          = imageColorAllocate($image, 0, 0, 255);   //blue 
+$colorTMax          = imageColorAllocate($image, 255, 0, 0);   //red
+$colorPAvg          = imageColorAllocate($image, 0, 255, 0);   // зеленый
+$colorPMin          = imageColorAllocate($image, 0, 255, 192); // 
+$colorPMax          = imageColorAllocate($image, 192, 255, 0); // 
+
+
+// выбираем шрифт
+$font = 1;
 
 // заливаем цветом фона 
 imageFilledRectangle($image, 0, 0, $diagramWidth - 1, $diagramHeight - 1, $colorBackgr);  
@@ -117,28 +130,69 @@ $text_color = imagecolorallocate($image, 233, 14, 91);
 if(isset($error))
     imagestring($image, 1, 5, 5, "ERROR : ".$error, $text_color);
 
-$colWight = (int)($diagramWidth/$points_count);
+$colWidht = (int)($diagramWidth/$points_count);
 // делаем график
 for($i=0;$i<$points_count;$i++) {
-    $y_pos = (int)(abs($points['val'][$i]-$max_temp)*$scale)+10;
-    $y_pos_min = (int)(abs($points['min'][$i]-$max_temp)*$scale)+10;
-    $y_pos_max = (int)(abs($points['max'][$i]-$max_temp)*$scale)+10;
-    $x_pos_begin = $colWight*$i;
-    //imagestring($image, 1, 5, 25+10*$i , "*** ".$i." ".$y_pos, $text_color);
+    // считеам позиции для температуры
+    $y_t_pos = (int)(abs($points['t'][$i]-$t_max)*$t_scale)+10;
+    $y_t_pos_min = (int)(abs($points['tmin'][$i]-$t_max)*$t_scale)+10;
+    $y_t_pos_max = (int)(abs($points['tmax'][$i]-$t_max)*$t_scale)+10;
+    // считаме позиции для давления
+    $y_p_pos = (int)(abs($points['p'][$i]-$p_max)*$p_scale)+10;
+    $y_p_pos_min = (int)(abs($points['pmin'][$i]-$p_max)*$p_scale)+10;
+    $y_p_pos_max = (int)(abs($points['pmax'][$i]-$p_max)*$p_scale)+10;
+    // позиция начала столбца
+    $x_pos_begin = $colWidht*$i;
     // делим весь рисунок на части
     if($i>0)
-        imageline($image, $x_pos_begin , 10 , $x_pos_begin , $diagramHeight-30 ,$colorCross);
+        imageline($image, $x_pos_begin , 10 , $x_pos_begin , $diagramHeight-30 ,$colorGrid);
     // выводим значения столбцов
-    imagestring($image, 1, $x_pos_begin+5, $diagramHeight-40 , $points['day'][$i].".".$points['month'][$i]." ".$points['hour'][$i].":00 ", $text_color);
-    // строим линии
-    imageline($image, $x_pos_begin, $y_pos , $x_pos_begin+$colWight -1 , $y_pos ,$colorAvg);
-    imageline($image, $x_pos_begin, $y_pos_min , $x_pos_begin+$colWight -1 , $y_pos_min ,$colorMin);
-    imageline($image, $x_pos_begin, $y_pos_max , $x_pos_begin+$colWight , $y_pos_max ,$colorMax);
+    $str_out = $points['day'][$i].".".$points['month'][$i]." ".$points['hour'][$i].":00";
+    imagestring($image, $font, $x_pos_begin + 25, $diagramHeight - 25, $str_out, $text_color);
+    // строим линии температуры
+    imageline($image, $x_pos_begin+35, $y_t_pos       , $x_pos_begin+$colWidht-1 , $y_t_pos     ,$colorTAvg);
+    imageline($image, $x_pos_begin+35, $y_t_pos_min   , $x_pos_begin+$colWidht-1 , $y_t_pos_min ,$colorTMin);
+    imageline($image, $x_pos_begin+35, $y_t_pos_max   , $x_pos_begin+$colWidht-1 , $y_t_pos_max ,$colorTMax);
+    // и давления
+    imageline($image, $x_pos_begin+35, $y_p_pos       , $x_pos_begin+$colWidht-1 , $y_p_pos     ,$colorPAvg);
+    imageline($image, $x_pos_begin+35, $y_p_pos_min   , $x_pos_begin+$colWidht-1 , $y_p_pos_min ,$colorPMin);
+    imageline($image, $x_pos_begin+35, $y_p_pos_max   , $x_pos_begin+$colWidht-1 , $y_p_pos_max ,$colorPMax);
+   
+    // надписи к линиям
+    // начинаем с мин
+    $y_t_pos_str_min = $y_t_pos_min-imagefontheight($font)/2; 
+    imagestring($image, $font, $x_pos_begin+2, $y_t_pos_str_min , ((int)($points['tmin'][$i]*100))/100, $colorTMin);
+    // вычисляем где следующая строка (среднее) 
+    $y_t_pos_str = $y_t_pos-imagefontheight($font)/2;
+    // если она накладываеться на мин
+    if(($y_t_pos_str_min-$y_t_pos_str)<(imagefontheight($font)+1)) 
+        // то добавляем (вычитаем)
+        $y_t_pos_str = $y_t_pos_str_min - imagefontheight($font)+1; 
+    imagestring($image, $font, $x_pos_begin+2, $y_t_pos_str , ((int)($points['t'][$i]*100))/100, $colorTAvg);
+    // то же для макс
+    $y_t_pos_str_max = $y_t_pos_max-imagefontheight($font)/2;
+    if(($y_t_pos_str-$y_t_pos_str_max)<(imagefontheight($font)+1))
+        $y_t_pos_str_max = $y_t_pos_str - imagefontheight($font)+1;
+    imagestring($image, $font, $x_pos_begin+2, $y_t_pos_str_max , ((int)($points['tmax'][$i]*100))/100, $colorTMax);
+    // надписи к давлению. пока у линии !!!
+    $y_p_pos_str = $y_p_pos-imagefontheight($font)/2; 
+    imagestring($image, $font, $x_pos_begin+2, $y_p_pos_str , (int)($points['p'][$i]), $colorPAvg);
     
-    imagestring($image, 1, $x_pos_begin+62, $y_pos_max-imagefontheight(1)-1 , ((int)($points['max'][$i]*100))/100, $colorMax);
-    imagestring($image, 1, $x_pos_begin+32, $y_pos_min-imagefontheight(1)-1 , ((int)($points['min'][$i]*100))/100, $colorMin);
-    imagestring($image, 1, $x_pos_begin+2, $y_pos-imagefontheight(1)-1 , ((int)($points['val'][$i]*100))/100, $colorAvg);
-
+    $y_p_pos_str_min = $y_p_pos_min-imagefontheight($font)/2;   
+    imagestring($image, $font, $x_pos_begin+2, $y_p_pos_str_min , (int)($points['p'][$i]), $colorPMin);
+    
+    $y_p_pos_str_max = $y_p_pos_max-imagefontheight($font)/2; 
+    imagestring($image, $font, $x_pos_begin+2, $y_p_pos_str_max , (int)($points['p'][$i]), $colorPMax);
+    
+    // линии к подписям
+    imageline($image, $x_pos_begin+30, $y_t_pos_str     + (imagefontheight($font)/2)      , $x_pos_begin+35 , $y_t_pos     ,$colorTAvg);
+    imageline($image, $x_pos_begin+30, $y_t_pos_str_min + (imagefontheight($font)/2)      , $x_pos_begin+35 , $y_t_pos_min ,$colorTMin);
+    imageline($image, $x_pos_begin+30, $y_t_pos_str_max + (imagefontheight($font)/2)      , $x_pos_begin+35 , $y_t_pos_max ,$colorTMax);
+    // давление
+    imageline($image, $x_pos_begin+30, $y_p_pos_str     + (imagefontheight($font)/2)      , $x_pos_begin+35 , $y_p_pos     ,$colorPAvg);
+    imageline($image, $x_pos_begin+30, $y_p_pos_str_min + (imagefontheight($font)/2)      , $x_pos_begin+35 , $y_p_pos_min ,$colorPMin);
+    imageline($image, $x_pos_begin+30, $y_p_pos_str_max + (imagefontheight($font)/2)      , $x_pos_begin+35 , $y_p_pos_max ,$colorPMax);
+     
 }
 
 /*
