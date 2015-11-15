@@ -11,7 +11,7 @@ $mysql_host = "localhost";
 $mysql_database = "garage";
 $mysql_user = "barometer";
 $mysql_password = "pass";
-
+    
 try {
     $db = mysql_connect($mysql_host, $mysql_user, $mysql_password) or 
 	die("Database error"); 
@@ -68,6 +68,17 @@ if(isset($argv[2])&&$argv[2] != "") {
         $TempDecFloat = 42.5 + $TempDec / 480;
     }
 }
+
+// sms count
+/*
+if($res=mysql_query("SELECT count(s.id)-sc.sms_conut AS a FROM smsd.inbox s, garage.sms sc LIMIT 1;")) {
+    $arr = mysql_fetch_assoc($res);
+    if($arr['a']!=0) {
+        $res = mysql_query("SELECT s.id from");
+    }
+} 
+*/
+
 mysql_query("insert into events (press,temp) values  ($PressDecFloat, $TempDecFloat);");
 mysql_close($db);
 }

@@ -33,6 +33,10 @@ if (isset($_SESSION['user_id']) AND $_SESSION['ip'] == $_SERVER['REMOTE_ADDR']) 
 
 $return = array( 'test' => 'ok' , 'cmd' => $cmd , 'auth' => $auth, 'time' => date("d.m.Y H:i:s"), "version" => $server_version );
 
+if($debug) {
+    var_dump($_SESSION);
+}
+
 $params = array ('year','month','day','hour','minute');
 
 function events_cols() {

@@ -132,7 +132,37 @@
                     <tbody><tr id="events"><td colspan="7">Loading...</td></tr></tbody>
                 </table>
             </div>
+        </div>
         
+        <div class="main-text" id="main-text-control" style="text-align:left;">
+            <h1>Rules</h1>
+            <div class="panel panel-default"><div class="panel-body" style="text-align:left;">
+            <a class="btn btn-default" role="button">Add new rule</a>
+                </div></div>
+            <div class="row col-md-2"><h3>New rule</h3>
+            <a class="btn btn-default" role="button">Up</a>
+            <a class="btn btn-default" role="button">Down</a>
+            </div>if <div class="btn-group">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Parametr <span class="caret"></span>
+            </button>
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dd-cond" aria-haspopup="true" aria-expanded="false">
+                condition <span class="caret"></span>
+            </button>
+              <ul class="dropdown-menu">
+                <li><a href="#">Action</a></li>
+                <li><a href="#">Another action</a></li>
+                <li><a href="#">Something else here</a></li>
+                <li role="separator" class="divider"></li>
+                <li><a href="#">Separated link</a></li>
+              </ul>
+              <input type="text" class="form-control" id="basic-url">
+            Action
+            Parameter
+            </div>
+            
+            
+            
         </div>
         
         <div class="main-text" id="main-text-map">
@@ -155,7 +185,7 @@
         </div>
       
       <div class="main-text" id="main-text-user">
-          <a class="btn btn-default" href="javascript:logout()" role="button">Logout</a>
+          <br/><a class="btn btn-default" href="javascript:logout()" role="button">Logout</a>
       </div>
         
     <div class="point" id="point"></div>
@@ -339,6 +369,7 @@ function show_date_from_id(id) {
         hour = cut_time(show_date);
         minute = cut_time(show_date);  
         if(false) {
+            var returnstr= "";
             if(year!="")
                 returnstr = year;
             if(month!="")
@@ -349,30 +380,19 @@ function show_date_from_id(id) {
                 returnstr += " "+hour;
             if(minute!="")
                 returnstr += ":"+minute;
+            return returnstr;
         } else {
-            returnstr = "";
-            if(minute!="")
-                returnstr = hour+":"+minute;
-            if(returnstr=="") {
-                if(hour!="")
-                    returnstr = hour+":XX";
-                if(returnstr=="") {
-                    if(day!="") {
-                        returnstr = day + " " + months[parseInt(month)-1];
-                    }
-                    if(returnstr=="") {
-                        if(month!="") {
-                            returnstr = months[parseInt(month)-1];
-                            if(returnstr=="") {
-                                returnstr = year;
-                            }
-                        }
-                    }
-                }
-            } 
+            if(minute!="") 
+                return hour+":"+minute;
+            if(hour!="")
+                return hour+":XX";
+            if(day!="") 
+                return  day + " " + months[parseInt(month)-1];
+            if(month!="") 
+                return months[parseInt(month)-1];
+            return year;
         }
     }
-    return returnstr;
 }
     
 function show_events(level,id,param) {
