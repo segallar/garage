@@ -66,7 +66,7 @@ try {
         }
         // выбираем данные
         if($items_count > 0) {
-            $cols = "avg(temp) AS t, min(temp) AS mi, max(temp) AS mx, day(ts) AS d, month(ts) as m, avg(hour(ts)) AS h";
+            $cols = "avg(temp) AS t, min(temp) AS mi, max(temp) AS mx, day(ts) AS d, month(ts) as m, hour(ts) AS h";
             $query = "SELECT $cols , $group_fld FROM events $where $group ;";
             //echo  $query;
             $points_count = 0;
@@ -132,9 +132,7 @@ for($i=0;$i<$points_count;$i++) {
     imagestring($image, 1, $x_pos_begin+5, $diagramHeight-40 , $points['day'][$i].".".$points['month'][$i]." ".$points['hour'][$i].":00 ", $text_color);
     // строим линии
     imageline($image, $x_pos_begin, $y_pos , $x_pos_begin+$colWight -1 , $y_pos ,$colorAvg);
-  
     imageline($image, $x_pos_begin, $y_pos_min , $x_pos_begin+$colWight -1 , $y_pos_min ,$colorMin);
-    
     imageline($image, $x_pos_begin, $y_pos_max , $x_pos_begin+$colWight , $y_pos_max ,$colorMax);
     
     imagestring($image, 1, $x_pos_begin+62, $y_pos_max-imagefontheight(1)-1 , ((int)($points['max'][$i]*100))/100, $colorMax);
