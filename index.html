@@ -484,12 +484,16 @@ function show_event_bar() {
     $.getJSON( "http://pi/server.php?cmd=events&group=hour&interval="+interval+"&div="+divs+"&minmax=on", function( data ) {
         $.each( data, function( key, val ) {
             var s = "<table width=\"100%\">";
-            s += "<tr><td class=\"event-bar-temp-min\"> "+parseFloat(val['press_min']).toFixed(0)+"</td>";
-            s += "<td class=\"event-bar-temp-min\"> "+parseFloat(val['temp_min']).toFixed(1)+"</td></tr>";
-            s += "<tr><td class=\"event-bar-temp\"> "+parseFloat(val['press']).toFixed(0)+"</td>";
-            s += "<td class=\"event-bar-temp\"> "+parseFloat(val['temp']).toFixed(1)+"</td></tr>";
-            s += "<tr><td class=\"event-bar-temp-max\"> "+parseFloat(val['press_max']).toFixed(0)+"</td>";
-            s += "<td class=\"event-bar-temp-max\"> "+parseFloat(val['temp_max']).toFixed(1)+"</td></tr>";
+            s += "<tr>";
+            s += "<td class=\"event-bar-temp-max\"> "+parseFloat(val['press_max']).toFixed(0)+"</td>";
+            s += "<td class=\"event-bar-temp-max\"> "+parseFloat(val['temp_max']).toFixed(1)+"</td>";
+            s += "</tr><tr>";
+            s += "<td class=\"event-bar-temp\"> "+parseFloat(val['press']).toFixed(0)+"</td>";
+            s += "<td class=\"event-bar-temp\"> "+parseFloat(val['temp']).toFixed(1)+"</td>";
+            s += "</tr><tr>";
+            s += "<td class=\"event-bar-temp-min\"> "+parseFloat(val['press_min']).toFixed(0)+"</td>";
+            s += "<td class=\"event-bar-temp-min\"> "+parseFloat(val['temp_min']).toFixed(1)+"</td>";
+            s += "</tr>";
             s += "</table></div>"
             $("#event-col-"+val['day']+"-"+val['hour']+"-body").html(s);
         });
