@@ -66,7 +66,7 @@ try {
         }
         // выбираем данные
         if($items_count > 0) {
-            $cols = "avg(temp) AS t, min(temp) AS mi, max(temp) AS mx, day(ts) AS d, avg(hour(ts)) AS h";
+            $cols = "avg(temp) AS t, min(temp) AS mi, max(temp) AS mx, day(ts) AS d, month(ts) as m, avg(hour(ts)) AS h";
             $query = "SELECT $cols , $group_fld FROM events $where $group ;";
             //echo  $query;
             $points_count = 0;
@@ -77,6 +77,7 @@ try {
                     $points['max'][$points_count] = (float)$arr['mx'];
                     $points['day'][$points_count] = $arr['d'];
                     $points['hour'][$points_count] = (int)$arr['h'];
+                    $points['month'][$points_count] = (int)$arr['m'];
                     $points_count++;
                 }
             }
@@ -112,31 +113,33 @@ imageFilledRectangle($image, 0, 0, $diagramWidth - 1, $diagramHeight - 1, $color
 
 // выводим текст
 $text_color = imagecolorallocate($image, 233, 14, 91);
-imagestring($image, 1, 5, 5, "points(steps): ".$points_count." items(data): ".$items_count." max t ".$max_temp." min t ".$min_temp." scale ".$scale, $text_color);
+//imagestring($image, 1, 5, 5, "points(steps): ".$points_count." items(data): ".$items_count." max t ".$max_temp." min t ".$min_temp." scale ".$scale, $text_color);
 if(isset($error))
-    imagestring($image, 1, 5, 15, "ERROR : ".$error, $text_color);
+    imagestring($image, 1, 5, 5, "ERROR : ".$error, $text_color);
 
+$colWight = (int)($diagramWidth/$points_count);
 // делаем график
 for($i=0;$i<$points_count;$i++) {
     $y_pos = (int)(abs($points['val'][$i]-$max_temp)*$scale)+10;
     $y_pos_min = (int)(abs($points['min'][$i]-$max_temp)*$scale)+10;
     $y_pos_max = (int)(abs($points['max'][$i]-$max_temp)*$scale)+10;
-    $x_pos_begin = $diagramWidth/$points_count*$i;
-    imagestring($image, 1, 5, 25+10*$i , "*** ".$i." ".$y_pos, $text_color);
+    $x_pos_begin = $colWight*$i;
+    //imagestring($image, 1, 5, 25+10*$i , "*** ".$i." ".$y_pos, $text_color);
     // делим весь рисунок на части
     if($i>0)
         imageline($image, $x_pos_begin , 10 , $x_pos_begin , $diagramHeight-30 ,$colorCross);
     // выводим значения столбцов
-    imagestring($image, 1, $x_pos_begin+5, $diagramHeight-40 , $i." ".$points['day'][$i].".11 ".$points['hour'][$i].":00 ", $text_color);
+    imagestring($image, 1, $x_pos_begin+5, $diagramHeight-40 , $points['day'][$i].".".$points['month'][$i]." ".$points['hour'][$i].":00 ", $text_color);
     // строим линии
-    imageline($image, $x_pos_begin, $y_pos , $diagramWidth/$points_count*($i+1)-1 , $y_pos ,$colorAvg);
-    imagestring($image, 1, $x_pos_begin+5, $y_pos-imagefontheight(1)-1 , ((int)($points['val'][$i]*100))/100, $colorAvg);
-
-    imageline($image, $x_pos_begin, $y_pos_min , $diagramWidth/$points_count*($i+1)-1 , $y_pos_min ,$colorMin);
-    imagestring($image, 1, $x_pos_begin+5, $y_pos_min-imagefontheight(1)-1 , ((int)($points['min'][$i]*100))/100, $colorMin);
+    imageline($image, $x_pos_begin, $y_pos , $x_pos_begin+$colWight -1 , $y_pos ,$colorAvg);
+  
+    imageline($image, $x_pos_begin, $y_pos_min , $x_pos_begin+$colWight -1 , $y_pos_min ,$colorMin);
     
-    imageline($image, $x_pos_begin, $y_pos_max , $diagramWidth/$points_count*($i+1)-1 , $y_pos_max ,$colorMax);
-    imagestring($image, 1, $x_pos_begin+5, $y_pos_max-imagefontheight(1)-1 , ((int)($points['max'][$i]*100))/100, $colorMax);
+    imageline($image, $x_pos_begin, $y_pos_max , $x_pos_begin+$colWight , $y_pos_max ,$colorMax);
+    
+    imagestring($image, 1, $x_pos_begin+62, $y_pos_max-imagefontheight(1)-1 , ((int)($points['max'][$i]*100))/100, $colorMax);
+    imagestring($image, 1, $x_pos_begin+32, $y_pos_min-imagefontheight(1)-1 , ((int)($points['min'][$i]*100))/100, $colorMin);
+    imagestring($image, 1, $x_pos_begin+2, $y_pos-imagefontheight(1)-1 , ((int)($points['val'][$i]*100))/100, $colorAvg);
 
 }
 

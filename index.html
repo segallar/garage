@@ -117,7 +117,7 @@
             <h1>Events</h1>
                 <div class="row" id="events-bar">
                 </div>
-            <div><img src="http://pi/temp_img.php"></div>
+            <div><img id="tmp_img"/></div>
             <div class="row">
                 <table class="table table-condensed table-striped">
                     <thead>
@@ -462,6 +462,7 @@ function show_event_bar() {
     var divs = 6; 
     var interval = 3; // in hours
     
+    $("#tmp_img").attr("src","http://pi/temp_img.php?interval="+interval+"&div="+divs+"&minmax=on");
     for(i=divs-1;i>=0;i--) {
         var today = new Date(); 
         today.setMinutes(0,0,0);

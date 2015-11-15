@@ -156,7 +156,6 @@ case "events":
         }
 
         if(isset($_GET["interval"])&&$_GET["interval"]!=""&&isset($_GET["div"])&&$_GET["div"]!="") {
-            //SELECT day(ts),hour(ts), hour(ts) div 3 as hdiv, avg(temp) from events  where ts between now() - interval 3*5 hour and now() group by hdiv ;
             $div = (int)$_GET['div']*1;
             $interval = (int)$_GET['interval']*1;
             $intwhere = " ts BETWEEN now() - INTERVAL $interval * $div HOUR AND now()";
@@ -165,7 +164,7 @@ case "events":
                 $where = " WHERE $intwhere";
             else
                 $where .= "AND $intwhere";
-            $query = "SELECT $group(ts) div $interval AS div$group, hour(ts) AS hour, day(ts) AS day ".events_cols();
+            $query = "SELECT $group(ts) div $interval AS div$group, avg(hour(ts)) AS hour, day(ts) AS day ".events_cols();
             $query .= " FROM events $where GROUP BY div$group;";
         } else { 
             $query = "SELECT $group(ts) AS $group ".events_cols()." FROM events ".events_where()." GROUP BY $group;";
