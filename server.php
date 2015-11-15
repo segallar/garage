@@ -66,7 +66,6 @@ function events_where() {
             $where .= " $param(ts) = ".((int)$_GET[$param]*1)." ";
         }
     }
-        
     if($where!="") 
         $where = " WHERE $where";
     return $where;
@@ -287,12 +286,13 @@ case 'balance':
         
         $balance = -1;
         
-        $result = mysql_query("SELECT balance, balance_time FROM balance ORDER BY id DESC LIMIT 1;");
-        if ($arr = mysql_fetch_array($result, MYSQL_ASSOC)) {
-            $balance = $arr['balance'];
-            $return = $arr;
-        } else { 
-            $return['balance'] = '-1';
+        if($result = mysql_query("SELECT balance, balance_time FROM balance ORDER BY id DESC LIMIT 1;")) {
+            if ($arr = mysql_fetch_array($result, MYSQL_ASSOC)) {
+                $balance = $arr['balance'];
+                $return = $arr;
+            } else { 
+                $return['balance'] = '-1';
+            }
         }
     }
     catch (Exception $e) {

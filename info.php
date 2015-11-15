@@ -2,6 +2,8 @@
 
 //phpinfo();
 
+header('Content-type: text/html; charset=utf-8');
+
 session_start(); 
 
 if(isset($_GET['cmd'])&&$_GET['cmd']=='destroy') {
@@ -15,5 +17,9 @@ echo "Вы обновили эту страницу ".$_SESSION['counter']++." �
 echo "<br><a href=".$_SERVER['PHP_SELF'].">обновить"; 
 
 echo "<br><a href=".$_SERVER['PHP_SELF']."?cmd=destroy>Удалить сессию</a>";
+echo "<hr>";
+
+phpinfo();
 
 ?>
+test

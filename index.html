@@ -117,6 +117,7 @@
             <h1>Events</h1>
                 <div class="row" id="events-bar">
                 </div>
+            <div><img src="http://pi/temp_img.php"></div>
             <div class="row">
                 <table class="table table-condensed table-striped">
                     <thead>
@@ -145,7 +146,7 @@
             <a class="btn btn-default" role="button">Down</a>
             </div>if <div class="btn-group">
             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Parametr <span class="caret"></span>
+                Parameter <span class="caret"></span>
             </button>
             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dd-cond" aria-haspopup="true" aria-expanded="false">
                 condition <span class="caret"></span>
@@ -187,6 +188,10 @@
       
       <div class="main-text" id="main-text-user">
           <br/><a class="btn btn-default" href="javascript:logout()" role="button">Logout</a>
+          <table class="table table-striped table-condensed">
+              <thead><tr><th>Parameter</th><th>Value</th></tr></thead>
+              <tbody id="user-tbl"></tbody>
+          </table>
       </div>
         
     <div class="point" id="point"></div>
@@ -208,6 +213,8 @@ var levels = Array('year','month','day','hour','minute');
     
 var auth = false;    
     
+isFunc = function(func){ return typeof window[func] === "function"; }    
+
 function menuClick(item) {
     if(item!="") { 
         $("#menu-item-").css("color","darkgray");
@@ -218,6 +225,7 @@ function menuClick(item) {
     $( "#menu-item-" + item).addClass("active");
     $( ".main-text" ).hide();
     $( "#main-text-" + item ).show();
+    if(isFunc(item+"_click")) eval(item+"_click()");
 }
   
 function show_sms_inbox(param) {
@@ -554,7 +562,6 @@ function connectionTest() {
         });
 }
 
-    
 // Menu data    
 var menu = {
     sms : "SMS",
@@ -592,6 +599,16 @@ function logout() {
         });
 }  
 
+function user_click() {
+    $("#user-tbl").html("");
+    $.getJSON("http://pi/server.php?cmd=hello", 
+        function( data ) {
+            $.each( data , function (key, val) {
+                $("<tr><td>"+key+"</td><td>"+val+"</td></tr>").appendTo("#user-tbl");
+            });
+        });
+}
+    
 /*
 atr = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>';
     
@@ -611,6 +628,7 @@ function show_all() {
     show_sms_newmsg();
     show_events(0,"events","");
     show_event_bar();
+    $("#login_form").hide();
 }
     
 // Init function
