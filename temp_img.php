@@ -25,8 +25,8 @@ if(isset($_GET["interval"])&&$_GET["interval"]!=""&&isset($_GET["div"])&&$_GET["
     $divs = (int)$_GET['div']*1;
     $interval = (int)$_GET['interval']*1;
 } else {
-    $interval = 3; // in hours
-    $divs = 6; // столбцов
+    $interval = 3;  // in hours
+    $divs = 5;      // столбцов (реально на один больше)
 }
 
 $points_count = 0; //
