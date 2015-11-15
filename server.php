@@ -36,7 +36,7 @@ if (isset($_SESSION['user_id']) AND $_SESSION['ip'] == $_SERVER['REMOTE_ADDR']) 
 
 $return = array( 'hello' => 'ok' , 'cmd' => $cmd , 'auth' => $auth, 'time' => date("d.m.Y H:i:s"), "version" => $server_version );
 
-if(true) {
+if($auth) {
     $return['session_ip'] = $_SESSION['ip'];
     $return['session_begin_time'] = $_SESSION['begin_time'];
     $return['session_last_time'] = $_SESSION['last_time'];
@@ -113,6 +113,7 @@ case "auth":// auth
         }
     }
     catch (Exception $e) {
+        if(isset($query)) $return['query'] = $query;
         $return["error"] = $e->getMessage();
     }
     break;
@@ -131,7 +132,8 @@ case "mysql_test":
         }
     }
     catch (Exception $e) {
-        $e->getMessage();
+        if(isset($query)) $return['query'] = $query;
+        $return["error"] = $e->getMessage();
     }
     break;
 
@@ -177,7 +179,8 @@ case "events":
         }
     }
     catch (Exception $e) {
-        $e->getMessage();
+       if(isset($query)) $return['query'] = $query;
+        $return["error"] = $e->getMessage();
     }
     break;
 
@@ -216,7 +219,8 @@ case "send_sms":
         }
     }
     catch (Exception $e) {
-        $e->getMessage();
+        if(isset($query)) $return['query'] = $query;
+        $return["error"] = $e->getMessage();
     }
     break;
 case "show_sms":
@@ -267,8 +271,8 @@ case "show_sms":
         }
     }
     catch (Exception $e) {
-        echo("SQL:".$query."</br>");
-        $e->getMessage();
+        if(isset($query)) $return['query'] = $query;
+        $return["error"] = $e->getMessage();
     }
     break;
 case 'balance':
@@ -290,8 +294,8 @@ case 'balance':
         }
     }
     catch (Exception $e) {
-        echo("SQL:".$query."</br>");
-        $e->getMessage();
+        if(isset($query)) $return['query'] = $query;
+        $return["error"] = $e->getMessage();
     }    
     break;
         
@@ -306,8 +310,8 @@ default :
 if(isset($db))
     mysql_close($db);
 
-if($debug) 
-    echo "$query \n\n";  
+if($debug&&isset($query)) 
+    $return["query"] = $query;  
 
 echo json_encode($return);
 

@@ -536,12 +536,13 @@ function connectionTest() {
     $.getJSON("http://pi/server.php?cmd=hello") 
         .done(function( data ) {
             if(data['auth']==true||data['auth']=="true") {
-                auth = true;
-                show_all();
+                if(!auth) {
+                    auth = true;
+                    show_all();
+                }
             }
-            $("#test").html("Connection to server - <b>"+data["test"]+
-                "</b><div> Auth - "+  data['auth']+
-                "</div><div class='btn btn-primary' onClick=connectionTest()>Test again</div>");    
+            $("#test").html("Connection to server - <b>"+data["hello"]+
+                "</b><div> Auth - "+data['auth']+"</div>");    
         })
         .fail(function( jqxhr, textStatus, error ) {
             $("#test").html("<div class='label label-danger'> Status - "+textStatus + ", error - " + error+"</div>"+
