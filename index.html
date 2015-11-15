@@ -64,6 +64,7 @@
               </div>
               <button type="submit" class="btn btn-default" onClick="submit_auth()">Submit</button>
             </div>
+            
             <div class="row col-md-6 col-md-offset-3">
                 <br/>
                 <p style="text-align:left" id="test"> Testing connection to server ... </p>
@@ -535,6 +536,7 @@ function connectionTest() {
     $("#test").html("<p class='label label-info'>Testing connеcetion to server ... </p>");
     $.getJSON("http://pi/server.php?cmd=hello") 
         .done(function( data ) {
+            auth = false;
             if(data['auth']==true||data['auth']=="true") {
                 if(!auth) {
                     auth = true;
@@ -542,7 +544,9 @@ function connectionTest() {
                 }
             }
             $("#test").html("Connection to server - <b>"+data["hello"]+
-                "</b><div> Auth - "+data['auth']+"</div>");    
+                "</b><div> Auth - "+data['auth']+"</div>");
+            if(auth) 
+                $("#login_form").hide();
         })
         .fail(function( jqxhr, textStatus, error ) {
             $("#test").html("<div class='label label-danger'> Status - "+textStatus + ", error - " + error+"</div>"+
@@ -580,8 +584,12 @@ function show_menu() {
 }
 
 function logout() {
-    $.getJSON("http://pi/server.php?cmd=logout");
-    location.replace(location.origin+location.pathname);
+    $.getJSON("http://pi/server.php?cmd=logout", 
+        function( data ) {
+            //$("#main-text-user").append("<div>"+data["auth"]+"</div>");
+            auth = false;
+            location.replace(location.origin+location.pathname);
+        });
 }  
 
 /*

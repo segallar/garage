@@ -91,6 +91,8 @@ case "auth":// auth
             $pass = mysql_real_escape_string($_GET['auth_pass']);
             $query = "SELECT id FROM users WHERE email='$name' AND password='$pass';";
             $return['query'] = $query;
+            session_destroy();
+            session_start();
             $res = mysql_query($query) 
                 or die(json_encode(Array($return, "error" => "Invalid query", "mysql_error" => mysql_error(), "query" => $query)));
             if ($row = mysql_fetch_assoc($res)) {
