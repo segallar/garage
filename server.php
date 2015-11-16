@@ -230,7 +230,7 @@ case "show_sms":
         $db = mysql_connect($mysql_host, $mysql_user, $mysql_password) or 
             die(json_encode("Database error")); 
         mysql_select_db($mysql_database_sms, $db); 
-        $result = mysql_query("set names 'utf8'"); 
+        $result = mysql_query("set names 'utf8';"); 
         
         $where = "";
   
@@ -238,8 +238,13 @@ case "show_sms":
             $limit = " LIMIT ".$range;
         }
         
+        
+        if(!isset($_GET['box'])||$_GET['box']!='inbox'||$_GET['box']!='outbox') {
+            $rerult["error"] = "no parametr";
+            break;
+        }
         if(isset($_GET['box'])&&$_GET['box']=='inbox')
-            $query = "SELECT id, SenderNumber as number, ReceivingDateTime as date, TextDecoded as text FROM inbox ";
+            $query = "SELECT id, SenderNumber AS number, ReceivingDateTime AS date, TextDecoded AS text, UDH FROM inbox ";
         if(isset($_GET['box'])&&$_GET['box']=='outbox')
             $query = "SELECT id, DestinationNumber AS number, SendingDateTime AS date, TextDecoded AS text FROM sentitems ";
   
@@ -263,7 +268,7 @@ case "show_sms":
                 $returnQuery[] = $arr;    
             }
             if (!$debug) {
-                $return = [];
+                if()
                 $return = $returnQuery;
             } else {
                 $return["sql"] = $query;
