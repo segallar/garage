@@ -313,50 +313,6 @@ function show_sms_balance() {
      });
 }    
     
-function loadData(param,range) {
-    //+"&range="+(range*1)+","+(delta*1)
-    /*
-    $.getJSON( "http://accmon.segalla.ru/server.php?cmd=list_track"+param, 
-        function( data ) {
-            var str = '';
-            $.each( data, function( key, val ) {
-                str += "<tr class='dev-"+val['UUID']+" session-"+val['session']+"' >";
-                str += "<td>"+val['id']+"</td>";
-                str += "<td>"+val['time']+"</td>";
-                
-                str += "</tr>";
-            });
-            if(range*1==0) {
-                $("#track-table").html("");
-            }
-            $("#track-table").append(str);
-        });
-        */
-    //$("#main-text-raw-load-more").html("<span class='btn btn-default' id='load-more' onClick=\"loadRangeRawData('"+param+"',"+(range+delta)+")\" >Load more...</span>");
-}   
-    
-function showMapTrack(session) {
-    //alert(session);
-    /*
-    if (!$("#session-"+session).hasClass("active")) {
-        $.getJSON( "http://pi/server.php?cmd=get_track&session="+session, 
-            function( data ) {
-                var myLayer = L.geoJson().addTo(map);
-                myLayer.addData(data);
-                setView();
-                mapLayers[session] = myLayer;
-                loadData("&session="+session,0);
-            });
-        $("#session-"+session).addClass("active");
-    } else {
-        map.removeLayer(mapLayers[session]);
-        setView();
-        $("#session-"+session).removeClass("active");
-    }
-    */
-}
-    
-
 // 
 // events 
 //
@@ -613,7 +569,7 @@ function setView() {
 function connectionTest() {
     $("#main-text-").show();
     $("#test").html("<p class='label label-info'>Testing connеcetion to server ... </p>");
-    $.getJSON("http://pi/server.php?cmd=hello") 
+    $.getJSON(location.protocol+location.hostname+"/server.php?cmd=hello") 
         .done(function( data ) {
             auth = false;
             if(data['auth']==true||data['auth']=="true") {
@@ -724,6 +680,10 @@ function user_click() {
             });
         });
 }
+  
+//
+// Map
+//
     
 /*
 atr = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>';
@@ -739,18 +699,56 @@ var mapLayers = new Array();
 var delta = 25;
 */
     
+function loadData(param,range) {
+    //+"&range="+(range*1)+","+(delta*1)
+    /*
+    $.getJSON( "http://accmon.segalla.ru/server.php?cmd=list_track"+param, 
+        function( data ) {
+            var str = '';
+            $.each( data, function( key, val ) {
+                str += "<tr class='dev-"+val['UUID']+" session-"+val['session']+"' >";
+                str += "<td>"+val['id']+"</td>";
+                str += "<td>"+val['time']+"</td>";
+                
+                str += "</tr>";
+            });
+            if(range*1==0) {
+                $("#track-table").html("");
+            }
+            $("#track-table").append(str);
+        });
+        */
+    //$("#main-text-raw-load-more").html("<span class='btn btn-default' id='load-more' onClick=\"loadRangeRawData('"+param+"',"+(range+delta)+")\" >Load more...</span>");
+}   
+    
+function showMapTrack(session) {
+    //alert(session);
+    /*
+    if (!$("#session-"+session).hasClass("active")) {
+        $.getJSON( "http://pi/server.php?cmd=get_track&session="+session, 
+            function( data ) {
+                var myLayer = L.geoJson().addTo(map);
+                myLayer.addData(data);
+                setView();
+                mapLayers[session] = myLayer;
+                loadData("&session="+session,0);
+            });
+        $("#session-"+session).addClass("active");
+    } else {
+        map.removeLayer(mapLayers[session]);
+        setView();
+        $("#session-"+session).removeClass("active");
+    }
+    */
+}
+    
 // Init function
 $( document ).ready( function() {
-    
     // Loading ...
     $(".main-text").hide();
     
     // Testing connection to server
     connectionTest();
-    
-    /*if(auth) {
-        show_all();
-    }*/
 });
 </script>
 </body>
