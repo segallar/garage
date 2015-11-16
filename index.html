@@ -569,7 +569,7 @@ function setView() {
 function connectionTest() {
     $("#main-text-").show();
     $("#test").html("<p class='label label-info'>Testing connеcetion to server ... </p>");
-    $.getJSON(location.hostname+"/server.php?cmd=hello") 
+    $.getJSON("/server.php?cmd=hello") 
         .done(function( data ) {
             auth = false;
             if(data['auth']==true||data['auth']=="true") {
@@ -585,7 +585,7 @@ function connectionTest() {
         })
         .fail(function( jqxhr, textStatus, error ) {
             $("#test").html("<div class='label label-danger'> Status - "+textStatus + ", error - " + error+"</div>"+
-                "<br/>"+location.hostname+"<br/><div class='btn btn-primary' onClick=connectionTest()>Test again</div>");
+                "<br/><br/><div class='btn btn-primary' onClick=connectionTest()>Test again</div>");
         });
 }
 
