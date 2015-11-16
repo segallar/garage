@@ -265,15 +265,14 @@ case "show_sms":
             die(json_encode('Invalid query: ' . mysql_error()));
         } else {
             while ($arr= mysql_fetch_array($result, MYSQL_ASSOC)) {
-                $returnQuery[] = $arr;    
+                if($_GET['box']=='inbox'&&$arr['UDH']!="") {
+                    $arr['text'] = "MP:"+$arr['text'];
+                    $returnQuery[] = $arr;
+                } else {
+                    $returnQuery[] = $arr; 
+                }
             }
-            if (!$debug) {
-                //if()
-                $return = $returnQuery;
-            } else {
-                $return["sql"] = $query;
-                $return["result"] = $returnQuery;
-            } 
+            $return = $returnQuery; 
         }
     }
     catch (Exception $e) {
