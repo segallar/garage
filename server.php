@@ -268,7 +268,7 @@ case "show_sms":
                 $returnQuery[] = $arr;    
             }
             if (!$debug) {
-                if()
+                //if()
                 $return = $returnQuery;
             } else {
                 $return["sql"] = $query;
