@@ -253,7 +253,7 @@ function show_sms_inbox(param) {
     $(".sms_menu").removeClass("active");
     $("#sms_inbox_menu").addClass("active");
     $("#sms_table_body").html("");
-    $.getJSON( "http://pi/server.php?cmd=show_sms&box=inbox"+param, 
+    $.getJSON("/server.php?cmd=show_sms&box=inbox"+param, 
         function( data ) {
             var str = '';
             $.each( data, function( key, val ) {
@@ -273,7 +273,7 @@ function show_sms_outbox(param) {
     $(".sms_menu").removeClass("active");
     $("#sms_outbox_menu").addClass("active");
     $("#sms_table_body").html("");
-    $.getJSON( "http://pi/server.php?cmd=show_sms&box=outbox"+param, 
+    $.getJSON( "/server.php?cmd=show_sms&box=outbox"+param, 
         function( data ) {
             var str = '';
             $.each( data, function( key, val ) {
@@ -298,7 +298,7 @@ function show_sms_newmsg() {
 function send_sms() {
     var param = "&number=" + encodeURIComponent($("#sms_number_input").val());
     param += "&text=" + encodeURIComponent($("#sms_text_input").val()); 
-    $.getJSON( "http://pi/server.php?cmd=send_sms"+param, function( data ) {
+    $.getJSON( "/server.php?cmd=send_sms"+param, function( data ) {
         $("#send_status").html(data['result']);        
      });
 }
@@ -308,7 +308,7 @@ function show_sms_balance() {
     $("#sms_form").hide();
     $(".sms_menu").removeClass("active");
     $("#sms_balance_menu").addClass("active");
-    $.getJSON( "http://pi/server.php?cmd=balance", function( data ) {
+    $.getJSON("/server.php?cmd=balance", function( data ) {
         $("#sms_balance").html("balance - "+data['balance']);
      });
 }    
@@ -418,7 +418,7 @@ function show_date_from_id(id) {
 function show_events(level,id,param) {
     if(!$("#"+id).hasClass("has-pressed")) {
         elem = "#"+id;
-        $.getJSON( "http://pi/server.php?cmd=events&minmax=on&group="+levels[level]+param, 
+        $.getJSON( "/server.php?cmd=events&minmax=on&group="+levels[level]+param, 
             function( data ) {
                 $.each( data, function( key, val ) {
                     var element=val[levels[level]];
@@ -477,7 +477,7 @@ function show_event_bar(divs,interval) {
         interval = 3; // in hours
     } 
     
-    $("#tmp_img").attr("src","http://pi/temp_img.php?interval="+interval+"&div="+divs+"&minmax=on");
+    $("#tmp_img").attr("src","/temp_img.php?interval="+interval+"&div="+divs+"&minmax=on");
     // Создаем панели
     $("#events-bar").html("");
     for(i=divs-1;i>=0;i--) {
@@ -500,7 +500,7 @@ function show_event_bar(divs,interval) {
     
     //http://pi/server.php?cmd=events&group=hour&interval=5&div=3&debug=on
     // загружаем в панели информацию
-    $.getJSON( "http://pi/server.php?cmd=events&group=hour&interval="+interval+"&div="+divs+"&minmax=on", function( data ) {
+    $.getJSON( "/server.php?cmd=events&group=hour&interval="+interval+"&div="+divs+"&minmax=on", function( data ) {
         $.each( data, function( key, val ) {
             var s = "<table width=\"100%\">";
             s += "<tr>";
@@ -590,7 +590,7 @@ function connectionTest() {
 }
 
 function submit_auth() {
-    $.getJSON( "http://pi/server.php?cmd=auth&auth_name="+$("#exampleInputEmail1").val()+"&auth_pass="+$("#exampleInputPassword1").val(), 
+    $.getJSON("/server.php?cmd=auth&auth_name="+$("#exampleInputEmail1").val()+"&auth_pass="+$("#exampleInputPassword1").val(), 
         function( data ) {
             $("#test").html("auth - "+data['auth']);
             if(data['auth']==true||data['auth']=="true") {
@@ -600,7 +600,7 @@ function submit_auth() {
 }    
     
 function logout() {
-    $.getJSON("http://pi/server.php?cmd=logout", 
+    $.getJSON("/server.php?cmd=logout", 
         function( data ) {
             //$("#main-text-user").append("<div>"+data["auth"]+"</div>");
             auth = false;
@@ -673,7 +673,7 @@ function show_all() {
 
 function user_click() {
     $("#user-tbl").html("");
-    $.getJSON("http://pi/server.php?cmd=hello", 
+    $.getJSON("/server.php?cmd=hello", 
         function( data ) {
             $.each( data , function (key, val) {
                 $("<tr><td>"+key+"</td><td>"+val+"</td></tr>").appendTo("#user-tbl");
