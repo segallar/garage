@@ -266,7 +266,7 @@ case "show_sms":
         } else {
             while ($arr= mysql_fetch_array($result, MYSQL_ASSOC)) {
                 if($_GET['box']=='inbox'&&$arr['UDH']!="") {
-                    $arr['text'] = "MP:".$arr['text'];
+                    $arr['text'] = "MP ".$arr['UDH']." :".$arr['text'];
                     $returnQuery[] = $arr;
                 } else {
                     $returnQuery[] = $arr; 
