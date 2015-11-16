@@ -569,7 +569,7 @@ function setView() {
 function connectionTest() {
     $("#main-text-").show();
     $("#test").html("<p class='label label-info'>Testing connеcetion to server ... </p>");
-    $.getJSON(location.protocol+location.hostname+"/server.php?cmd=hello") 
+    $.getJSON(location.hostname+"/server.php?cmd=hello") 
         .done(function( data ) {
             auth = false;
             if(data['auth']==true||data['auth']=="true") {
