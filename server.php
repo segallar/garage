@@ -239,8 +239,8 @@ case "show_sms":
         }
         
         
-        if(!isset($_GET['box'])||$_GET['box']!='inbox'||$_GET['box']!='outbox') {
-            $rerult["error"] = "no parametr";
+        if(!(isset($_GET['box'])&&($_GET['box']=='inbox'||$_GET['box']=='outbox'))) {
+            $rerult["error"] = "no_parametr";
             break;
         }
         if(isset($_GET['box'])&&$_GET['box']=='inbox')
