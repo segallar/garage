@@ -30,6 +30,14 @@ if(isset($_GET["interval"])&&$_GET["interval"]!=""&&isset($_GET["div"])&&$_GET["
     $divs = 5;      // столбцов (реально на один больше)
 }
 
+if(isset($_GET["style"])&&$_GET['style']=="lines")
+   $style = "lines";
+if(isset($_GET["style"])&&$_GET['style']=="line")
+   $style = "line";
+if(!isset($style))
+   $style = "line";
+   
+
 // массив точек
 $points_count = 0; //
 $points = Array();
@@ -133,12 +141,16 @@ $text_color = imagecolorallocate($image, 233, 14, 91);
 if(isset($error))
     imagestring($image, 1, 5, 5, "ERROR : ".$error, $text_color);
 
-$colWidht = (int)($diagramWidth/$points_count);
+$colWidth = (int)($diagramWidth/$points_count);
 // делаем график
 for($i=0;$i<$points_count;$i++) {
     $y_pos = [];
     // позиция начала столбца
-    $x_pos = $colWidht*$i;
+    $x_pos = $colWidth*$i;
+    if($style=="line")
+        $x_shift = 40;
+    if($style=="lines")
+        $x_shift = ($colWidth-40)/2+40-1;
     // делим весь рисунок на части
     if($i>0)
         imageline($image, $x_pos , 10 , $x_pos , $diagramHeight-30 ,$colorGrid);
@@ -149,17 +161,29 @@ for($i=0;$i<$points_count;$i++) {
     foreach($fields as $key) {
         // считеам позиции
         $y_pos[$key] = (int)(abs($points[$key][$i]-$minmax[substr($key,0,1)]['max'])*$minmax[substr($key,0,1)]['scale'])+10;
-        imageline($image, $x_pos+35, $y_pos[$key], $x_pos+$colWidht-1 , $y_pos[$key], $colors[$key]);
+        // рисуем линию или еще что-то
+        if($style=="line")
+            imageline($image, $x_pos+$x_shift, $y_pos[$key], $x_pos+$colWidth-1 , $y_pos[$key], $colors[$key]);
+        if($style=="lines") {
+            imagefilledrectangle($image, $x_pos+$x_shift- 2, $y_pos[$key] - 2, $x_pos+$x_shift+2, $y_pos[$key] + 2, $colors[$key] );
+            if(!isset($y_last_pos[$key])) {
+                $y_last_pos[$key] = $y_pos[$key];
+            } else {
+                imageline($image, $x_pos-$colWidth+$x_shift, $y_last_pos[$key], $x_pos+$x_shift , $y_pos[$key], $colors[$key]);
+                $y_last_pos[$key] = $y_pos[$key];
+            }
+        }
         // округляем данные для вывода
         if(substr($key,0,1)=="p") 
-            $points[$key][$i] = (int)($points[$key][$i]);
+            $points[$key][$i] = number_format ( $points[$key][$i], 0 );
         if(substr($key,0,1)=="t") 
-            $points[$key][$i] = ((int)($points[$key][$i] * 100))/100;
-        
+            $points[$key][$i] = number_format ( $points[$key][$i], 2 );
+        while(strlen($points[$key][$i]) < 6 ) {
+            $points[$key][$i] = " ".$points[$key][$i];
+        }
     }
     // определяем порядок линий
     asort($y_pos);
-    $j=0;
     $up_shift = 0;
     // верхний алгоритм
     foreach($y_pos as $key => $pos) {
@@ -172,7 +196,6 @@ for($i=0;$i<$points_count;$i++) {
         } 
     }
     arsort($y_pos);
-    $j=0;
     $down_shift = 0;
     // нижний алгоритм
     foreach($y_pos as $key => $pos) {
@@ -191,7 +214,7 @@ for($i=0;$i<$points_count;$i++) {
         // выводим надпись
         imagestring($image, $font, $x_pos+2, $y_pos_str[$key] , $points[$key][$i], $colors[$key]);    
         // и линию к ней
-        imageline($image, $x_pos+30, $y_pos_str[$key] + (imagefontheight($font)/2), $x_pos+35 , $pos , $colors[$key]);
+        imageline($image, $x_pos+32, $y_pos_str[$key] + (imagefontheight($font)/2), $x_pos + $x_shift , $pos , $colors[$key]);
     }
           
 }
