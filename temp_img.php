@@ -186,6 +186,7 @@ for($i=0;$i<$points_count;$i++) {
             $down_shift = $y_pos_str[$key];
         }
     }
+    // вывод линий и надписей
     foreach($y_pos as $key => $pos) {
         // выводим надпись
         imagestring($image, $font, $x_pos+2, $y_pos_str[$key] , $points[$key][$i], $colors[$key]);    
