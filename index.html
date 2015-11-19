@@ -241,7 +241,7 @@ var events_divs = 6;
     
 var events_interval = 3;
     
-var events_graph = "line";
+var events_graph = 1;
       
 //
 // SMS
@@ -323,7 +323,7 @@ function show_sms_balance() {
     
 var intervals = { 1 : "1h", 2 : "2h", 3 : "3h", 6 : "6h", 12 : "12h", 24 : "1 day" /*, 48 : "2 days", 72 : "3 days", 168 : "week" */};
 
-var graphs = { line : "Bars", lines : "Line" };
+var graphs = { 1 : "Bar", 2 : "Line" };
     
 function event_click(firstrun) {
     if(firstrun) {
@@ -496,7 +496,8 @@ function show_event_bar(divs,interval) {
         interval = 3; // in hours
     } 
     
-    $("#tmp_img").attr("src","/temp_img.php?interval="+interval+"&div="+divs+"&style="+events_graph+"&minmax=on");
+    $("#tmp_img").attr("src","/temp_img.php?interval="+interval+"&div="+divs+"&style="+graphs
+                       [events_graph]+"&minmax=on");
     // Создаем панели
     $("#events-bar").html("");
     for(i=divs-1;i>=0;i--) {

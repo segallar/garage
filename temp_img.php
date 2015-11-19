@@ -30,9 +30,9 @@ if(isset($_GET["interval"])&&$_GET["interval"]!=""&&isset($_GET["div"])&&$_GET["
     $divs = 5;      // столбцов (реально на один больше)
 }
 
-if(isset($_GET["style"])&&$_GET['style']=="lines")
+if(isset($_GET["style"])&&$_GET['style']=="Line")
    $style = "lines";
-if(isset($_GET["style"])&&$_GET['style']=="line")
+if(isset($_GET["style"])&&$_GET['style']=="Bar")
    $style = "line";
 if(!isset($style))
    $style = "line";
