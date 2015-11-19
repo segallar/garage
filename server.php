@@ -286,7 +286,7 @@ case "show_sms":
                             $arr1['text'] = $text;
                             $returnQuery[] = $arr1;
                             $text = $arr['text'];
-                            }
+                        }
                     } else {
                         // add one more message to udh
                         $text .= $arr['text'];
