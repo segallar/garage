@@ -492,7 +492,7 @@ function show_event_bar(divs,interval) {
         interval = 3; // in hours
     } 
     
-    $("#tmp_img").attr("src","/temp_img.php?interval="+interval+"&div="+divs+"&style="+graph+"&minmax=on");
+    $("#tmp_img").attr("src","/temp_img.php?interval="+interval+"&div="+divs+"&style="+event_graph+"&minmax=on");
     // Создаем панели
     $("#events-bar").html("");
     for(i=divs-1;i>=0;i--) {
