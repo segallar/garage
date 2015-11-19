@@ -204,11 +204,9 @@ case "events":
 case "send_sms":
     try {
         if(!$auth) die(json_encode(array("auth" => "need_auth"))); 
-        $number = $_GET["number"];
-        $text = $_GET["text"];
+        $number = mysql_real_escape_string($_GET["number"]);
+        $text = mysql_real_escape_string($_GET["text"]);
         
-        //!! mast check for sql injection
-
         if( isset($number)&&isset($text) ) {
             
             $db = mysql_connect($mysql_host, $mysql_user, $mysql_password) or die("Database error"); 
@@ -284,16 +282,25 @@ case "show_sms":
                     
                     if( abs(hexdec($arr['UDH']) - $udh) > 10 ) {
                         // new sequence
+                        if($udh>0) {
+                            $arr1['text'] = $text;
+                            $returnQuery[] = $arr1;
+                            $text = $arr['text'];
+                            }
                     } else {
                         // add one more message to udh
                         $text .= $arr['text'];
-                        $udh = hexdec($arr['UDH']);
                     }
+                    $arr1 = $arr;
+                    $udh = hexdec($arr['UDH']);
+                        
+                    /*
                         $arr['text'] = $j." ".$arr['UDH']." ".$text.$arr['text'];
                         $text = "";
                         $returnQuery[] = $arr;
                         $udh = hexdec($arr['UDH']);
                     }
+                    */
                     
                 } else {
                     $returnQuery[] = $arr; 
