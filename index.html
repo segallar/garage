@@ -135,6 +135,13 @@
                     <button type="button" id="events-table-btn" class="btn btn-default" aria-label="Events table" onclick="events_table_show()">
                         <span class="glyphicon glyphicon-calendar" aria-hidden="true"></span>
                     </button>
+                    
+                    <div class="btn-group">
+                        <a type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="event-graph-dropdown-button"> Bars <span class="caret"></span></a>
+                        <ul class="dropdown-menu" id="event-graph-dropdown">
+                        </ul>
+                    </div>
+                    
                 </div>
                 <div class="row" id="events-bar">
                 </div>
@@ -234,6 +241,8 @@ var auth = false;
 var events_divs = 6;
     
 var events_interval = 3;
+    
+var events_graph = "line";
       
 //
 // SMS
@@ -314,6 +323,8 @@ function show_sms_balance() {
 //
     
 var intervals = { 1 : "1h", 2 : "2h", 3 : "3h", 6 : "6h", 12 : "12h", 24 : "1 day" /*, 48 : "2 days", 72 : "3 days", 168 : "week" */};
+
+var graphs = { line : "Bars", lines : "Line" };
     
 function event_click(firstrun) {
     if(firstrun) {
@@ -352,6 +363,12 @@ function events_divs_inc(incrace) {
 function events_interval_change(interval) {
     events_interval = interval;
     $("#event-interval-dropdown-button").html(intervals[interval]+" <span class=\"caret\"></span>");
+    show_event_bar(events_divs,events_interval);
+}
+
+function events_graph_change(graph) {
+    events_graph = graph;
+    $("#event-graph-dropdown-button").html(graphs[graph]+" <span class=\"caret\"></span>");
     show_event_bar(events_divs,events_interval);
 }
     
@@ -475,7 +492,7 @@ function show_event_bar(divs,interval) {
         interval = 3; // in hours
     } 
     
-    $("#tmp_img").attr("src","/temp_img.php?interval="+interval+"&div="+divs+"&minmax=on");
+    $("#tmp_img").attr("src","/temp_img.php?interval="+interval+"&div="+divs+"&style="+graph+"&minmax=on");
     // Создаем панели
     $("#events-bar").html("");
     for(i=divs-1;i>=0;i--) {
