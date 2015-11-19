@@ -276,13 +276,12 @@ case "show_sms":
         } else {
             $udh = 0;
             $text = "";
-            $j = 0;
             while ($arr= mysql_fetch_array($result, MYSQL_ASSOC)) {
                 if($_GET['box']=='inbox'&&$arr['UDH']!="") {
-                    
                     if( abs(hexdec($arr['UDH']) - $udh) > 10 ) {
                         // new sequence
                         if($udh>0) {
+                            // save last sequence
                             $arr1['text'] = $text;
                             $returnQuery[] = $arr1;
                         }
@@ -292,20 +291,10 @@ case "show_sms":
                         $text = $arr['text'].$text;
                     }
                     $arr1 = $arr;
-                    $udh = hexdec($arr['UDH']);
-                        
-                    /*
-                        $arr['text'] = $j." ".$arr['UDH']." ".$text.$arr['text'];
-                        $text = "";
-                        $returnQuery[] = $arr;
-                        $udh = hexdec($arr['UDH']);
-                    }
-                    */
-                    
+                    $udh = hexdec($arr['UDH']);     
                 } else {
                     $returnQuery[] = $arr; 
                 }
-                $j++;
             }
             $return = $returnQuery; 
         }
