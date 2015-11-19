@@ -2,6 +2,6 @@
 #
 # garage project 
 #
-php /home/pi/garage/LLS331AP_sql.php `/home/pi/garage/LLS331AP.sh` 
+php /home/pi/garage/bin/LLS331AP_sql.php `/home/pi/garage/bin/LLS331AP.sh` 
 
 
