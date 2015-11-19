@@ -76,19 +76,35 @@ int main(int argc, char** argv)
     int dev_addr = 0x5c;
     
 	// set address of the device	
-    //i2cSetAddress(dev_addr);
+    i2cSetAddress(dev_addr);
     
+    __u8 reg = 0x0f; /* Device register to access */
+    __s32 res;
+    //char buf[10];
+
+      /* Using SMBus commands */
+    res = i2c_smbus_read_word_data(file, reg);
+    if (res < 0) {
+        //  ERROR HANDLING: i2c transaction failed 
+    } else {
+        // res contains the read word 
+        printf(" we got %d and shoud be %d \n",res,0xbb);
+    }
+    
+    /*
     char buf[10];
     
     if (read(g_i2cFile, buf, 1) != 1) {
-    /* ERROR HANDLING: i2c transaction failed */
+    // ERROR HANDLING: i2c transaction failed 
         perror("i2cRead error");
 		exit(1);
     } else {
-    /* buf[0] contains the read byte */
+    // buf[0] contains the read byte 
         printf(" we got %d and shoud be %d \n",buf[0],0xbb);
     }
-
+    */
+    
+        
 	// close Linux I2C device
 	i2cClose();
 
