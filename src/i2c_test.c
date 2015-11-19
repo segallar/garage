@@ -68,7 +68,7 @@ int main(int argc, char** argv)
         c (write byte/read byte)
         Append p for SMBus PEC
 
-    
+    info: https://www.kernel.org/doc/Documentation/i2c/dev-interface
     */
 	// open Linux I2C device
 	i2cOpen();
@@ -76,7 +76,7 @@ int main(int argc, char** argv)
     int dev_addr = 0x5c;
     
 	// set address of the device	
-    i2cSetAddress(dev_addr);
+    //i2cSetAddress(dev_addr);
     
     char buf[10];
     
