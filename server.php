@@ -176,7 +176,7 @@ case "events":
             else
                 $where .= "AND $intwhere";
             $query = "SELECT $group(ts) div $interval AS div$group, hour(ts) AS hour, day(ts) AS day ".events_cols();
-            $query .= " FROM events $where GROUP BY div$group;";
+            $query .= " FROM events $where GROUP BY day, div$group;";
         } else { 
             $query = "SELECT $group(ts) AS $group ".events_cols()." FROM events ".events_where()." GROUP BY $group;";
         }
