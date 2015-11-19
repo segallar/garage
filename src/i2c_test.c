@@ -38,99 +38,54 @@ void i2cSetAddress(int address)
 	}
 }
 
-// write a 16 bit value to a register pair
-// write low byte of value to register reg,
-// and high byte of value to register reg+1
-void pca9555WriteRegisterPair(uint8_t reg, uint16_t value)
-{
-	uint8_t data[3];
-	data[0] = reg;
-	data[1] = value & 0xff;
-	data[2] = (value >> 8) & 0xff;
-	if (write(g_i2cFile, data, 3) != 3) {
-		perror("pca9555SetRegisterPair");
-	}
-}
-
-// read a 16 bit value from a register pair
-uint16_t pca9555ReadRegisterPair(uint8_t reg)
-{
-	uint8_t data[3];
-	data[0] = reg;
-	if (write(g_i2cFile, data, 1) != 1) {
-		perror("pca9555ReadRegisterPair set register");
-	}
-	if (read(g_i2cFile, data, 2) != 2) {
-		perror("pca9555ReadRegisterPair read value");
-	}
-	return data[0] | (data[1] << 8);
-}
-
-// set IO ports to input, if the corresponding direction bit is 1,
-// otherwise set it to output
-void pca9555SetInputDirection(uint16_t direction)
-{
-	pca9555WriteRegisterPair(6, direction);
-}
-
-// set the IO port outputs
-void pca9555SetOutput(uint16_t value)
-{
-	pca9555WriteRegisterPair(2, value);
-}
-
-// read the IO port inputs
-uint16_t pca9555GetInput()
-{
-	return pca9555ReadRegisterPair(0);
-}
-
 int main(int argc, char** argv)
 {
-	// test output value
-	int v = 3;
+    
+    /*
+    
+     WHO_AM_I=`sudo i2cget -y 1 0x5c 0x0f`
+     if [ $WHO_AM_I != "0xbb" ]; then
+       echo "device NG"
+       exit 1
+     fi
 
-	// direction of the LED animation
-	int directionLeft = 1;
+     ### set active mode
+     sudo i2cset -y 1 0x5c 0x20 0x90
 
+     ### read pres data
+
+     PressOut_XL=`sudo i2cget -y 1 0x5c 0x28`
+     PressOut_L=`sudo i2cget -y 1 0x5c 0x29`
+     PressOut_H=`sudo i2cget -y 1 0x5c 0x2a`
+    
+    ---
+    Usage: i2cget [-f] [-y] I2CBUS CHIP-ADDRESS [DATA-ADDRESS [MODE]]
+    I2CBUS is an integer or an I2C bus name
+    ADDRESS is an integer (0x03 - 0x77)
+      MODE is one of:
+        b (read byte data, default)
+        w (read word data)
+        c (write byte/read byte)
+        Append p for SMBus PEC
+
+    
+    */
 	// open Linux I2C device
 	i2cOpen();
 
-	// set address of the PCA9555
-	i2cSetAddress(0x20);
-
-	// set input for IO pin 15, rest output
-	pca9555SetInputDirection(1 << 15);
-
-	// LED animation loop
-	while (1) {
-		// if button is pressed, invert output
-		int xor;
-		if (pca9555GetInput() & 0x8000) {
-			xor = 0;
-		} else {
-			xor = 0xffff;
-		}
-		
-		// set current output
-		pca9555SetOutput(v ^ xor);
-
-		// animate LED position
-		if (directionLeft) {
-			v <<= 1;
-		} else {
-			v >>= 1;
-		}
-		if (v == 0x6000) {
-			directionLeft = 0;
-		}
-		if (v == 3) {
-			directionLeft = 1;
-		}
-
-		// wait 100 ms for next animation step
-		usleep(100000);
-	}
+    int dev_addr = 0x5c;
+    
+	// set address of the device	
+    i2cSetAddress(dev_addr);
+    
+    if (read(g_i2cFile, buf, 1) != 1) {
+    /* ERROR HANDLING: i2c transaction failed */
+        perror("i2cRead error");
+		exit(1);
+    } else {
+    /* buf[0] contains the read byte */
+        printf(" we got %d \n",buf[0]);
+    }
 
 	// close Linux I2C device
 	i2cClose();
