@@ -78,6 +78,8 @@ int main(int argc, char** argv)
 	// set address of the device	
     i2cSetAddress(dev_addr);
     
+    char buf[10];
+    
     if (read(g_i2cFile, buf, 1) != 1) {
     /* ERROR HANDLING: i2c transaction failed */
         perror("i2cRead error");
