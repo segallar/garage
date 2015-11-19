@@ -88,7 +88,7 @@ int main(int argc, char** argv)
         //  ERROR HANDLING: i2c transaction failed 
     } else {
         // res contains the read word 
-        printf(" we got %d and shoud be %d \n",res,0xbb);
+        printf(" we got 0x%04x and shoud be 0x%02x \n",res,0xbb);
     }
     
     /*
