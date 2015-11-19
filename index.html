@@ -74,7 +74,7 @@
         <div class="main-text" id="main-text-sms">
             <h1>SMS</h1>
             <div class="row">
-                <ul class="nav nav-tabs">
+                <ul class="nav nav-pils">
                     <li id="sms_newmsg_menu" class="sms_menu">
                         <a href="javascript:show_sms_newmsg('')">New message</a>
                     </li>
@@ -95,8 +95,7 @@
                         <thead><tr><th>Number</th><th>Date</th><th>Text</th></tr></thead>
                         <tbody id="sms_table_body"></tbody>
                     </table>
-                    <div id="sms_form" class="text-left">
-                        
+                    <div id="sms_form" class="text-left">     
                             <div class="form-group">
                                 <label for="sms_number_input">Phone number</label>
                                 <input type="text" class="form-control" id="sms_number_input" placeholder="Number">
@@ -331,6 +330,11 @@ function event_click(firstrun) {
         $.each( intervals, function( key, val ) {
             $("#event-interval-dropdown").append("<li><a href=\"javascript:events_interval_change("+key+")\">"+val+"</a></li>");
         });
+        //event-graph-dropdown
+        $.each( graphs, function( key, val ) {
+            $("#event-graph-dropdown").append("<li><a href=\"javascript:events_graph_change("+key+")\">"+val+"</a></li>");
+        });
+        
         show_event_bar();
     }
 }    
