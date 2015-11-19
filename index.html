@@ -79,10 +79,10 @@
                         <a href="javascript:show_sms_newmsg('')">New message</a>
                     </li>
                     <li id="sms_inbox_menu" class="sms_menu">
-                        <a href="javascript:show_sms_inbox('')">Inbox</a>
+                        <a href="javascript:show_sms('inbox','')">Inbox</a>
                     </li>
                     <li id="sms_outbox_menu" class="sms_menu">
-                        <a href="javascript:show_sms_outbox('')">Outbox</a>
+                        <a href="javascript:show_sms('outbox','')">Outbox</a>
                     </li>
                     <li id="sms_balance_menu" class="sms_menu">
                         <a href="javascript:show_sms_balance('')">Balance</a>
@@ -91,10 +91,8 @@
             </div><br/>
             <div class="row">
                 <div>
-                    <table class="table table-striped table-condensed" id="sms_table">
-                        <thead><tr><th>Number</th><th>Date</th><th>Text</th></tr></thead>
-                        <tbody id="sms_table_body"></tbody>
-                    </table>
+                    <div class="table table-striped table-condensed" id="sms_holder">
+                    </div>
                     <div id="sms_form" class="text-left">     
                             <div class="form-group">
                                 <label for="sms_number_input">Phone number</label>
@@ -252,42 +250,26 @@ function sms_click(firstrun) {
         show_sms_newmsg();
 }
 
-function show_sms_inbox(param) {
+function show_sms(box,param) {
     $("#sms_form").hide();
     $(".sms_menu").removeClass("active");
-    $("#sms_inbox_menu").addClass("active");
-    $("#sms_table_body").html("");
-    $.getJSON("/server.php?cmd=show_sms&box=inbox"+param, 
+    if(box=="inbox") {
+        $("#sms_inbox_menu").addClass("active");
+    } else {
+        $("#sms_outbox_menu").addClass("active");
+    }
+    $("#sms_holder").html("");
+    $.getJSON( "/server.php?cmd=show_sms&box="+box+param, 
         function( data ) {
             var str = '';
             $.each( data, function( key, val ) {
-                str += "<tr>";
-                str += "<td>"+val['number']+"</td>";
-                str += "<td>"+val['date']+"</td>";
-                str += "<td align=left>"+val['text']+"</td>";
-                str += "</tr>";
+            str += "<div class=\"panel panel-default\">";
+                str += "<div class="panel-heading\"><h3 class=\"panel-title\">"+val['number']+"</h3>";
+                str += val['date'];
+                str += "<div class=\"panel-body\">"+val['text']+"</div>";
+                str += "</div></div></div>";
             });
-            $("#sms_table_body").html(str);
-    });
-    $("#sms_table").show();
-}
- 
-function show_sms_outbox(param) {
-    $("#sms_form").hide();
-    $(".sms_menu").removeClass("active");
-    $("#sms_outbox_menu").addClass("active");
-    $("#sms_table_body").html("");
-    $.getJSON( "/server.php?cmd=show_sms&box=outbox"+param, 
-        function( data ) {
-            var str = '';
-            $.each( data, function( key, val ) {
-                str += "<tr>";
-                str += "<td>"+val['number']+"</td>";
-                str += "<td>"+val['date']+"</td>";
-                str += "<td>"+val['text']+"</td>";
-                str += "</tr>";
-            });
-            $("#sms_table_body").html(str);
+            $("#sms_holder").html(str);
     });
     $("#sms_table").show();
 }
