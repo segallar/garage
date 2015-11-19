@@ -289,7 +289,7 @@ case "show_sms":
                         $text = $arr['text'];
                     } else {
                         // add one more message to udh
-                        $text .= $arr['text'];
+                        $text = $arr['text'].$text;
                     }
                     $arr1 = $arr;
                     $udh = hexdec($arr['UDH']);
