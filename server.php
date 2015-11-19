@@ -285,8 +285,8 @@ case "show_sms":
                         if($udh>0) {
                             $arr1['text'] = $text;
                             $returnQuery[] = $arr1;
-                            $text = $arr['text'];
                         }
+                        $text = $arr['text'];
                     } else {
                         // add one more message to udh
                         $text .= $arr['text'];
