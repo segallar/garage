@@ -266,12 +266,12 @@ function show_sms(box,param) {
                 str += "<div class=\"panel panel-default\">";
                 str += "<div class=\"panel-heading\"><h3 class=\"panel-title\">"+val['number']+"</h3></div>"; 
                 str += "<div class=\"panel-body\">"+val['text']+"</div>";
-                str += "<div class=\"panel-footer\">"+val['date'];+"</div>";
+                str += "<div class=\"panel-footer\">"+val['date']+"</div>";
                 str += "</div>";
             });
             $("#sms_holder").html(str);
     });
-    $("#sms_table").show();
+    $("#sms_form").show();
 }
 
 function show_sms_newmsg() {
