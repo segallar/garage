@@ -263,7 +263,7 @@ function show_sms(box,param) {
         function( data ) {
             var str = '';
             $.each( data, function( key, val ) {
-                str += "<div class=\"panel panel-default\">";
+                str += "<div class=\"panel panel-default panel-xs\">";
                 str += "<div class=\"panel-heading\" style=\"text-align:left\"><h3 class=\"panel-title\">"+val['number']+"</h3></div>"; 
                 str += "<div class=\"panel-body\" style=\"text-align:left\">"+val['text']+"</div>";
                 str += "<div class=\"panel-footer\" style=\"text-align:left\">"+val['date']+"</div>";
@@ -271,11 +271,11 @@ function show_sms(box,param) {
             });
             $("#sms_holder").html(str);
     });
-    $("#sms_form").show();
+    $("#sms_holder").show();
 }
 
 function show_sms_newmsg() {
-    $("#sms_table").hide();
+    $("#sms_holder").hide();
     $("#sms_form").show();
     $(".sms_menu").removeClass("active");
     $("#sms_newmsg_menu").addClass("active");
