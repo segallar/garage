@@ -54,6 +54,12 @@ if($auth) {
     $return['session_user_id'] = $_SESSION['user_id'];
 }
 
+if($debug) {
+    foreach($_SERVER as $key => $val) {
+        $return["ENV_".$key] = $val;
+    }
+}
+
 $params = array ('year','month','day','hour','minute');
 
 function events_cols() {

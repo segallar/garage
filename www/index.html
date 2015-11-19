@@ -678,7 +678,7 @@ function show_all() {
 
 function user_click() {
     $("#user-tbl").html("");
-    $.getJSON("/server.php?cmd=hello", 
+    $.getJSON("/server.php?cmd=hello&debug=on", 
         function( data ) {
             $.each( data , function (key, val) {
                 $("<tr><td>"+key+"</td><td>"+val+"</td></tr>").appendTo("#user-tbl");
