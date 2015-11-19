@@ -118,12 +118,12 @@
                 <div class="row panel panel-default panel-body" style="text-align:left;">
                   
                     <div class="btn-group">
-                    <a type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">3h<span class="caret"></span></a>
-                      <ul class="dropdown-menu" id="event-interval-dropdown">
-                      </ul>
+                        <a type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="event-interval-dropdown-button">3h<span class="caret"></span></a>
+                        <ul class="dropdown-menu" id="event-interval-dropdown">
+                        </ul>
                     </div>
                     
-                  <div class="btn-group" role="group" aria-label="...">
+                   <div class="btn-group" role="group" aria-label="...">
                     <button type="button" class="btn btn-default" onclick="events_divs_inc(true)" aria-label="Left Align">
                         <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>
                     </button>
@@ -351,6 +351,7 @@ function events_divs_inc(incrace) {
   
 function events_interval_change(interval) {
     events_interval = interval;
+    $("#event-interval-dropdown-button").html(intervals[interval]+"<span class=\"caret\"></span>");
     show_event_bar(events_divs,events_interval);
 }
     
