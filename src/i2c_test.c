@@ -86,7 +86,7 @@ int main(int argc, char** argv)
 		exit(1);
     } else {
     /* buf[0] contains the read byte */
-        printf(" we got %d \n",buf[0]);
+        printf(" we got %d and shoud be %d \n",buf[0],0xbb);
     }
 
 	// close Linux I2C device
