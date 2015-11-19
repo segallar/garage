@@ -258,27 +258,30 @@ function show_sms(box,param) {
     } else {
         $("#sms_outbox_menu").addClass("active");
     }
-    $("#sms_holder").html("");
+    $("#sms_holder").html("<span id=\"sms-loading\">Loading...</span>");
+    $("#sms_holder").show();
     $.getJSON( "/server.php?cmd=show_sms&box="+box+param, 
         function( data ) {
-            var str = '';
             $.each( data, function( key, val ) {
-                str += "<div class=\"panel panel-default panel-xs\">";
-                str += "<div class=\"panel-heading\" style=\"text-align:left\"><h3 class=\"panel-title\">"+val['number']+"</h3></div>"; 
-                str += "<div class=\"panel-body\" style=\"text-align:left\">"+val['text']+"</div>";
-                str += "<div class=\"panel-footer\" style=\"text-align:left\">"+val['date']+"</div>";
+                str  = "<div class=\"well well-sm\" style=\"text-align:left\">";
+                str += val['text'];;
+                str += "<br/><a href=\"javascript:show_sms_newmsg('"+val['number']+"')\"><span class=\"label label-success\"><span class=\"glyphicon glyphicon-phone\" aria-hidden=\"true\"></span> "+val['number']+" </span></a>";
+                str += "&nbsp;<span class=\"label label-default\"><span class=\"glyphicon glyphicon-calendar\" aria-hidden=\"true\"></span> "+val['date']+" </span>";
                 str += "</div>";
+                $("#sms_holder").append(str);
             });
-            $("#sms_holder").html(str);
+            $("#sms-loading").hide();
     });
-    $("#sms_holder").show();
 }
 
-function show_sms_newmsg() {
+function show_sms_newmsg(number) {
     $("#sms_holder").hide();
     $("#sms_form").show();
     $(".sms_menu").removeClass("active");
     $("#sms_newmsg_menu").addClass("active");
+    if(number!="") {
+        $("#sms_number_input").val(number);
+    }
 }
     
 function send_sms() {
