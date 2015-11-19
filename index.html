@@ -116,17 +116,13 @@
         <div class="main-text" id="main-text-event">
             <h1>Events</h1>
                 <div class="row panel panel-default panel-body" style="text-align:left;">
-
-                    
-                  <div class="btn-group" role="group" aria-label="...">
-                    <a type="button" class="btn btn-default"  onclick="events_interval_inc(true)"  aria-label="Left Align">
-                        <span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span>
-                    </a>
-                    <input class="btn btn-default"  id="event-bar-divs" value="6" />  
-                    <a type="button" class="btn btn-default" onclick="events_interval_inc(false)" aria-label="Left Align">
-                        <span class="glyphicon glyphicon-zoom-out" aria-hidden="true"></span>
-                    </a>
+                  
+                    <div class="btn-group">
+                    <a type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">3h<span class="caret"></span></a>
+                      <ul class="dropdown-menu" id="event-interval-dropdown">
+                      </ul>
                     </div>
+                    
                   <div class="btn-group" role="group" aria-label="...">
                     <button type="button" class="btn btn-default" onclick="events_divs_inc(true)" aria-label="Left Align">
                         <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>
@@ -317,9 +313,15 @@ function show_sms_balance() {
 // events 
 //
     
+var intervals = { 1 : "1h", 2 : "2h", 3 : "3h", 6 : "6h", 12 : "12h", 24 : "1 day", 48 : "2 days", 72 : "3 days", 168 : "week" };
+    
 function event_click(firstrun) {
-    if(firstrun)
+    if(firstrun) {
+        $.each( intervals, function( key, val ) {
+            $("#event-interval-dropdown").append("<li><a href=\"javascript:events_interval_change("+key+")\">"+val+"</a></li>");
+        });
         show_event_bar();
+    }
 }    
     
 function events_table_show() {
@@ -346,14 +348,9 @@ function events_divs_inc(incrace) {
     }
     show_event_bar(events_divs,events_interval);
 }
- 
-function events_interval_inc(incrace) {
-    if(incrace) {
-        events_interval++;
-    } else {
-        if(events_interval>1)
-          events_interval--;
-    }
+  
+function events_interval_change(interval) {
+    events_interval = interval;
     show_event_bar(events_divs,events_interval);
 }
     
@@ -584,7 +581,7 @@ function connectionTest() {
                 $("#login_form").hide();
         })
         .fail(function( jqxhr, textStatus, error ) {
-            $("#test").html("<div class='label label-danger'> Status - "+textStatus + ", error - " + error+"</div>"+
+            $("#test").html("<div class='label label-danger'> Status - "+textStatus + ", error - " + error + "</div>"+
                 "<br/><br/><div class='btn btn-primary' onClick=connectionTest()>Test again</div>");
         });
 }
