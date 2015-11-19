@@ -79,17 +79,13 @@ int main(int argc, char** argv)
     i2cSetAddress(dev_addr);
     
     __u8 reg = 0x0f; /* Device register to access */
-    __s8 res;
+    __u8 res;
     //char buf[10];
 
       /* Using SMBus commands */
     res = i2c_smbus_read_byte_data(g_i2cFile, reg);
-    if (res < 0) {
-        //  ERROR HANDLING: i2c transaction failed 
-    } else {
-        // res contains the read word 
-        printf(" we got 0x%02x and shoud be 0x%02x \n",res,0xbb);
-    }
+    printf(" we got 0x%02x and shoud be 0x%02x \n",res,0xbb);
+    
     
     /*
     char buf[10];
