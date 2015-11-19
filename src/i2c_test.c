@@ -83,7 +83,7 @@ int main(int argc, char** argv)
     //char buf[10];
 
       /* Using SMBus commands */
-    res = i2c_smbus_read_word_data(file, reg);
+    res = i2c_smbus_read_word_data(g_i2cFile, reg);
     if (res < 0) {
         //  ERROR HANDLING: i2c transaction failed 
     } else {
