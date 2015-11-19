@@ -16,7 +16,7 @@ int g_i2cFile;
 // open the Linux device
 void i2cOpen()
 {
-	g_i2cFile = open("/dev/i2c-0", O_RDWR);
+	g_i2cFile = open("/dev/i2c-1", O_RDWR);
 	if (g_i2cFile < 0) {
 		perror("i2cOpen");
 		exit(1);
