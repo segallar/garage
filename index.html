@@ -264,9 +264,9 @@ function show_sms(box,param) {
             var str = '';
             $.each( data, function( key, val ) {
                 str += "<div class=\"panel panel-default\">";
-                str += "<div class=\"panel-heading\"><h3 class=\"panel-title\">"+val['number']+"</h3></div>"; 
-                str += "<div class=\"panel-body\">"+val['text']+"</div>";
-                str += "<div class=\"panel-footer\">"+val['date']+"</div>";
+                str += "<div class=\"panel-heading\" style=\"text-align:left\"><h3 class=\"panel-title\">"+val['number']+"</h3></div>"; 
+                str += "<div class=\"panel-body\" style=\"text-align:left\">"+val['text']+"</div>";
+                str += "<div class=\"panel-footer\" style=\"text-align:left\">"+val['date']+"</div>";
                 str += "</div>";
             });
             $("#sms_holder").html(str);
