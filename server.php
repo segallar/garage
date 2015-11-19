@@ -4,11 +4,21 @@
 # garage project 
 #
 
-$mysql_host = "localhost";
 $mysql_database = "garage";
 $mysql_database_sms = "smsd";
-$mysql_user = "www";
-$mysql_password = "passwww";
+
+// определяем параметры подключения к базе
+if($_SERVER["DOCUMENT_ROOT"] == "/Users/rosipov/progs/garage" ||
+   $_SERVER["DOCUMENT_ROOT"] == "/Users/romanosipov/test/garage") {
+    $mysql_host = "192.168.5.252";
+    $mysql_user = "mac";
+    $mysql_password = "macpass";
+    
+} else {
+    $mysql_host = "localhost";
+    $mysql_user = "www";
+    $mysql_password = "passwww";
+}
 
 $server_version = '0.1.1';
 
@@ -203,7 +213,7 @@ case "send_sms":
             
             $db = mysql_connect($mysql_host, $mysql_user, $mysql_password) or die("Database error"); 
             mysql_select_db($mysql_database_sms, $db); 
-            $result = mysql_query("set names 'utf8'"); 
+            $result = mysql_query("set names 'utf8';"); 
 
             // insert into outbox (number,text) values('+31972123456', 'Tetsing Testing everyone');
             
@@ -229,7 +239,10 @@ case "show_sms":
         if(!$auth) die(json_encode(array("auth" => "need_auth"))); 
         $db = mysql_connect($mysql_host, $mysql_user, $mysql_password) or 
             die(json_encode("Database error")); 
-        mysql_select_db($mysql_database_sms, $db); 
+        if(!mysql_select_db($mysql_database_sms, $db)) {
+            $return["error"] = "database select error";
+            break;
+        } 
         $result = mysql_query("set names 'utf8';"); 
         
         $where = "";
@@ -237,7 +250,6 @@ case "show_sms":
         if (isset($range)&&$range!="") {
             $limit = " LIMIT ".$range;
         }
-        
         
         if(!(isset($_GET['box'])&&($_GET['box']=='inbox'||$_GET['box']=='outbox'))) {
             $return["error"] = "no_parametr";
@@ -264,13 +276,29 @@ case "show_sms":
         if (!$result) {
             die(json_encode('Invalid query: ' . mysql_error()));
         } else {
+            $udh = 0;
+            $text = "";
+            $j = 0;
             while ($arr= mysql_fetch_array($result, MYSQL_ASSOC)) {
                 if($_GET['box']=='inbox'&&$arr['UDH']!="") {
-                    $arr['text'] = "MP ".$arr['UDH']." :".$arr['text'];
-                    $returnQuery[] = $arr;
+                    
+                    if( abs(hexdec($arr['UDH']) - $udh) > 10 ) {
+                        // new sequence
+                    } else {
+                        // add one more message to udh
+                        $text .= $arr['text'];
+                        $udh = hexdec($arr['UDH']);
+                    }
+                        $arr['text'] = $j." ".$arr['UDH']." ".$text.$arr['text'];
+                        $text = "";
+                        $returnQuery[] = $arr;
+                        $udh = hexdec($arr['UDH']);
+                    }
+                    
                 } else {
                     $returnQuery[] = $arr; 
                 }
+                $j++;
             }
             $return = $returnQuery; 
         }
