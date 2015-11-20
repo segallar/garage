@@ -83,7 +83,7 @@ int main(int argc, char** argv)
     __s32 writeResult;
     __u8  pressHB;
     __u8  pressLB;
-    __u8  pressХLB;
+    __u8  pressXLB;
     
     
    
@@ -97,10 +97,10 @@ int main(int argc, char** argv)
             exit(1);
         }
         pressXLB = i2c_smbus_read_byte_data(g_i2cFile, 0x28);
-        pressLB = i2c_smbus_read_byte_data(g_i2cFile, 0x29);
-        pressHB = i2c_smbus_read_byte_data(g_i2cFile, 0x2a);
+        pressLB  = i2c_smbus_read_byte_data(g_i2cFile, 0x29);
+        pressHB  = i2c_smbus_read_byte_data(g_i2cFile, 0x2a);
         
-        printf(" we got press 0x%02x%02x%02x \n",pressHB,pressLB,pressХLB,);
+        printf(" we got press 0x%02x%02x%02x \n",pressHB,pressLB,pressХLB);
         
     }
     
