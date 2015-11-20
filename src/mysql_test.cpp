@@ -6,7 +6,7 @@
 #include <mysql/mysql.h>
 
 // Прототип функции обработки ошибок
-void puterror(char *);
+void puterror( const char *);
 
 // Главная функция программы1
 int main(int argc, char *argv[])
@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
   mysql_close(&conn);
 }
 
-void puterror(const char * str)
+void puterror( const char *str )
 {
   fprintf(stderr, str);
   exit(1);
