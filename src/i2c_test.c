@@ -41,20 +41,8 @@ void i2cSetAddress(int address)
 	}
 }
 
-int main(int argc, char** argv)
-{
-    // INFO: https://www.kernel.org/doc/Documentation/i2c/dev-interface
-    // INFO: http://www.st.com/web/en/resource/technical/document/datasheet/DM00036196.pdf
-
-	// open Linux I2C device
-	i2cOpen();
-
-    int devAddr = 0x5c;
+void i2cLPS331APRead( float &press, float &temp ) {
     
-	// set address of the device	
-    i2cSetAddress(devAddr);
-    
-    __u8  reg = 0x0f; /* Device register to access */
     __u8  res;
     __s32 writeResult;
     __u8  pressHB;
@@ -67,8 +55,12 @@ int main(int argc, char** argv)
     float pressF;
     __s16 tempI;
     float tempF;
-   
-    /* Using SMBus commands */
+    
+    // open Linux I2C device
+	i2cOpen();
+    // set address of the device	
+    i2cSetAddress(0x5c);
+    
     // if board installed in system
     res = i2c_smbus_read_byte_data(g_i2cFile, reg);
     if( res == 0xbb ) {
@@ -98,12 +90,11 @@ int main(int argc, char** argv)
         pressI = pressHB * 0x10000 + pressLB * 0x100 + pressXLB;
         pressF = (float)pressI / 4096;
         
-        printf("Press 0x%08x %f \n",pressI, pressF);
-        
         tempI = tempHB * 0x100 + tempLB;
         tempF = 42.5 + ( (float)tempI / 480 );
         
-        printf("Temp 0x%04x %d %f \n",tempI,tempI, tempF);
+        *temp = tempF;
+        *press = pressF;
         
         
     } else {
@@ -113,6 +104,18 @@ int main(int argc, char** argv)
         
 	// close Linux I2C device
 	i2cClose();
+}
 
+int main(int argc, char** argv)
+{
+    // INFO: https://www.kernel.org/doc/Documentation/i2c/dev-interface
+    // INFO: http://www.st.com/web/en/resource/technical/document/datasheet/DM00036196.pdf
+
+	float press, temp;
+
+    i2cLPS331APRead(press,temp);
+    
+    printf(" pres %f temp %f \n",press,temp);
+    
 	return 0;
 }
