@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
      puterror("Error: can't connect to MySQL server\n");
 
   // Выполняем SQL-запрос
-  if(mysql_query(&conn, "SELECT VERSION()") != 0)
+  if(mysql_query(&conn, "SELECT ts, temp FROM events ORDER BY id DESC LIMIT 2") != 0)
      puterror("Error: can't execute SQL-query\n");
 
   // Получаем дескриптор результирующей таблицы
@@ -44,12 +44,13 @@ int main(int argc, char *argv[])
   
 
   // Получаем первую строку из результирующей таблицы
-  row = mysql_fetch_row(res);
+  while (row = mysql_fetch_row(res)) {
   if(mysql_errno(&conn) > 0)
       puterror("Error: can't fetch result\n");
 
-  // Выводим результат в стандартный поток
-  fprintf(stdout, "Version: %s\n", row[0]);
+     // Выводим результат в стандартный поток
+     fprintf(stdout, "ts: %s temp: %f\n", row[0],(float)row[1]);
+  }
 
   // Освобождаем память, занятую результирующей таблицей
   mysql_free_result(res);
