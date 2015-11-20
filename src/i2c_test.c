@@ -44,6 +44,7 @@ void i2cSetAddress(int address)
 int main(int argc, char** argv)
 {
     // INFO: https://www.kernel.org/doc/Documentation/i2c/dev-interface
+    // INFO: http://www.st.com/web/en/resource/technical/document/datasheet/DM00036196.pdf
 
 	// open Linux I2C device
 	i2cOpen();
@@ -61,6 +62,9 @@ int main(int argc, char** argv)
     __u8  pressXLB;
     __u8  tempHB;
     __u8  tempLB;
+    
+    __s32 press;
+    __s16 temp;
    
     /* Using SMBus commands */
     // if board installed in system
@@ -88,6 +92,11 @@ int main(int argc, char** argv)
             perror("i2cWritePowerDown");
             exit(1);
         }
+        
+        press = pressXLB*0x10000+pressLB*0x100+pressXLB;
+        
+        printf("0x%08 \n",press);
+        
     } else {
         perror("i2cNoDeviceFound");
         exit(1);
