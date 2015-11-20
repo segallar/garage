@@ -1,4 +1,7 @@
-// I2C test program for a PCA9555
+//
+// garage project 
+//
+// I2C test program for a LLS331AP
 
 #include <stdint.h>
 #include <stdlib.h>
@@ -40,36 +43,8 @@ void i2cSetAddress(int address)
 
 int main(int argc, char** argv)
 {
-    
-    /*
-    
-     WHO_AM_I=`sudo i2cget -y 1 0x5c 0x0f`
-     if [ $WHO_AM_I != "0xbb" ]; then
-       echo "device NG"
-       exit 1
-     fi
+    // INFO: https://www.kernel.org/doc/Documentation/i2c/dev-interface
 
-     ### set active mode
-     sudo i2cset -y 1 0x5c 0x20 0x90
-
-     ### read pres data
-
-     PressOut_XL=`sudo i2cget -y 1 0x5c 0x28`
-     PressOut_L=`sudo i2cget -y 1 0x5c 0x29`
-     PressOut_H=`sudo i2cget -y 1 0x5c 0x2a`
-    
-    ---
-    Usage: i2cget [-f] [-y] I2CBUS CHIP-ADDRESS [DATA- [MODE]]
-    I2CBUS is an integer or an I2C bus name
-    ADDRESS is an integer (0x03 - 0x77)
-      MODE is one of:
-        b (read byte data, default)
-        w (read word data)
-        c (write byte/read byte)
-        Append p for SMBus PEC
-
-    info: https://www.kernel.org/doc/Documentation/i2c/dev-interface
-    */
 	// open Linux I2C device
 	i2cOpen();
 
@@ -90,12 +65,11 @@ int main(int argc, char** argv)
     /* Using SMBus commands */
     // if board installed in system
     res = i2c_smbus_read_byte_data(g_i2cFile, reg);
-    printf(" we got 0x%02x and shoud be 0x%02x \n",res,0xbb);
     if( res == 0xbb ) {
         // power board up
         writeResult = i2c_smbus_write_byte_data(g_i2cFile, 0x20, 0x90);
         if( writeResult < 0 ) {
-            perror("i2cWrite1");
+            perror("i2cPowerUp");
             exit(1);
         }
         // read press
@@ -106,17 +80,17 @@ int main(int argc, char** argv)
         tempLB   = i2c_smbus_read_byte_data(g_i2cFile, 0x2b);
         tempHB   = i2c_smbus_read_byte_data(g_i2cFile, 0x2c);
         // print out
-        printf(" we got press 0x%02x%02x%02x \n",pressHB,pressLB,pressXLB);
-        printf(" we got temp  0x%02x%02x  \n",tempHB,tempLB);
+        printf("%02x%02x%02x %02x%02x\n",pressHB,pressLB,pressXLB,tempHB,tempLB);
         
         // power down
         writeResult = i2c_smbus_write_byte_data(g_i2cFile, 0x20, 0x00);
         if( writeResult < 0 ) {
-            perror("i2cWrite2");
+            perror("i2cWritePowerDown");
             exit(1);
         }
-        
-        printf(" bye !");
+    } else {
+        perror("i2cNoDeviceFound");
+        exit(1);
     }
         
 	// close Linux I2C device
