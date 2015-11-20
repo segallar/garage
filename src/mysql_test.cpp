@@ -1,6 +1,6 @@
 
- // Заголовочные файлы
-#include <my_global.h>
+// Заголовочные файлы
+//#include <my_global.h>
 #include <mysql.h>
 
 // Прототип функции обработки ошибок
