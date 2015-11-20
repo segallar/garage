@@ -73,21 +73,32 @@ int main(int argc, char** argv)
 	// open Linux I2C device
 	i2cOpen();
 
-    int dev_addr = 0x5c;
+    int devAddr = 0x5c;
     
 	// set address of the device	
-    i2cSetAddress(dev_addr);
+    i2cSetAddress(devAddr);
     
     __u8 reg = 0x0f; /* Device register to access */
     __u8 res;
-    __s32 press; 
+    __s32 writeResult;
+    __s16 pressHW;
+    __u8  pressLB;
+    
    
     /* Using SMBus commands */
     res = i2c_smbus_read_byte_data(g_i2cFile, reg);
     printf(" we got 0x%02x and shoud be 0x%02x \n",res,0xbb);
     if( res == 0xbb ) {
-        i2c_smbus_write_byte_data(g_i2cFile, 0x20, 0x90);
-        press = i2c_smbus_read_world_data(g_i2cFile, 0x28);
+        writeResult = i2c_smbus_write_byte_data(g_i2cFile, 0x20, 0x90);
+        if( writeResult < 0 ) {
+            perror("i2cWrite");
+            exit(1);
+        }
+        pressHW = i2c_smbus_read_word_data(g_i2cFile, 0x28);
+        pressLB = i2c_smbus_read_byte_data(g_i2cFile, 0x2a);
+        
+        printf(" we got press 0x%04x%02x \n",pressHW,pressLB);
+        
     }
     
     /*
