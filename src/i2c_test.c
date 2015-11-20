@@ -95,7 +95,7 @@ int main(int argc, char** argv)
         
         press = pressXLB*0x10000+pressLB*0x100+pressXLB;
         
-        printf("0x%08 \n",press);
+        printf("0x%08x \n",press);
         
     } else {
         perror("i2cNoDeviceFound");
