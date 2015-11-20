@@ -84,6 +84,7 @@ int main(int argc, char** argv)
     __u8  pressHB;
     __u8  pressLB;
     __u8  pressXLB;
+    __s16 tempW;
     
     
    
@@ -99,8 +100,11 @@ int main(int argc, char** argv)
         pressXLB = i2c_smbus_read_byte_data(g_i2cFile, 0x28);
         pressLB  = i2c_smbus_read_byte_data(g_i2cFile, 0x29);
         pressHB  = i2c_smbus_read_byte_data(g_i2cFile, 0x2a);
+        tempW    = i2c_smbus_read_word_data(g_i2cFile, 0x2b);
         
         printf(" we got press 0x%02x%02x%02x \n",pressHB,pressLB,pressXLB);
+        printf(" we got temp  0x%04x   \n",tempW);
+        
         
     }
     
