@@ -41,26 +41,14 @@ void i2cSetAddress(int address)
 	}
 }
 
-void i2cLPS331APRead( float &press, float &temp ) {
-    
+int i2cLPS331APRead( float &press, float &temp ) {    
+// INFO: http://www.st.com/web/en/resource/technical/document/datasheet/DM00036196.pdf
     __u8  res;
     __s32 writeResult;
-    __u8  pressHB;
-    __u8  pressLB;
-    __u8  pressXLB;
-    __u8  tempHB;
-    __u8  tempLB;
-    
-    __s32 pressI;
-    float pressF;
-    __s16 tempI;
-    float tempF;
-    
-    // open Linux I2C device
-	i2cOpen();
+    __u8  pressHB, pressLB, pressXLB, tempHB, tempLB;
+    __s32 pressI, tempI;
     // set address of the device	
     i2cSetAddress(0x5c);
-    
     // if board installed in system
     res = i2c_smbus_read_byte_data(g_i2cFile, 0x0f);
     if( res == 0xbb ) {
@@ -68,7 +56,7 @@ void i2cLPS331APRead( float &press, float &temp ) {
         writeResult = i2c_smbus_write_byte_data(g_i2cFile, 0x20, 0x90);
         if( writeResult < 0 ) {
             perror("i2cPowerUp");
-            exit(1);
+            return -2;
         }
         // read press
         pressXLB = i2c_smbus_read_byte_data(g_i2cFile, 0x28);
@@ -77,45 +65,36 @@ void i2cLPS331APRead( float &press, float &temp ) {
         // read temp
         tempLB   = i2c_smbus_read_byte_data(g_i2cFile, 0x2b);
         tempHB   = i2c_smbus_read_byte_data(g_i2cFile, 0x2c);
-        // print out
-        printf("%02x%02x%02x %02x%02x\n",pressHB,pressLB,pressXLB,tempHB,tempLB);
-        
         // power down
         writeResult = i2c_smbus_write_byte_data(g_i2cFile, 0x20, 0x00);
         if( writeResult < 0 ) {
             perror("i2cWritePowerDown");
-            exit(1);
+            return -3;;
         }
-        
         pressI = pressHB * 0x10000 + pressLB * 0x100 + pressXLB;
-        pressF = (float)pressI / 4096;
-        
+        press = (float)pressI / 4096;
         tempI = tempHB * 0x100 + tempLB;
-        tempF = 42.5 + ( (float)tempI / 480 );
-        
-        temp = tempF;
-        press = pressF;
-        
-        
+        temp = 42.5 + ( (float)tempI / 480 );
+        return 0;
     } else {
         perror("i2cNoDeviceFound");
-        exit(1);
+        return -1;
     }
-        
-	// close Linux I2C device
-	i2cClose();
 }
 
 int main(int argc, char** argv)
 {
     // INFO: https://www.kernel.org/doc/Documentation/i2c/dev-interface
-    // INFO: http://www.st.com/web/en/resource/technical/document/datasheet/DM00036196.pdf
-
+ 
 	float press, temp;
 
-    i2cLPS331APRead(press,temp);
-    
-    printf(" pres %f temp %f \n",press,temp);
+    // open Linux I2C device
+	i2cOpen();
+    // read press and temp from LPS3331AP
+    if(i2cLPS331APRead(press,temp)) 
+        printf(" pres %f temp %f \n",press,temp);
+    // close Linux I2C device
+	i2cClose();
     
 	return 0;
 }
