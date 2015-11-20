@@ -81,8 +81,10 @@ int main(int argc, char** argv)
     __u8 reg = 0x0f; /* Device register to access */
     __u8 res;
     __s32 writeResult;
-    __s16 pressHW;
+    __u8  pressHB;
     __u8  pressLB;
+    __u8  pressХLB;
+    
     
    
     /* Using SMBus commands */
@@ -94,10 +96,11 @@ int main(int argc, char** argv)
             perror("i2cWrite");
             exit(1);
         }
-        pressHW = i2c_smbus_read_word_data(g_i2cFile, 0x28);
-        pressLB = i2c_smbus_read_byte_data(g_i2cFile, 0x2a);
+        pressXLB = i2c_smbus_read_byte_data(g_i2cFile, 0x28);
+        pressLB = i2c_smbus_read_byte_data(g_i2cFile, 0x29);
+        pressHB = i2c_smbus_read_byte_data(g_i2cFile, 0x2a);
         
-        printf(" we got press 0x%04x%02x \n",pressHW,pressLB);
+        printf(" we got press 0x%02x%02x%02x \n",pressHB,pressLB,pressХLB,);
         
     }
     
