@@ -100,7 +100,7 @@ int main(int argc, char** argv)
         pressLB  = i2c_smbus_read_byte_data(g_i2cFile, 0x29);
         pressHB  = i2c_smbus_read_byte_data(g_i2cFile, 0x2a);
         
-        printf(" we got press 0x%02x%02x%02x \n",pressHB,pressLB,pressХLB);
+        printf(" we got press 0x%02x%02x%02x \n",pressHB,pressLB,pressXLB);
         
     }
     
