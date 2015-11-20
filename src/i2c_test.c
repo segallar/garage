@@ -78,8 +78,8 @@ int main(int argc, char** argv)
 	// set address of the device	
     i2cSetAddress(devAddr);
     
-    __u8 reg = 0x0f; /* Device register to access */
-    __u8 res;
+    __u8  reg = 0x0f; /* Device register to access */
+    __u8  res;
     __s32 writeResult;
     __u8  pressHB;
     __u8  pressLB;
@@ -88,39 +88,36 @@ int main(int argc, char** argv)
     __u8  tempLB;
    
     /* Using SMBus commands */
+    // if board installed in system
     res = i2c_smbus_read_byte_data(g_i2cFile, reg);
     printf(" we got 0x%02x and shoud be 0x%02x \n",res,0xbb);
     if( res == 0xbb ) {
+        // power board up
         writeResult = i2c_smbus_write_byte_data(g_i2cFile, 0x20, 0x90);
         if( writeResult < 0 ) {
-            perror("i2cWrite");
+            perror("i2cWrite1");
             exit(1);
         }
+        // read press
         pressXLB = i2c_smbus_read_byte_data(g_i2cFile, 0x28);
         pressLB  = i2c_smbus_read_byte_data(g_i2cFile, 0x29);
         pressHB  = i2c_smbus_read_byte_data(g_i2cFile, 0x2a);
+        // read temp
         tempLB   = i2c_smbus_read_byte_data(g_i2cFile, 0x2b);
         tempHB   = i2c_smbus_read_byte_data(g_i2cFile, 0x2c);
-        
+        // print out
         printf(" we got press 0x%02x%02x%02x \n",pressHB,pressLB,pressXLB);
         printf(" we got temp  0x%02x%02x  \n",tempHB,tempLB);
         
+        // power down
+        writeResult = i2c_smbus_write_byte_data(g_i2cFile, 0x20, 0x00);
+        if( writeResult < 0 ) {
+            perror("i2cWrite2");
+            exit(1);
+        }
         
+        printf(" bye !");
     }
-    
-    /*
-    char buf[10];
-    
-    if (read(g_i2cFile, buf, 1) != 1) {
-    // ERROR HANDLING: i2c transaction failed 
-        perror("i2cRead error");
-		exit(1);
-    } else {
-    // buf[0] contains the read byte 
-        printf(" we got %d and shoud be %d \n",buf[0],0xbb);
-    }
-    */
-    
         
 	// close Linux I2C device
 	i2cClose();
