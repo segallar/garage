@@ -93,7 +93,7 @@ int main(int argc, char** argv)
             exit(1);
         }
         
-        press = pressXLB*0x10000+pressLB*0x100+pressXLB;
+        press = pressHB*0x10000+pressLB*0x100+pressXLB;
         
         printf("0x%08x \n",press);
         
