@@ -63,8 +63,10 @@ int main(int argc, char** argv)
     __u8  tempHB;
     __u8  tempLB;
     
-    __s32 press;
-    __s16 temp;
+    __s32 pressI;
+    float pressF;
+    __s16 tempI;
+    float tempF;
    
     /* Using SMBus commands */
     // if board installed in system
@@ -93,9 +95,16 @@ int main(int argc, char** argv)
             exit(1);
         }
         
-        press = pressHB*0x10000+pressLB*0x100+pressXLB;
+        pressI = pressHB * 0x10000 + pressLB * 0x100 + pressXLB;
+        pressF = pressI / 4096;
         
-        printf("0x%08x \n",press);
+        printf("Press 0x%08x %f \n",pressI, pressF);
+        
+        tempI = tempHB * 0x100 + tempLB;
+        tempF = 42.5 + tempI / 480;
+        
+        printf("Temp 0x%04x %f \n",tempI, tempF);
+        
         
     } else {
         perror("i2cNoDeviceFound");
