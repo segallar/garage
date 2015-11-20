@@ -62,7 +62,7 @@ void i2cLPS331APRead( float &press, float &temp ) {
     i2cSetAddress(0x5c);
     
     // if board installed in system
-    res = i2c_smbus_read_byte_data(g_i2cFile, reg);
+    res = i2c_smbus_read_byte_data(g_i2cFile, 0x0f);
     if( res == 0xbb ) {
         // power board up
         writeResult = i2c_smbus_write_byte_data(g_i2cFile, 0x20, 0x90);
@@ -93,8 +93,8 @@ void i2cLPS331APRead( float &press, float &temp ) {
         tempI = tempHB * 0x100 + tempLB;
         tempF = 42.5 + ( (float)tempI / 480 );
         
-        *temp = tempF;
-        *press = pressF;
+        temp = tempF;
+        press = pressF;
         
         
     } else {
