@@ -59,7 +59,7 @@ int main(int argc, char** argv)
      PressOut_H=`sudo i2cget -y 1 0x5c 0x2a`
     
     ---
-    Usage: i2cget [-f] [-y] I2CBUS CHIP-ADDRESS [DATA-ADDRESS [MODE]]
+    Usage: i2cget [-f] [-y] I2CBUS CHIP-ADDRESS [DATA- [MODE]]
     I2CBUS is an integer or an I2C bus name
     ADDRESS is an integer (0x03 - 0x77)
       MODE is one of:
@@ -80,12 +80,15 @@ int main(int argc, char** argv)
     
     __u8 reg = 0x0f; /* Device register to access */
     __u8 res;
-    //char buf[10];
-
-      /* Using SMBus commands */
+    __s32 press; 
+   
+    /* Using SMBus commands */
     res = i2c_smbus_read_byte_data(g_i2cFile, reg);
     printf(" we got 0x%02x and shoud be 0x%02x \n",res,0xbb);
-    
+    if( res == 0xbb ) {
+        i2c_smbus_write_byte_data(g_i2cFile, 0x20, 0x90);
+        press = i2c_smbus_read_world_data(g_i2cFile, 0x28);
+    }
     
     /*
     char buf[10];
