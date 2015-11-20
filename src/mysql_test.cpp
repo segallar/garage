@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
       puterror("Error: can't fetch result\n");
 
      // Выводим результат в стандартный поток
-     fprintf(stdout, "ts: %s temp: %f\n", row[0],(float)row[1]);
+     fprintf(stdout, "ts: %s temp: %s\n", row[0],row[1]);
   }
 
   // Освобождаем память, занятую результирующей таблицей
