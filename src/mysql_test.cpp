@@ -40,13 +40,13 @@ int main(int argc, char *argv[])
   // Получаем дескриптор результирующей таблицы
   res = mysql_store_result(&conn);
   if(res == NULL)
-  {
-    puterror("Error: can't get the result description\n");
-  }
+      puterror("Error: can't get the result description\n");
+  
 
   // Получаем первую строку из результирующей таблицы
   row = mysql_fetch_row(res);
-  if(mysql_errno(&conn) > 0) puterror("Error: can't fetch result\n");
+  if(mysql_errno(&conn) > 0)
+      puterror("Error: can't fetch result\n");
 
   // Выводим результат в стандартный поток
   fprintf(stdout, "Version: %s\n", row[0]);
@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
   mysql_close(&conn);
 }
 
-void puterror(char * str)
+void puterror(const char * str)
 {
   fprintf(stderr, str);
   exit(1);
