@@ -12,6 +12,7 @@
 #include <sys/stat.h>
 #include <sys/ioctl.h>
 #include <fcntl.h>
+#include "mysql.h"
 
 // I2C Linux device handle
 int g_i2cFile;
@@ -81,6 +82,10 @@ int i2cLPS331APRead( float &press, float &temp ) {
         return -1;
     }
 }
+
+void savePressTemp(float press, float temp) {
+    
+} 
 
 int main(int argc, char** argv)
 {

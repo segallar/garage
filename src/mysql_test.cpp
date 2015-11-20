@@ -1,7 +1,7 @@
 
 // Заголовочные файлы
 //#include <my_global.h>
-#include <mysql.h>
+#include <mysql/mysql.h>
 
 // Прототип функции обработки ошибок
 void puterror(char *);
