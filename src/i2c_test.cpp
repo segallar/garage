@@ -91,7 +91,7 @@ int main(int argc, char** argv)
     // open Linux I2C device
 	i2cOpen();
     // read press and temp from LPS3331AP
-    if(i2cLPS331APRead(press,temp)) 
+    if( i2cLPS331APRead(press,temp) == 0 ) 
         printf(" pres %f temp %f \n",press,temp);
     // close Linux I2C device
 	i2cClose();
