@@ -103,7 +103,7 @@ int main(int argc, char** argv)
         tempI = tempHB * 0x100 + tempLB;
         tempF = 42.5 + tempI / 480;
         
-        printf("Temp 0x%04x %f \n",tempI, tempF);
+        printf("Temp 0x%04x %d %f \n",tempI,tempI, tempF);
         
         
     } else {
