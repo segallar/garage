@@ -105,12 +105,9 @@ void savePressTemp(float press, float temp) {
     // Формируем запрос
     char str[100];
     sprintf (str,"INSERT INTO events (press,temp) VALUES (%f,%f);",press,temp);
-    printf("SQL: %s\n",str);
     // Выполняем SQL-запрос
     if(mysql_query(&conn, str) != 0)
         perror("Error: can't execute SQL-query\n");
-    else
-        printf("Ok\n");
     // Закрываем соединение с сервером базы данных
     mysql_close(&conn);
 } 
