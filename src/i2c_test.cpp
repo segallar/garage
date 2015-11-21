@@ -12,7 +12,7 @@
 #include <sys/stat.h>
 #include <sys/ioctl.h>
 #include <fcntl.h>
-#include "mysql.h"
+#include <mysql/mysql.h>
 
 // I2C Linux device handle
 int g_i2cFile;
@@ -84,7 +84,34 @@ int i2cLPS331APRead( float &press, float &temp ) {
 }
 
 void savePressTemp(float press, float temp) {
+    // Дескриптор соединения
+    MYSQL conn;
+
+    // Получаем дескриптор соединения
+    if(!mysql_init(&conn))
+        perror("Error: can't create MySQL-descriptor\n");
+
+    // Устанавливаем соединение с базой данных
+    if(!mysql_real_connect(&conn,
+                         "localhost",
+                         "barometer",
+                         "pass",
+                         "garage",
+                         0,
+                         NULL,
+                         0))
+        perror("Error: can't connect to MySQL server\n");
+
+    // Формируем запрос
+    char * str;
+    sprintf (str,"INSERT INTO events (press,temp) VALUES (%f,%f);",press,temp);
     
+    // Выполняем SQL-запрос
+    if(mysql_query(&conn, str) != 0)
+        perror("Error: can't execute SQL-query\n");
+
+    // Закрываем соединение с сервером базы данных
+    mysql_close(&conn);
 } 
 
 int main(int argc, char** argv)
@@ -96,8 +123,9 @@ int main(int argc, char** argv)
     // open Linux I2C device
 	i2cOpen();
     // read press and temp from LPS3331AP
-    if( i2cLPS331APRead(press,temp) == 0 ) 
-        printf(" pres %f temp %f \n",press,temp);
+    if( i2cLPS331APRead(press,temp) == 0 )
+        // and save it into SQL table
+        savePressTemp(press,temp);
     // close Linux I2C device
 	i2cClose();
     
