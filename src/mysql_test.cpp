@@ -2,7 +2,12 @@
 //#include <my_global.h>
 #include <stdlib.h>
 #include <stdio.h>
+#ifdef __APPLE__
+#include <mysql.h>
+#endif
+#ifdef linux
 #include <mysql/mysql.h>
+#endif
 
 // Прототип функции обработки ошибок
 void puterror( const char *);
@@ -23,9 +28,9 @@ int main(int argc, char *argv[])
 
   // Устанавливаем соединение с базой данных
   if(!mysql_real_connect(&conn,
-                         "localhost",
-                         "root",
-                         "nigthfal",
+                         "pi",
+                         "mac",
+                         "macpass",
                          "garage",
                          0,
                          NULL,
