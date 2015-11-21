@@ -2,7 +2,7 @@
 //#include <my_global.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <mysql.h>
+#include <mysql/mysql.h>
 
 // Прототип функции обработки ошибок
 void puterror( const char *);
