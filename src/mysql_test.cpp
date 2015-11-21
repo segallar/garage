@@ -5,7 +5,7 @@
 #ifdef __APPLE__
 #include <mysql.h>
 #endif
-#ifdef linux
+#ifdef __gnu_linux__
 #include <mysql/mysql.h>
 #endif
 
@@ -15,18 +15,19 @@ void puterror( const char *);
 // Главная функция программы1
 int main(int argc, char *argv[])
 {
-  // Дескриптор соединения
-  MYSQL conn;
-  // Дескриптор результирующей таблицы
-  MYSQL_RES *res;
-  // Массив полей текущей строки
-  MYSQL_ROW row;
+    // Дескриптор соединения
+    MYSQL conn;
+    // Дескриптор результирующей таблицы
+    MYSQL_RES *res;
+    // Массив полей текущей строки
+    MYSQL_ROW row;
 
-  // Получаем дескриптор соединения
-  if(!mysql_init(&conn))
+    // Получаем дескриптор соединения
+    if(!mysql_init(&conn))
      puterror("Error: can't create MySQL-descriptor\n");
 
-  // Устанавливаем соединение с базой данных
+    // Устанавливаем соединение с базой данных
+#ifdef __APPLE__
   if(!mysql_real_connect(&conn,
                          "pi",
                          "mac",
@@ -36,10 +37,24 @@ int main(int argc, char *argv[])
                          NULL,
                          0))
      puterror("Error: can't connect to MySQL server\n");
-
-  // Выполняем SQL-запрос
-  if(mysql_query(&conn, "SELECT ts, temp FROM events ORDER BY id DESC LIMIT 2") != 0)
-     puterror("Error: can't execute SQL-query\n");
+#endif
+#ifdef __gnu_linux__
+  if(!mysql_real_connect(&conn,
+                         "localhost",
+                         "root",
+                         "nigthfal",
+                         "garage",
+                         0,
+                         NULL,
+                         0))
+     puterror("Error: can't connect to MySQL server\n");
+#endif
+    
+  
+    
+    // Выполняем SQL-запрос
+    if(mysql_query(&conn, "SELECT ts, temp FROM events ORDER BY id DESC LIMIT 2") != 0)
+        puterror("Error: can't execute SQL-query\n");
 
   // Получаем дескриптор результирующей таблицы
   res = mysql_store_result(&conn);
