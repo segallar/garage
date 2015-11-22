@@ -60,7 +60,7 @@ int i2cLPS331APRead( float &press, float &temp ) {
         // power board up
         writeResult = i2c_smbus_write_byte_data(g_i2cFile, 0x20, 0x90);
         if( writeResult < 0 ) {
-            perror("i2cPowerUp");
+            fprintf(stderr,"Error: Can't power up for LPS331AP\n");
             return -2;
         }
         // read press
@@ -73,8 +73,8 @@ int i2cLPS331APRead( float &press, float &temp ) {
         // power down
         writeResult = i2c_smbus_write_byte_data(g_i2cFile, 0x20, 0x00);
         if( writeResult < 0 ) {
-            perror("i2cWritePowerDown");
-            return -3;;
+            fprintf(stderr,"Error: Can't power down for LPS331AP\n");
+            return -3;
         }
         if(debug) {
             printf("0x%.2x%.2x%.2x 0x%.2x%.2x\n",pressHB,pressLB,pressXLB,tempHB,tempLB); 
@@ -91,7 +91,7 @@ int i2cLPS331APRead( float &press, float &temp ) {
         }
         return 0;
     } else {
-        perror("i2cNoDeviceFound");
+        fprintf(stderr,"Error: No LPS331AP device found\n");
         return -1;
     }
 }
