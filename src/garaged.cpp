@@ -181,13 +181,19 @@ int main(int argc, char** argv)
                 last_press = press;
                 last_temp  = temp;
                 last_min   = timeinfo->tm_min;
+                /*idle_time  = idle_time * 2;
+                if(idle_time > 100000000) idle_time = 100000000;
+                */
 	       }
-	    }
+	    } else {
+            time (&rawtime);
+            printf("%s ******** Error ********** i2c \n",ctime(&rawtime));    
+        }
         if(debug) {
             time (&rawtime);
             printf("%s idle \n",ctime(&rawtime));
         }
-        usleep (1000000);
+        usleep (10000000);
     }
         
     return 0;
