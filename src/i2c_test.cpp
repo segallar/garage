@@ -14,6 +14,8 @@
 #include <fcntl.h>
 #include <mysql/mysql.h>
 
+bool debug = false;
+
 // I2C Linux device handle
 int g_i2cFile;
 
@@ -84,6 +86,7 @@ int i2cLPS331APRead( float &press, float &temp ) {
 }
 
 void savePressTemp(float press, float temp) {
+    
     // Дескриптор соединения
     MYSQL conn;
 
@@ -105,6 +108,9 @@ void savePressTemp(float press, float temp) {
     // Формируем запрос
     char str[100];
     sprintf (str,"INSERT INTO events (press,temp) VALUES (%f,%f);",press,temp);
+    if(debug)
+        printf("SQL:%s\n",str);
+    
     // Выполняем SQL-запрос
     if(mysql_query(&conn, str) != 0)
         perror("Error: can't execute SQL-query\n");
@@ -116,6 +122,10 @@ int main(int argc, char** argv)
 {
     // INFO: https://www.kernel.org/doc/Documentation/i2c/dev-interface
  
+    if((argc>0)&& (argv[1]=="-d")) {
+        debug = true;
+    }
+    
 	float press, temp;
 
     // open Linux I2C device
