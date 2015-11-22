@@ -155,7 +155,7 @@ int main(int argc, char** argv)
     while(1) {
         if(debug) {
             time (&rawtime);
-            printf("%s wake up! \n",ctime(&rawtime);
+            printf("%s wake up! \n",ctime(&rawtime));
         }
         // open Linux I2C device
         i2cOpen();
@@ -172,7 +172,7 @@ int main(int argc, char** argv)
         i2cClose();
         if(debug) {
             time (&rawtime);
-            printf("%s go sleep \n",ctime(&rawtime);
+            printf("%s go sleep \n",ctime(&rawtime));
         }
         usleep (100000);
     }
