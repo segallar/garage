@@ -140,6 +140,10 @@ int main(int argc, char** argv)
     if((argc>0) && (strcmp(argv[1],"-d")==0)) {
         debug = true;
         printf("Debug mode on. argc=%i\n",argc);
+        int i = 0;
+        for(i=0;i<argc;i++){
+            printf("argc %i = %s\n",i,argv[i]);
+        }
     }
     
 	float press, temp;
