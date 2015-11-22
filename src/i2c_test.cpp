@@ -50,7 +50,8 @@ int i2cLPS331APRead( float &press, float &temp ) {
     __u8  res;
     __s32 writeResult;
     __u8  pressHB, pressLB, pressXLB, tempHB, tempLB;
-    int   pressI, tempI;
+    __s32 pressI;
+    __s16 tempI;
     // set address of the device	
     i2cSetAddress(0x5c);
     // if board installed in system
