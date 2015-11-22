@@ -76,13 +76,13 @@ int i2cLPS331APRead( float &press, float &temp ) {
             return -3;;
         }
         if(debug)
-            printf("0x%02%02%02 0x%02%02\n",pressHB,pressLB,pressXLB,tempHB,tempLB);
+            printf("0x%.2x%.2x%.2x 0x%.2x%.2x\n",pressHB,pressLB,pressXLB,tempHB,tempLB);
         pressI = pressHB * 0x10000 + pressLB * 0x100 + pressXLB;
         press = (float)pressI / 4096;
         tempI = tempHB * 0x100 + tempLB;
         temp = 42.5 + ( (float)tempI / 480 );
         if(debug)
-            printf("$f $f\n",press,temp);
+            printf("%f %f\n",press,temp);
         return 0;
     } else {
         perror("i2cNoDeviceFound");
