@@ -170,12 +170,12 @@ int main(int argc, char** argv)
         if( i2cLPS331APRead(press,temp) == 0 ) {
             time ( &rawtime );
             timeinfo = localtime ( &rawtime );
-            if ( (abs(temp-last_temp) > 0.01) || (abs(press-last_press) > 0.1) || (abs(timeinfo->ts_min-last_min)>0) {
+            if ( (abs(temp-last_temp) > 0.01) || (abs(press-last_press) > 0.1) || (abs(timeinfo->tm_min-last_min)>0)) {
 	    	    // and save it into SQL table
             	savePressTemp(press,temp);
                 last_press = press;
                 last_temp  = temp;
-                last_min   = timeinfo->ts_min;
+                last_min   = timeinfo->tm_min;
 	       }
 	    }
         // close Linux I2C device
