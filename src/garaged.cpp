@@ -23,6 +23,18 @@ int g_i2cFile;
 
 time_t rawtime;
 
+char * get_time(void) {
+    static char* buf;
+    static char* pch;
+    
+    time (&rawtime);
+    buf = ctime(&rawtime);
+    pch = strstr (buf,"\n");
+    *pch = '\0';
+    
+    return buf;
+}
+
 // open the Linux device
 void i2cOpen()
 {
@@ -82,8 +94,7 @@ int i2cLPS331APRead( float &press, float &temp ) {
             return -3;
         }
         if(debug) {
-            time (&rawtime);
-            printf("%s read 0x%.2x%.2x%.2x 0x%.2x%.2x ",ctime (&rawtime),pressHB,pressLB,pressXLB,tempHB,tempLB); 
+            printf("%s read 0x%.2x%.2x%.2x 0x%.2x%.2x ",get_time(),pressHB,pressLB,pressXLB,tempHB,tempLB); 
         }
         pressI = pressHB * 0x10000 + pressLB * 0x100 + pressXLB;
         tempI = tempHB * 0x100 + tempLB;
@@ -128,8 +139,7 @@ void savePressTemp(float press, float temp) {
         char query[100];
         sprintf (query,"INSERT INTO events (press,temp) VALUES (%f,%f);",press,temp);
         if(debug) {
-            time (&rawtime);
-            printf("%s Exec SQL:%s\n",ctime (&rawtime),query);
+            printf("%s Exec SQL:%s\n",get_time(),query);
         }
         // Выполняем SQL-запрос
         if(mysql_query(&conn, query) != 0) {
@@ -164,8 +174,7 @@ int main(int argc, char** argv)
 
     while(1) {
         if(debug) {
-            time (&rawtime);
-            printf("%s wake up! \n",ctime(&rawtime));
+            printf("%s wake up! \n",get_time());
         }
     
         time ( &rawtime );
@@ -186,12 +195,10 @@ int main(int argc, char** argv)
                 */
 	       }
 	    } else {
-            time (&rawtime);
-            printf("%s ******** Error ********** i2c \n",ctime(&rawtime));    
+            printf("%s ******** Error ********** i2c \n",get_time());    
         }
         if(debug) {
-            time (&rawtime);
-            printf("%s idle \n",ctime(&rawtime));
+            printf("%s idle \n",get_time());
         }
         usleep (10000000);
     }
