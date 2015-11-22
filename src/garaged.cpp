@@ -168,13 +168,15 @@ int main(int argc, char** argv)
     
     struct tm * timeinfo;
     int last_min = -1;
+    
+    int idle_time = 10000000;
 
     if(debug)
         printf("Start daemon\n");
 
     while(1) {
         if(debug) {
-            printf("%s wake up! \n",get_time());
+            printf("%s wake up! idle time %i \n",get_time(),idle_time);
         }
     
         time ( &rawtime );
@@ -190,17 +192,21 @@ int main(int argc, char** argv)
                 last_press = press;
                 last_temp  = temp;
                 last_min   = timeinfo->tm_min;
-                /*idle_time  = idle_time * 2;
+                idle_time  = idle_time / 2;
+                if(idle_time < 1000) idle_time = 1000;
+                
+	       } else {
+                idle_time  = idle_time * 2;
                 if(idle_time > 100000000) idle_time = 100000000;
-                */
-	       }
+                
+            }
 	    } else {
             printf("%s ******** Error ********** i2c \n",get_time());    
         }
         if(debug) {
-            printf("%s idle \n",get_time());
+            printf("%s idle time %i\n",get_time(),idle_time);
         }
-        usleep (10000000);
+        usleep (idle_time);
     }
         
     return 0;
