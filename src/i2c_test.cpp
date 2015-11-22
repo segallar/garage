@@ -97,36 +97,40 @@ int i2cLPS331APRead( float &press, float &temp ) {
 }
 
 void savePressTemp(float press, float temp) {
-    
     // Дескриптор соединения
     MYSQL conn;
-
     // Получаем дескриптор соединения
-    if(!mysql_init(&conn))
-        perror("Error: can't create MySQL-descriptor\n");
-
-    // Устанавливаем соединение с базой данных
-    if(!mysql_real_connect(&conn,
-                         "localhost",
-                         "barometer",
-                         "pass",
-                         "garage",
-                         0,
-                         NULL,
-                         0))
-        perror("Error: can't connect to MySQL server\n");
-
-    // Формируем запрос
-    char query[100];
-    sprintf (query,"INSERT INTO events (press,temp) VALUES (%f,%f);",press,temp);
-    if(debug) {
-        printf("SQL:%s\n",query);
+    if(!mysql_init(&conn)) {
+        fprintf(stderr,"Error: can't create MySQL-descriptor\n");
+    } else {
+        // Устанавливаем соединение с базой данных
+        if(!mysql_real_connect(&conn,
+                             "localhost",
+                             "barometer",
+                             "pass",
+                             "garage",
+                             0,
+                             NULL,
+                             0)) {
+            fprintf(stderr,"Error: can't connect to MySQL server\n");
+            mysql_close(&conn);
+            return;
+        }
+        if(debug){
+            printf("Connect to MYSQL ok\n");
+        }
+        // Формируем запрос
+        char query[100];
+        sprintf (query,"INSERT INTO events (press,temp) VALUES (%f,%f);",press,temp);
+        if(debug) {
+            printf("SQL:%s\n",query);
+        }
+        // Выполняем SQL-запрос
+        if(mysql_query(&conn, query) != 0)
+            fprintf(stderr,"Error: can't execute SQL-query\n");
+        // Закрываем соединение с сервером базы данных
+        mysql_close(&conn);
     }
-    // Выполняем SQL-запрос
-    if(mysql_query(&conn, query) != 0)
-        perror("Error: can't execute SQL-query\n");
-    // Закрываем соединение с сервером базы данных
-    mysql_close(&conn);
 } 
 
 int main(int argc, char** argv)
