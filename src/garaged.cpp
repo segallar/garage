@@ -76,7 +76,7 @@ int i2cLPS331APRead( float &press, float &temp ) {
     temp  = 0;
     
     //
-    u8 ret; 
+    __u8 ret; 
     struct i2c_client * my_client; 
     struct i2c_adapter * my_adap = i2c_get_adapter(1); // 1 means i2c-1 bus
     my_client = i2c_new_dummy (my_adap, 0x0f); // 0x69 - slave address on i2c bus
