@@ -55,6 +55,8 @@ int i2cLPS331APRead( float &press, float &temp ) {
     __u8  pressHB, pressLB, pressXLB, tempHB, tempLB;
     __s32 pressI;
     __s16 tempI;
+    // open Linux I2C device
+    i2cOpen();
     // set address of the device
     i2cSetAddress(0x5c);
     // if board installed in system
@@ -98,6 +100,8 @@ int i2cLPS331APRead( float &press, float &temp ) {
         fprintf(stderr,"Error: No LPS331AP device found\n");
         return -1;
     }
+    // close Linux I2C device
+    i2cClose();
 }
 
 void savePressTemp(float press, float temp) {
@@ -163,9 +167,7 @@ int main(int argc, char** argv)
             time (&rawtime);
             printf("%s wake up! \n",ctime(&rawtime));
         }
-        // open Linux I2C device
-        i2cOpen();
-        
+    
         time ( &rawtime );
         timeinfo = localtime ( &rawtime );
         
@@ -181,8 +183,6 @@ int main(int argc, char** argv)
                 last_min   = timeinfo->tm_min;
 	       }
 	    }
-        // close Linux I2C device
-        i2cClose();
         if(debug) {
             time (&rawtime);
             printf("%s idle \n",ctime(&rawtime));
