@@ -75,15 +75,25 @@ int i2cLPS331APRead( float &press, float &temp ) {
     press = 0;
     temp  = 0;
     
+    //
+    u8 ret; 
+    struct i2c_client * my_client; 
+    struct i2c_adapter * my_adap = i2c_get_adapter(1); // 1 means i2c-1 bus
+    my_client = i2c_new_dummy (my_adap, 0x0f); // 0x69 - slave address on i2c bus
+    i2c_smbus_write_byte(my_client, 0x0f); 
+    //ret = i2c_smbus_read_byte(my_client);
+    
+    g_i2cFile = my_client;
+    
     // open Linux I2C device
-    i2cOpen();
+    //i2cOpen();
     // set address of the device
-    i2cSetAddress(0x5c);
+    //i2cSetAddress(0x5c);
     // if board installed in system
     res = i2c_smbus_read_byte_data(g_i2cFile, 0x0f);
     if( res == 0xbb ) {
         // power board up
-        writeResult = i2c_smbus_write_byte_data(g_i2cFile, 0x20, 0x90);
+        writeResult = i2c_smbus_write_byte_data(my_client, 0x20, 0x90);
         if( writeResult < 0 ) {
             fprintf(stderr,"Error: Can't power up for LPS331AP\n");
             return -2;
