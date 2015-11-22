@@ -148,6 +148,9 @@ int main(int argc, char** argv)
     float press, temp;
     float last_press = 0; 
     float last_temp  = 0;
+    
+    struct tm * timeinfo;
+    int last_min = -1;
 
     if(debug)
         printf("Start daemon\n");
@@ -159,22 +162,29 @@ int main(int argc, char** argv)
         }
         // open Linux I2C device
         i2cOpen();
+        
+        time ( &rawtime );
+        timeinfo = localtime ( &rawtime );
+        
         // read press and temp from LPS3331AP
         if( i2cLPS331APRead(press,temp) == 0 ) {
-            if ( (abs(temp-last_temp)>0.01) || (abs(press-last_press)>0.1)) {
+            time ( &rawtime );
+            timeinfo = localtime ( &rawtime );
+            if ( (abs(temp-last_temp) > 0.01) || (abs(press-last_press) > 0.1) || (abs(timeinfo->ts_min-last_min)>0) {
 	    	    // and save it into SQL table
             	savePressTemp(press,temp);
                 last_press = press;
-                last_temp = temp;
+                last_temp  = temp;
+                last_min   = timeinfo->ts_min;
 	       }
 	    }
         // close Linux I2C device
         i2cClose();
         if(debug) {
             time (&rawtime);
-            printf("%s go sleep \n",ctime(&rawtime));
+            printf("%s idle \n",ctime(&rawtime));
         }
-        usleep (100000);
+        usleep (1000000);
     }
         
     return 0;
