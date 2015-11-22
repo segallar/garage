@@ -15,7 +15,7 @@
 #include <fcntl.h>
 #include <mysql/mysql.h>
 
-bool debug = true;
+bool debug = false;
 
 // I2C Linux device handle
 int g_i2cFile;
@@ -45,14 +45,14 @@ void i2cSetAddress(int address)
 	}
 }
 
-int i2cLPS331APRead( float &press, float &temp ) {    
+int i2cLPS331APRead( float &press, float &temp ) {
 // INFO: http://www.st.com/web/en/resource/technical/document/datasheet/DM00036196.pdf
     __u8  res;
     __s32 writeResult;
     __u8  pressHB, pressLB, pressXLB, tempHB, tempLB;
     __s32 pressI;
     __s16 tempI;
-    // set address of the device	
+    // set address of the device
     i2cSetAddress(0x5c);
     // if board installed in system
     res = i2c_smbus_read_byte_data(g_i2cFile, 0x0f);
@@ -132,12 +132,12 @@ void savePressTemp(float press, float temp) {
         // Закрываем соединение с сервером базы данных
         mysql_close(&conn);
     }
-} 
+}
 
 int main(int argc, char** argv)
 {
     // INFO: https://www.kernel.org/doc/Documentation/i2c/dev-interface
- 
+
     if((argc>1) && (strcmp(argv[1],"-d")==0)) {
         debug = true;
         printf("Debug mode on. argc=%i\n",argc);
@@ -145,11 +145,11 @@ int main(int argc, char** argv)
             printf("argc %i = %s\n",i,argv[i]);
         }
     }
-    
-	float press, temp;
 
-    fprintf(stderr,"Start\n");
-    
+    float press, temp;
+
+    //fprintf(stderr,"Start\n");
+
     // open Linux I2C device
 	i2cOpen();
     // read press and temp from LPS3331AP
@@ -157,7 +157,7 @@ int main(int argc, char** argv)
         // and save it into SQL table
         savePressTemp(press,temp);
     // close Linux I2C device
-	i2cClose();
-    
-	return 0;
+    i2cClose();
+
+    return 0;
 }
