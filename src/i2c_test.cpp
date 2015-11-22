@@ -122,7 +122,7 @@ int main(int argc, char** argv)
 {
     // INFO: https://www.kernel.org/doc/Documentation/i2c/dev-interface
  
-    if((argc>0)&& (argv[1]=="-d")) {
+    if((argc>0) && (strcmp(argv[1],"-d")==0)) {
         debug = true;
         printf("Debug mode on\n");
     }
