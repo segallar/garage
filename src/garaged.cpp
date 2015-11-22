@@ -147,25 +147,31 @@ int main(int argc, char** argv)
     }
 
     float press, temp;
+    float last_press, last_temp;
 
     if(debug)
         printf("Start daemon\n");
 
-    
     while(1) {
         if(debug)
             printf("*** Begin !!! \n");
         // open Linux I2C device
         i2cOpen();
         // read press and temp from LPS3331AP
-        if( i2cLPS331APRead(press,temp) == 0 )
-            // and save it into SQL table
-            savePressTemp(press,temp);
+        if( i2cLPS331APRead(press,temp) == 0 ) {
+            if ( (abs(temp-last_temp)>0.01) || (abs(press-last_press)>0.1)) {
+	    	// and save it into SQL table
+            	savePressTemp(press,temp);
+		last_press = press;
+		last_temp = temp;
+			
+	    }
+	}
         // close Linux I2C device
         i2cClose();
         if(debug)
             printf("go sleep\n");
-        usleep (10000);
+        usleep (100000);
     }
         
     return 0;
