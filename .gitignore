@@ -1,3 +1,4 @@
 *.o
 mysql_test
 i2c_test
+garaged
