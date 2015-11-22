@@ -15,7 +15,7 @@
 #include <fcntl.h>
 #include <mysql/mysql.h>
 
-bool debug = false;
+bool debug = true;
 
 // I2C Linux device handle
 int g_i2cFile;
