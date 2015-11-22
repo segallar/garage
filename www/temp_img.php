@@ -7,8 +7,8 @@
 // Параметры:
 
 // определяем параметры подключения к базе
-if($_SERVER["DOCUMENT_ROOT"] == "/Users/rosipov/progs/garage" ||
-   $_SERVER["DOCUMENT_ROOT"] == "/Users/romanosipov/test/garage") {
+if($_SERVER["DOCUMENT_ROOT"] == "/Users/rosipov/progs/garage/www" ||
+   $_SERVER["DOCUMENT_ROOT"] == "/Users/romanosipov/test/garage/www") {
     $mysql_host = "192.168.5.252";
     $mysql_user = "mac";
     $mysql_password = "macpass";

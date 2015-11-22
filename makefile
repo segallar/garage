@@ -1,16 +1,28 @@
-.PHONY: all clean 
+.PHONY: all clean install uninstall 
 
-all: i2c_test
+all: garaged
 
 clean:
-	rm -rf mysql_test i2c_test *.o
+	rm -rf mysql_test i2c_test garaged
+    rm -rf tmp/*.o
 
-mysql_test.o: src/mysql_test.cpp
-	gcc -c -o mysql_test.o src/mysql_test.cpp `mysql_config --cflags`
-mysql_test: mysql_test.o
-	gcc -o mysql_test mysql_test.o `mysql_config --libs`
+tmp/mysql_test.o: src/mysql_test.cpp
+	gcc -c -o rmp/mysql_test.o src/mysql_test.cpp `mysql_config --cflags`
+mysql_test: tmp/mysql_test.o
+	gcc -o mysql_test tmp/mysql_test.o `mysql_config --libs`
 
-i2c_test.o: src/i2c_test.cpp 
-	gcc -c -o i2c_test.o src/i2c_test.cpp `mysql_config --cflags`
-i2c_test: i2c_test.o
-	gcc -o i2c_test i2c_test.o `mysql_config --libs`
+tmp/i2c_test.o: src/i2c_test.cpp 
+	gcc -c -o tmp/i2c_test.o src/i2c_test.cpp `mysql_config --cflags`
+i2c_test: tmp/i2c_test.o
+	gcc -o i2c_test tmp/i2c_test.o `mysql_config --libs`
+
+tmp/garaged.o: src/garaged.cpp 
+	gcc -c -o tmp/garaged.o src/garaged.cpp `mysql_config --cflags`
+i2c_test: tmp/garaged.o
+	gcc -o garaged tmp/garaged.o `mysql_config --libs`
+
+    
+install:
+    cp garaged bin/
+uninstall:
+    rm -f bin/garaged
