@@ -76,16 +76,19 @@ int i2cLPS331APRead( float &press, float &temp ) {
             perror("i2cWritePowerDown");
             return -3;;
         }
-        if(debug)
-            printf("0x%.2x%.2x%.2x 0x%.2x%.2x\n",pressHB,pressLB,pressXLB,tempHB,tempLB);
+        if(debug) {
+            printf("0x%.2x%.2x%.2x 0x%.2x%.2x\n",pressHB,pressLB,pressXLB,tempHB,tempLB); 
+        }
         pressI = pressHB * 0x10000 + pressLB * 0x100 + pressXLB;
         tempI = tempHB * 0x100 + tempLB;
-        if(debug)
-            printf("0x%.6x 0x%.4x %i %i %f %f\n",pressI,tempI,pressI,tempI,(float)pressI,(float)tempI);
+        if(debug) {
+            printf("0x%.6x 0x%.4x %i %i %f %f\n",pressI,tempI,pressI,tempI,(float)pressI,(float)tempI); 
+        }
         press = (float)pressI / 4096;
         temp = 42.5 + ( (float)tempI / 480 );
-        if(debug)
-            printf("%f %f\n",press,temp);
+        if(debug) {
+            printf("%f %f\n",press,temp); 
+        }
         return 0;
     } else {
         perror("i2cNoDeviceFound");
@@ -116,9 +119,9 @@ void savePressTemp(float press, float temp) {
     // Формируем запрос
     char str[100];
     sprintf (str,"INSERT INTO events (press,temp) VALUES (%f,%f);",press,temp);
-    if(debug)
+    if(debug) {
         printf("SQL:%s\n",str);
-    
+    }
     // Выполняем SQL-запрос
     if(mysql_query(&conn, str) != 0)
         perror("Error: can't execute SQL-query\n");
@@ -132,7 +135,7 @@ int main(int argc, char** argv)
  
     if((argc>0) && (strcmp(argv[1],"-d")==0)) {
         debug = true;
-        printf("Debug mode on\n");
+        printf("Debug mode on. argc=%i\n",argc);
     }
     
 	float press, temp;
