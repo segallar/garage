@@ -124,6 +124,7 @@ int main(int argc, char** argv)
  
     if((argc>0)&& (argv[1]=="-d")) {
         debug = true;
+        printf("Debug mode on\n");
     }
     
 	float press, temp;
