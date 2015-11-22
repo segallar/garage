@@ -14,11 +14,14 @@
 #include <sys/ioctl.h>
 #include <fcntl.h>
 #include <mysql/mysql.h>
+#include <time.h>
 
 bool debug = false;
 
 // I2C Linux device handle
 int g_i2cFile;
+
+time_t rawtime;
 
 // open the Linux device
 void i2cOpen()
@@ -77,17 +80,15 @@ int i2cLPS331APRead( float &press, float &temp ) {
             return -3;
         }
         if(debug) {
-            printf("0x%.2x%.2x%.2x 0x%.2x%.2x\n",pressHB,pressLB,pressXLB,tempHB,tempLB); 
+            time (&rawtime);
+            printf("%s read 0x%.2x%.2x%.2x 0x%.2x%.2x",ctime (&rawtime),pressHB,pressLB,pressXLB,tempHB,tempLB); 
         }
         pressI = pressHB * 0x10000 + pressLB * 0x100 + pressXLB;
         tempI = tempHB * 0x100 + tempLB;
-        if(debug) {
-            printf("0x%.6x 0x%.4x %i %i %f %f\n",pressI,tempI,pressI,tempI,(float)pressI,(float)tempI); 
-        }
         press = (float)pressI / 4096;
         temp = 42.5 + ( (float)tempI / 480 );
         if(debug) {
-            printf("%f %f\n",press,temp); 
+            printf(" convert-> %f %f\n",press,temp); 
         }
         return 0;
     } else {
@@ -116,14 +117,12 @@ void savePressTemp(float press, float temp) {
             mysql_close(&conn);
             return;
         }
-        if(debug) {
-            printf("Connect to MYSQL ok\n");
-        }
         // Формируем запрос
         char query[100];
         sprintf (query,"INSERT INTO events (press,temp) VALUES (%f,%f);",press,temp);
         if(debug) {
-            printf("SQL:%s\n",query);
+            time (&rawtime);
+            printf("%s Exec SQL:%s\n",ctime (&rawtime),query);
         }
         // Выполняем SQL-запрос
         if(mysql_query(&conn, query) != 0) {
@@ -147,30 +146,34 @@ int main(int argc, char** argv)
     }
 
     float press, temp;
-    float last_press, last_temp;
+    float last_press = 0; 
+    float last_temp  = 0;
 
     if(debug)
         printf("Start daemon\n");
 
     while(1) {
-        if(debug)
-            printf("*** Begin !!! \n");
+        if(debug) {
+            time (&rawtime);
+            printf("%s wake up! \n",ctime(&rawtime);
+        }
         // open Linux I2C device
         i2cOpen();
         // read press and temp from LPS3331AP
         if( i2cLPS331APRead(press,temp) == 0 ) {
             if ( (abs(temp-last_temp)>0.01) || (abs(press-last_press)>0.1)) {
-	    	// and save it into SQL table
+	    	    // and save it into SQL table
             	savePressTemp(press,temp);
-		last_press = press;
-		last_temp = temp;
-			
+                last_press = press;
+                last_temp = temp;
+	       }
 	    }
-	}
         // close Linux I2C device
         i2cClose();
-        if(debug)
-            printf("go sleep\n");
+        if(debug) {
+            time (&rawtime);
+            printf("%s go sleep \n",ctime(&rawtime);
+        }
         usleep (100000);
     }
         
