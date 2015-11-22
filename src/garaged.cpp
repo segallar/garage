@@ -81,14 +81,17 @@ int i2cLPS331APRead( float &press, float &temp ) {
         }
         if(debug) {
             time (&rawtime);
-            printf("%s read 0x%.2x%.2x%.2x 0x%.2x%.2x",ctime (&rawtime),pressHB,pressLB,pressXLB,tempHB,tempLB); 
+            printf("%s read 0x%.2x%.2x%.2x 0x%.2x%.2x ",ctime (&rawtime),pressHB,pressLB,pressXLB,tempHB,tempLB); 
         }
         pressI = pressHB * 0x10000 + pressLB * 0x100 + pressXLB;
         tempI = tempHB * 0x100 + tempLB;
+        if(debug) {
+            printf("convert ->  0x%.6x 0x%.4x %i %i ",pressI,tempI,pressI,tempI); 
+        }
         press = (float)pressI / 4096;
         temp = 42.5 + ( (float)tempI / 480 );
         if(debug) {
-            printf(" convert-> %f %f\n",press,temp); 
+            printf("convert-> %f %f\n",press,temp); 
         }
         return 0;
     } else {
