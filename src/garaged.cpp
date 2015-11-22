@@ -62,11 +62,19 @@ void i2cSetAddress(int address)
 
 int i2cLPS331APRead( float &press, float &temp ) {
 // INFO: http://www.st.com/web/en/resource/technical/document/datasheet/DM00036196.pdf
-    __u8  res;
-    __s32 writeResult;
-    __u8  pressHB, pressLB, pressXLB, tempHB, tempLB;
-    __s32 pressI;
-    __s16 tempI;
+    __u8  res         = 0;
+    __s32 writeResult = -1;
+    __u8  pressHB     = 0;
+    __u8  pressLB     = 0;
+    __u8  pressXLB    = 0;
+    __u8  tempHB      = 0;
+    __u8  tempLB      = 0;
+    __s32 pressI      = 0;
+    __s16 tempI       = 0;
+    
+    press = 0;
+    temp  = 0;
+    
     // open Linux I2C device
     i2cOpen();
     // set address of the device
