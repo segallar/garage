@@ -117,13 +117,13 @@ void savePressTemp(float press, float temp) {
         perror("Error: can't connect to MySQL server\n");
 
     // Формируем запрос
-    char str[100];
-    sprintf (str,"INSERT INTO events (press,temp) VALUES (%f,%f);",press,temp);
+    char query[100];
+    sprintf (query,"INSERT INTO events (press,temp) VALUES (%f,%f);",press,temp);
     if(debug) {
-        printf("SQL:%s\n",str);
+        printf("SQL:%s\n",query);
     }
     // Выполняем SQL-запрос
-    if(mysql_query(&conn, str) != 0)
+    if(mysql_query(&conn, query) != 0)
         perror("Error: can't execute SQL-query\n");
     // Закрываем соединение с сервером базы данных
     mysql_close(&conn);
