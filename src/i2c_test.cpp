@@ -78,8 +78,10 @@ int i2cLPS331APRead( float &press, float &temp ) {
         if(debug)
             printf("0x%.2x%.2x%.2x 0x%.2x%.2x\n",pressHB,pressLB,pressXLB,tempHB,tempLB);
         pressI = pressHB * 0x10000 + pressLB * 0x100 + pressXLB;
-        press = (float)pressI / 4096;
         tempI = tempHB * 0x100 + tempLB;
+        if(debug)
+            printf("0x%.6x 0x%.4x %i %i %f %f\n",pressI,tempI,pressI,pressI,(float)pressI,(float)tempI);
+        press = (float)pressI / 4096;
         temp = 42.5 + ( (float)tempI / 480 );
         if(debug)
             printf("%f %f\n",press,temp);
