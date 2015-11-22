@@ -116,7 +116,7 @@ void savePressTemp(float press, float temp) {
             mysql_close(&conn);
             return;
         }
-        if(debug){
+        if(debug) {
             printf("Connect to MYSQL ok\n");
         }
         // Формируем запрос
@@ -126,8 +126,9 @@ void savePressTemp(float press, float temp) {
             printf("SQL:%s\n",query);
         }
         // Выполняем SQL-запрос
-        if(mysql_query(&conn, query) != 0)
+        if(mysql_query(&conn, query) != 0) {
             fprintf(stderr,"Error: can't execute SQL-query\n");
+        }
         // Закрываем соединение с сервером базы данных
         mysql_close(&conn);
     }
@@ -137,16 +138,18 @@ int main(int argc, char** argv)
 {
     // INFO: https://www.kernel.org/doc/Documentation/i2c/dev-interface
  
-    if((argc>0) && (strcmp(argv[1],"-d")==0)) {
+    if((argc>1) && (strcmp(argv[1],"-d")==0)) {
         debug = true;
         printf("Debug mode on. argc=%i\n",argc);
-        for(int i=0;i<argc;++i){
+        for(int i=0;i<argc;++i) {
             printf("argc %i = %s\n",i,argv[i]);
         }
     }
     
 	float press, temp;
 
+    fprintf(stderr,"Start\n");
+    
     // open Linux I2C device
 	i2cOpen();
     // read press and temp from LPS3331AP
