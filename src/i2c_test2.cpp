@@ -7,6 +7,11 @@
 #include <string.h>
 #include <stdio.h>
 
+#define I2C_SLAVE       0x0703  /* Use this slave address */
+#define I2C_SLAVE_FORCE 0x0706  /* Use this slave address, even if it
+                                    is already in use by a driver! */
+#define I2C_TENBIT      0x0704  /* 0 for 7 bit addrs, != 0 for 10 bit */ 
+
 int main(void)
 {
   // Set up some variables that we'll use along the way
