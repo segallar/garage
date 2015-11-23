@@ -500,9 +500,8 @@ function show_event_bar(divs,interval) {
             $("#"+id).removeClass("panel-default");
             $("#"+id).addClass("panel-primary");
         }
-        $("<div id=\""+id+"-body\" class=\"panel-body\">Loading...</div>").appendTo("#"+id);
+        $("<div id=\""+id+"-body\" class=\"panel-body events-panel-loading\">Loading...</div>").appendTo("#"+id);
     }
-    
     //http://pi/server.php?cmd=events&group=hour&interval=5&div=3&debug=on
     // загружаем в панели информацию
     $.getJSON( "/server.php?cmd=events&group=hour&interval="+interval+"&div="+divs+"&minmax=on", function( data ) {
@@ -522,6 +521,8 @@ function show_event_bar(divs,interval) {
             $("#event-col-"+val['day']+"-"+val['hour']+"-body").html(s);
         });
     });
+    //sleep(5);
+    //$(".events-panel-loading").html("No data");
 }
     
 function showMapSessions(device) {

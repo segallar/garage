@@ -5,7 +5,7 @@
 time_t rawtime;
 
 char * get_time(void) {
-    static char* buf;//[] = "ggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg";
+    static char* buf;
     static char* pch;
     
     time (&rawtime);

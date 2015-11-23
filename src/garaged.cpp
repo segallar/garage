@@ -2,6 +2,8 @@
 // garage project 
 //
 // garage daemon
+//
+// TODO: supervisor http://habrahabr.ru/post/83775/
 
 #include <stdint.h>
 #include <stdlib.h>
@@ -60,7 +62,7 @@ void i2cSetAddress(int address)
 	}
 }
 
-int i2cLPS331APRead( float &press, float &temp ) {
+int i2c_LPS331AP_read( float &press, float &temp ) {
 // INFO: http://www.st.com/web/en/resource/technical/document/datasheet/DM00036196.pdf
     __u8  res         = 0;
     __s32 writeResult = -1;
@@ -79,7 +81,7 @@ int i2cLPS331APRead( float &press, float &temp ) {
     __u8 ret; 
     struct i2c_client * my_client; 
     struct i2c_adapter * my_adap = i2c_get_adapter(1); // 1 means i2c-1 bus
-    my_client = i2c_new_dummy (my_adap, 0x0f); // 0x69 - slave address on i2c bus
+    my_client = i2c_new_dummy (my_adap, 0x5c); // 0x69 - slave address on i2c bus
     i2c_smbus_write_byte(my_client, 0x0f); 
     //ret = i2c_smbus_read_byte(my_client);
     
@@ -130,7 +132,7 @@ int i2cLPS331APRead( float &press, float &temp ) {
         return -1;
     }
     // close Linux I2C device
-    i2cClose();
+    //i2cClose();
 }
 
 void savePressTemp(float press, float temp) {
@@ -168,17 +170,21 @@ void savePressTemp(float press, float temp) {
     }
 }
 
-int main(int argc, char** argv)
-{
-    // INFO: https://www.kernel.org/doc/Documentation/i2c/dev-interface
-
+void process_args(int argc, char** argv) {
     if((argc>1) && (strcmp(argv[1],"-d")==0)) {
         debug = true;
         printf("Debug mode on. argc=%i\n",argc);
         for(int i=0;i<argc;++i) {
-            printf("argc %i = %s\n",i,argv[i]);
+            printf("%s argc %i = %s\n",get_time(),i,argv[i]);
         }
     }
+}
+
+int main(int argc, char** argv)
+{
+    // INFO: https://www.kernel.org/doc/Documentation/i2c/dev-interface
+
+    process_args(argc, argv);
 
     float press, temp;
     float last_press = 0; 
@@ -187,43 +193,47 @@ int main(int argc, char** argv)
     struct tm * timeinfo;
     int last_min = -1;
     
-    int idle_time = 10000000;
-
+    int idle_time           = 10000000;
+    int idle_time_min       = 1000;
+    int idle_time_max       = 100000000;
+    int idle_time_divider   = 2;
+    
+    float temp_delta        = 0.01;
+    float press_delta       = 0.1;
+    int time_delta          = 0;
+    
+    
     if(debug)
-        printf("Start daemon\n");
+        printf("%s Start daemon\n",get_time());
 
     while(1) {
         if(debug) {
             printf("%s wake up! idle time %i \n",get_time(),idle_time);
         }
-    
-        time ( &rawtime );
-        timeinfo = localtime ( &rawtime );
         
         // read press and temp from LPS3331AP
-        if( i2cLPS331APRead(press,temp) == 0 ) {
+        if( i2c_LPS331AP_read(press,temp) == 0 ) {
             time ( &rawtime );
             timeinfo = localtime ( &rawtime );
-            if ( (abs(temp-last_temp) > 0.01) || (abs(press-last_press) > 0.1) || (abs(timeinfo->tm_min-last_min)>0)) {
+            if ( (abs(temp-last_temp) > temp_delta) || (abs(press-last_press) > press_delta) || (abs(timeinfo->tm_min-last_min)>time_delta)) {
 	    	    // and save it into SQL table
             	savePressTemp(press,temp);
                 last_press = press;
                 last_temp  = temp;
                 last_min   = timeinfo->tm_min;
-                idle_time  = idle_time / 2;
-                if(idle_time < 1000) idle_time = 1000;
-                
+                idle_time  = idle_time / idle_time_divider;
+                if(idle_time < idle_time_min) idle_time = idle_time_min;
 	       } else {
-                idle_time  = idle_time * 2;
-                if(idle_time > 100000000) idle_time = 100000000;
-                
+                idle_time  = idle_time * idle_time_divider;
+                if(idle_time > idle_time_max) idle_time = idle_time_max;
             }
 	    } else {
             printf("%s ******** Error ********** i2c \n",get_time());    
         }
+        /*
         if(debug) {
             printf("%s idle time %i\n",get_time(),idle_time);
-        }
+        }*/
         usleep (idle_time);
     }
         
