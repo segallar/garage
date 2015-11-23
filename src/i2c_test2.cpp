@@ -57,17 +57,19 @@ int main(void)
   if (opResult != 1) printf("No ACK bit 2!\n");
   */
     
-printf("%i \n",i2c_smbus_write_byte_data(i2cHandle, 0x20, 0x90));        
+  printf("%i \n",i2c_smbus_write_byte_data(i2cHandle, 0x20, 0x90));        
    
-                                        
+  memset(rxBuffer, 0, sizeof(rxBuffer));
+  memset(txBuffer, 0, sizeof(txBuffer));
+   
   //*** read !!! 0x28
   txBuffer[0] = 0x28; // This is the address we want to read from.
   opResult = write(i2cHandle, txBuffer, 1);
   if (opResult != 1) printf("No ACK bit3!\n");
   //***read
   opResult = read(i2cHandle, rxBuffer, 5);
-  printf("Part ID: " ); // should print 105
-  for(int i=0;i<5;++i) {
+  printf("Part %i ID: ",opResult); // should print 105
+  for(int i=0;i<opResult;++i) {
       printf(" 0x%x",i,(int)rxBuffer[i]);
   }
   printf("\n");                  
