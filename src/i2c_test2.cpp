@@ -17,7 +17,7 @@ int main(void)
   // Set up some variables that we'll use along the way
   char rxBuffer[32];  // receive buffer
   char txBuffer[32];  // transmit buffer
-  int gyroAddress   = 0x5c; // gyro device address
+  int barometerAddress = 0x5c; // gyro device address
   int xlAddress     = 0x0f;   // accelerometer device address
   int tenBitAddress = 0;  // is the device's address 10-bit? Usually not.
   int opResult      = 0;   // for error checking of operations
@@ -31,7 +31,7 @@ int main(void)
 
   // Tell the I2C peripheral what the address of the device is. We're going to
   //   start out by talking to the gyro.
-  opResult = ioctl(i2cHandle, I2C_SLAVE, gyroAddress);
+  opResult = ioctl(i2cHandle, I2C_SLAVE, barometerAddress);
 
   // Clear our buffers
   memset(rxBuffer, 0, sizeof(rxBuffer));
@@ -41,11 +41,31 @@ int main(void)
   //   commands. We're going to ask the gyro to read back its "WHO_AM_I"
   //   register, which contains the I2C address. The process is easy- write the
   //   desired address, the execute a read command.
+  //***write
   txBuffer[0] = 0x0f; // This is the address we want to read from.
   opResult = write(i2cHandle, txBuffer, 1);
   if (opResult != 1) printf("No ACK bit!\n");
+  //***read
   opResult = read(i2cHandle, rxBuffer, 1);
-  printf("Part ID: %x\n", (int)rxBuffer[0]); // should print 105
+  printf("Part ID: 0x%x\n", (int)rxBuffer[0]); // should print 105
+
+  //*** write !!! 0x20, 0x90
+  txBuffer[0] = 0x20; // This is the address we want to read from.
+  txBuffer[1] = 0x90;
+  opResult = write(i2cHandle, txBuffer, 2);
+  if (opResult != 1) printf("No ACK bit 2!\n");
+                                        
+  //*** read !!! 0x28
+  txBuffer[0] = 0x28; // This is the address we want to read from.
+  opResult = write(i2cHandle, txBuffer, 1);
+  if (opResult != 1) printf("No ACK bit3!\n");
+  //***read
+  opResult = read(i2cHandle, rxBuffer, 5);
+  printf("Part ID: 0x%x\n", (int)rxBuffer[0]); // should print 105
+ 
+                                        
+                                        
+                                        
 /*
   // Next, we'll query the accelerometer using the same process- but first,
   //   we need to change the slave address!
