@@ -41,12 +41,12 @@ int main(void)
   //   commands. We're going to ask the gyro to read back its "WHO_AM_I"
   //   register, which contains the I2C address. The process is easy- write the
   //   desired address, the execute a read command.
-  txBuffer[0] = 0x00; // This is the address we want to read from.
+  txBuffer[0] = 0x0f; // This is the address we want to read from.
   opResult = write(i2cHandle, txBuffer, 1);
   if (opResult != 1) printf("No ACK bit!\n");
   opResult = read(i2cHandle, rxBuffer, 1);
-  printf("Part ID: %d\n", (int)rxBuffer[0]); // should print 105
-
+  printf("Part ID: %x\n", (int)rxBuffer[0]); // should print 105
+/*
   // Next, we'll query the accelerometer using the same process- but first,
   //   we need to change the slave address!
   opResult = ioctl(i2cHandle, I2C_SLAVE, xlAddress);
@@ -55,4 +55,5 @@ int main(void)
   if (opResult != 1) printf("No ACK bit!\n");
   opResult = read(i2cHandle, rxBuffer, 1);
   printf("Part ID: %d\n", (int)rxBuffer[0]); // should print 229
+  */
 }
