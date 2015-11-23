@@ -1,16 +1,16 @@
 #include <stdlib.h>
 #include <unistd.h>
-#include <linux/i2c.h>
-//#include <linux/i2c-dev.h>
+//#include <linux/i2c.h>
+#include <linux/i2c-dev.h>
 #include <sys/ioctl.h>
 #include <fcntl.h>
 #include <string.h>
 #include <stdio.h>
 
-#define I2C_SLAVE       0x0703  /* Use this slave address */
-#define I2C_SLAVE_FORCE 0x0706  /* Use this slave address, even if it
-                                    is already in use by a driver! */
-#define I2C_TENBIT      0x0704  /* 0 for 7 bit addrs, != 0 for 10 bit */ 
+//#define I2C_SLAVE       0x0703  /* Use this slave address */
+//#define I2C_SLAVE_FORCE 0x0706  /* Use this slave address, even if it
+//                                    is already in use by a driver! */
+//#define I2C_TENBIT      0x0704  /* 0 for 7 bit addrs, != 0 for 10 bit */ 
 
 int main(void)
 {
@@ -56,7 +56,8 @@ int main(void)
   opResult = write(i2cHandle, txBuffer, 2);
   if (opResult != 1) printf("No ACK bit 2!\n");
   */
-                                        
+    
+   i2c_smbus_write_byte_data(i2cHandle, 0x20, 0x90);        
    i2c_smbus_write_byte_data(i2cHandle, 0x20, 0x90);
                                         
   //*** read !!! 0x28
