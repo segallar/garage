@@ -57,8 +57,8 @@ int main(void)
   if (opResult != 1) printf("No ACK bit 2!\n");
   */
     
-   i2c_smbus_write_byte_data(i2cHandle, 0x20, 0x90);        
-   i2c_smbus_write_byte_data(i2cHandle, 0x20, 0x90);
+printf("%i \n",i2c_smbus_write_byte_data(i2cHandle, 0x20, 0x90));        
+   
                                         
   //*** read !!! 0x28
   txBuffer[0] = 0x28; // This is the address we want to read from.
