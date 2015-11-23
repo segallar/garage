@@ -61,9 +61,11 @@ int main(void)
   if (opResult != 1) printf("No ACK bit3!\n");
   //***read
   opResult = read(i2cHandle, rxBuffer, 5);
-  printf("Part ID: 0x%x\n", (int)rxBuffer[0]); // should print 105
- 
-                                        
+  printf("Part ID: " ); // should print 105
+  for(int i=0;i<sizeof(rxBuffer);++i) {
+      printf(" %i 0x%x",i,(int)rxBuffer[i]);
+  }
+  printf("\n");                  
                                         
                                         
 /*
