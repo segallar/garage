@@ -18,7 +18,7 @@ int main(void)
   char rxBuffer[32];  // receive buffer
   char txBuffer[32];  // transmit buffer
   int barometerAddress = 0x5c; // gyro device address
-  int xlAddress     = 0x0f;   // accelerometer device address
+  int xlAddress     = 0x28;   // accelerometer device address
   int tenBitAddress = 0;  // is the device's address 10-bit? Usually not.
   int opResult      = 0;   // for error checking of operations
 
@@ -62,6 +62,7 @@ int main(void)
   memset(rxBuffer, 0, sizeof(rxBuffer));
   memset(txBuffer, 0, sizeof(txBuffer));
    
+  opResult = ioctl(i2cHandle, I2C_SLAVE, barometerAddress);    
   //*** read !!! 0x28
   txBuffer[0] = 0x28; // This is the address we want to read from.
   opResult = write(i2cHandle, txBuffer, 1);
