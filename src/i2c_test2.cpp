@@ -49,15 +49,20 @@ int main(void)
   opResult = read(i2cHandle, rxBuffer, 1);
   printf("Part ID: 0x%x\n", (int)rxBuffer[0]); // should print 105
 
-  /*
+  // Clear our buffers
+  memset(rxBuffer, 0, sizeof(rxBuffer));
+  memset(txBuffer, 0, sizeof(txBuffer));
+    
   //*** write !!! 0x20, 0x90
   txBuffer[0] = 0x20; // This is the address we want to read from.
-  txBuffer[1] = 0x90;
-  opResult = write(i2cHandle, txBuffer, 2);
+  opResult = write(i2cHandle, txBuffer, 1);
   if (opResult != 1) printf("No ACK bit 2!\n");
-  */
+  txBuffer[1] = 0x90;
+  opResult = write(i2cHandle, txBuffer, 1);
+  if (opResult != 1) printf("No ACK bit 3!\n");
+
     
-  printf("%i \n",i2c_smbus_write_byte_data(i2cHandle, 0x20, 0x90));        
+ // printf("%i \n",i2c_smbus_write_byte_data(i2cHandle, 0x20, 0x90));        
    
   memset(rxBuffer, 0, sizeof(rxBuffer));
   memset(txBuffer, 0, sizeof(txBuffer));
@@ -66,7 +71,7 @@ int main(void)
   //*** read !!! 0x28
   txBuffer[0] = 0x28; // This is the address we want to read from.
   opResult = write(i2cHandle, txBuffer, 1);
-  if (opResult != 1) printf("No ACK bit3!\n");
+  if (opResult != 1) printf("No ACK bit4!\n");
   //***read
   opResult = read(i2cHandle, rxBuffer, 5);
   printf("Part %i ID: ",opResult); // should print 105
