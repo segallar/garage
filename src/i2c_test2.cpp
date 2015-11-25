@@ -73,7 +73,7 @@ int main(void)
   opResult = write(i2cHandle, txBuffer, 1);
   if (opResult != 1) printf("No ACK bit4!\n");
   //***read
-  opResult = read(i2cHandle, rxBuffer, 5);
+  opResult = read(i2cHandle, rxBuffer, 1);
   printf("Part %i ID: ",opResult); // should print 105
   for(int i=0;i<opResult;++i) {
       printf(" 0x%x",i,(int)rxBuffer[i]);
