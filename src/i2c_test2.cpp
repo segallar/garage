@@ -44,24 +44,23 @@ int main(void)
   //***write
   txBuffer[0] = 0x0f; // This is the address we want to read from.
   opResult = write(i2cHandle, txBuffer, 1);
-  if (opResult != 1) printf("No ACK bit!\n");
+  if (opResult != 1) printf("No ACK bit 1!\n");
   //***read
   opResult = read(i2cHandle, rxBuffer, 1);
   printf("Part ID: 0x%x\n", (int)rxBuffer[0]); // should print 105
     
-  opResult = ioctl(i2cHandle, I2C_SLAVE, barometerAddress+1);    
+  opResult = ioctl(i2cHandle, I2C_RDWR, barometerAddress);    
       
   //*** write !!! 0x20, 0x90
   txBuffer[0] = 0x20; // This is the address we want to read from.
-  printf(" write 0x%x",(int)txBuffer[0]);
+  printf(" write 0x%x \n",(int)txBuffer[0]);
   opResult = write(i2cHandle, txBuffer, 1);
   if (opResult != 1) printf("No ACK bit 2!\n");
   txBuffer[0] = 0x90;
   opResult = write(i2cHandle, txBuffer, 1);
   if (opResult != 1) printf("No ACK bit 3!\n");
 
-  opResult = ioctl(i2cHandle, I2C_SLAVE, barometerAddress);    
-    
+  opResult = ioctl(i2cHandle, I2C_SLAVE, barometerAddress);
     
   //*** read !!! 0x28
   txBuffer[0] = 0x28; // This is the address we want to read from.
