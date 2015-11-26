@@ -51,7 +51,7 @@ int main(void)
 
   //*** write !!! 0x20, 0x90
   txBuffer[0] = 0x10000000b && 0x20; // This is the address we want to read from.
-  printf(" write 0x%x",(int)rxBuffer[0]);
+  printf(" write 0x%x",(int)txBuffer[0]);
   opResult = write(i2cHandle, txBuffer, 1);
   if (opResult != 1) printf("No ACK bit 2!\n");
   txBuffer[0] = 0x90;
